@@ -1,0 +1,54 @@
+#auto-image-generator-form{
+	.preview-image{
+		width: 600px;
+		max-width: 98%;
+		height: auto;
+		border: 1px solid #cccccc;
+		padding: 5px;
+		background: #ffffff;
+	}
+
+	@media (max-width: 768px) {
+		.form-table, .form-table thead, .form-table tbody, .form-table th, .form-table td, .form-table tr {
+			display: block;
+			width: 100%;
+		}
+
+		.form-table th {
+			text-align: left;
+			padding-top: 1em;
+		}
+	}
+}
+
+.aimg-overlay-images{
+	h4{
+		margin: 0 0 10px;
+	}
+	&__items{
+		display: flex;
+		gap: 10px;
+		flex-wrap: wrap;
+	}
+
+	&__item{
+		position: relative;
+		img{
+			width: 60px;
+			height: 60px;
+		}
+	}
+
+	// Overly item styles.
+	.remove-overlay{
+		position: absolute;
+		top: 2px;
+		right: 2px;
+		background-color: #f00000;
+		color: #ffffff;
+		padding: 0 4px;
+		min-height: inherit;
+		line-height: inherit;
+		font-size: 12px;
+	}
+}

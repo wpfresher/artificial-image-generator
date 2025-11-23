@@ -1,0 +1,89 @@
+name: Release WordPress Plugin to SVN
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'  # Triggers on version tags like v1.0.0
+
+jobs:
+  build-and-release:
+    name: Build and Release Plugin
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          coverage: none
+          tools: composer
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '21.7.3'
+
+      - name: Authenticate GitHub token for Composer
+        run: composer config -g github-oauth.github.com ${{ secrets.ACCESS_TOKEN }}
+
+      - name: Build plugin
+        run: |
+          composer install
+          composer install --no-dev --no-scripts
+          npm install && npm run build
+
+      - name: Install Subversion
+        run: sudo apt-get install -y subversion
+
+      - name: Set tag name as environment variable
+        run: echo "TAG_NAME=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+
+      - name: Checkout to SVN repository
+        run: svn checkout --depth immediates ${{ secrets.SVN_REPOSITORY_URL }} svn
+
+      - name: Update SVN trunk
+        run: |
+          svn update svn/trunk
+          rsync -rc --delete --exclude-from='.distignore' --exclude='svn/' ./ svn/trunk/
+          cd svn
+          svn add --force trunk > /dev/null 2>&1 || true
+          svn status
+          svn commit -m "Release version v${{ env.TAG_NAME }}" --username ${{ secrets.SVN_USERNAME }} --password ${{ secrets.SVN_PASSWORD }} --no-auth-cache --non-interactive || true
+
+      - name: Sync WordPress.org assets
+        run: |
+          mkdir -p svn/assets
+          rsync -r --delete --include '*/' --include '*.png' --include '*.jpg' --include '*.jpeg' --include '*.gif' --include '*.svg' --exclude '*' .wordpress-org/ svn/assets/
+          mkdir -p svn/assets/blueprints
+          cp blueprint.json svn/assets/blueprints/blueprint.json
+          cd svn
+          svn add --force assets > /dev/null 2>&1 || true
+          svn commit -m "Update assets for version v${{ env.TAG_NAME }}" --username ${{ secrets.SVN_USERNAME }} --password ${{ secrets.SVN_PASSWORD }} --no-auth-cache --non-interactive || true
+
+      - name: Delete existing SVN tag (if exists)
+        run: |
+          svn delete ${{ secrets.SVN_REPOSITORY_URL }}/tags/${{ env.TAG_NAME }} -m "Deleting existing tag ${{ env.TAG_NAME }}" --username ${{ secrets.SVN_USERNAME }} --password ${{ secrets.SVN_PASSWORD }} --no-auth-cache --non-interactive || true
+
+      - name: Create new SVN tag by copying trunk
+        run: |
+          svn copy ${{ secrets.SVN_REPOSITORY_URL }}/trunk ${{ secrets.SVN_REPOSITORY_URL }}/tags/${{ env.TAG_NAME }} -m "Tagging version ${{ env.TAG_NAME }}" --username ${{ secrets.SVN_USERNAME }} --password ${{ secrets.SVN_PASSWORD }} --no-auth-cache --non-interactive
+
+      - name: Send Slack notification
+        uses: slackapi/slack-github-action@v1.18.0
+        with:
+          payload: |
+            {
+              "channel": "#announcements",
+              "text": "The release of *Auto Image Generator* version *v${{ env.TAG_NAME }}* has *${{ job.status == 'success' && 'succeeded' || 'failed' }}*.",
+              "attachments": [
+                {
+                  "color": "${{ job.status == 'success' && 'good' || 'danger' }}",
+                  "text": "${{ job.status == 'success' && 'Release completed successfully.' || 'Release failed. Check GitHub Actions logs for details.' }}"
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

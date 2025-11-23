@@ -1,0 +1,41 @@
+{
+  "name": "auto-image-generator",
+  "title": "Auto Image Generator",
+  "version": "1.0.0",
+  "description": "Automatically generate eye-catching featured images and thumbnails for your posts and pages. Boost your site's visual appeal and SEO effortlessly with dynamic, customizable image generation.",
+  "author": "UrlDev",
+  "homepage": "https://urldev.com/auto-image-generator",
+  "license": "GPL-v2.0-or-later",
+  "prettier": "@wordpress/prettier-config",
+  "scripts": {
+    "build": "wp-scripts build && grunt build",
+    "check-engines": "wp-scripts check-engines",
+    "check-licenses": "wp-scripts check-licenses",
+    "format": "wp-scripts format",
+    "lint:css": "wp-scripts lint-style",
+    "lint:js": "wp-scripts lint-js",
+    "lint:md:docs": "wp-scripts lint-md-docs",
+    "lint:pkg-json": "wp-scripts lint-pkg-json",
+    "packages-update": "wp-scripts packages-update",
+    "plugin-zip": "wp-scripts plugin-zip",
+    "start": "wp-scripts start",
+    "test:e2e": "wp-scripts test-e2e",
+    "test:unit": "wp-scripts test-unit-js"
+  },
+  "devDependencies": {
+    "@lodder/time-grunt": "^4.0.0",
+    "@wordpress/scripts": "^31.0.0",
+    "clean-webpack-plugin": "^4.0.0",
+    "copy-webpack-plugin": "^11.0.0",
+    "grunt": "^1.6.1",
+    "grunt-checktextdomain": "^1.0.1",
+    "grunt-wp-i18n": "^1.0.3",
+    "load-grunt-tasks": "^5.1.0",
+    "webpack-remove-empty-scripts": "^1.0.4"
+  },
+  "browserslist": [
+    "> 0.1%",
+    "ie 8",
+    "ie 9"
+  ]
+}
