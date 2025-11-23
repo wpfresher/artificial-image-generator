@@ -14,13 +14,13 @@ Automatically generate featured images and post thumbnails for your WordPress po
 
 Featured images and thumbnails play a crucial role in engaging your audience and boosting your website’s SEO performance. With **Auto Image Generator**, you never have to worry about manually setting featured images again. Save time, improve your content’s visual impact, and ensure every post shines with a captivating image.
 
-**Why Featured Images Matter?**
+**Why Auto Featured Images Matter?**
 
 - **SEO Boost**: Search engines love visually rich content. Adding relevant featured images can enhance your site’s search visibility and improve click-through rates.
 - **Improved User Engagement**: Posts with attractive thumbnails are more likely to grab attention and keep visitors on your site.
 - **Professional Appearance**: Consistent featured images give your website a polished and professional look.
 - **Social Media Sharing**: Featured images are often used when sharing posts on social media, making your content more shareable and visually appealing.
-- **Automation**: No more manual work! Automatically generate thumbnails for new posts, pages, and custom post types without lifting a finger.
+- **Automation**: No more manual work! Automatically generate thumbnail images for new posts, pages, and custom post types without lifting a finger.
 
 **What Auto Image Generator Does?**
 
@@ -32,7 +32,7 @@ Whether you’re running a blog, news site, portfolio, or online store, **Auto I
 
 == Key Features ==
 
-✅ **Automatic Thumbnail Creation**
+✅ **Automatic Thumbnail Image Creation**
 Generate featured images for new posts and pages automatically upon publication.
 
 ✅ **Flexible Image Settings**
@@ -75,7 +75,7 @@ Easy-to-use interface—no need to edit theme files or code snippets.
 
 == Usage ==
 
-1. After activation, go to **Thumbnails** in your WordPress admin dashboard.
+1. After activation, go to **Auto Image Generator** in your WordPress admin dashboard.
    - Here you can configure the plugin settings to suit your needs.
 2. Choose your preferred image generation options:
    - Set the default thumbnail style, dimensions, and more.
@@ -131,7 +131,7 @@ The Roboto font is included under the Apache License 2.0. Full license text avai
 
 1. Auto Image Generator - Image Configuration Page
 2. Plugin Settings
-3. Visual preview of a blog post with the generated thumbnail image
+3. Visual preview of a blog post with the automatically generated thumbnail image
 
 == Changelog ==
 
