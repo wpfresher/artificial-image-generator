@@ -158,7 +158,7 @@ class Settings {
 		$default_text_color = aimg_get_settings( 'default_text_color' );
 		?>
 		<input type="text" name="aimg_settings[default_text_color]" id="aimg_settings[default_text_color]" value="<?php echo esc_attr( $default_text_color ); ?>" class="regular-text" placeholder="<?php esc_attr_e( '#ffffff', 'auto-image-generator' ); ?>" />
-		<p class="description"><?php esc_html_e( 'Enter the default text color for the thumbnails. This will be used as a fallback color if no specific color is set.', 'image-generator' ); ?></p>
+		<p class="description"><?php esc_html_e( 'Enter the default text color for the thumbnails. This will be used as a fallback color if no specific color is set.', 'auto-image-generator' ); ?></p>
 		<?php
 	}
 
@@ -173,9 +173,9 @@ class Settings {
 		?>
 		<label for="aimg_settings[is_post_thumbnail]">
 			<input type="checkbox" name="aimg_settings[is_post_thumbnail]" id="aimg_settings[is_post_thumbnail]" value="1" <?php checked( $is_post_thumbnail, 'yes' ); ?> />
-			<?php esc_html_e( 'Enable Post Thumbnails', 'image-generator' ); ?>
+			<?php esc_html_e( 'Enable Post Thumbnails', 'auto-image-generator' ); ?>
 		</label>
-		<p class="description"><?php esc_html_e( 'Check this box to enable automatic generation of post thumbnails when a post is saved. This will create a thumbnail image based on the post title, using the random background colors and overlay images if configured.', 'image-generator' ); ?></p>
+		<p class="description"><?php esc_html_e( 'Check this box to enable automatic generation of post thumbnails when a post is saved. This will create a thumbnail image based on the post title, using the random background colors and overlay images if configured.', 'auto-image-generator' ); ?></p>
 		<?php
 	}
 
@@ -190,9 +190,9 @@ class Settings {
 		?>
 		<label for="aimg_settings[is_page_thumbnail]">
 			<input type="checkbox" name="aimg_settings[is_page_thumbnail]" id="aimg_settings[is_page_thumbnail]" value="1" <?php checked( $is_page_thumbnail, 'yes' ); ?> />
-			<?php esc_html_e( 'Enable Page Thumbnails', 'image-generator' ); ?>
+			<?php esc_html_e( 'Enable Page Thumbnails', 'auto-image-generator' ); ?>
 		</label>
-		<p class="description"><?php esc_html_e( 'Check this box to enable automatic generation of page thumbnails when a page is saved. This will create a thumbnail image based on the page title, using the random background colors and overlay images if configured.', 'image-generator' ); ?></p>
+		<p class="description"><?php esc_html_e( 'Check this box to enable automatic generation of page thumbnails when a page is saved. This will create a thumbnail image based on the page title, using the random background colors and overlay images if configured.', 'auto-image-generator' ); ?></p>
 		<?php
 	}
 

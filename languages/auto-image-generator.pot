@@ -1,10 +1,10 @@
-# Copyright (C) 2025 
-# This file is distributed under the same license as the  package.
+# Copyright (C) 2025 UrlDev
+# This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: \n"
+"Project-Id-Version: Auto Image Generator 1.0.0\n"
 "Report-Msgid-Bugs-To: https://urldev.com/support/\n"
-"POT-Creation-Date: 2025-11-23 17:54:27+00:00\n"
+"POT-Creation-Date: 2025-11-23 17:56:07+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -65,9 +65,7 @@ msgstr ""
 msgid "Invalid overlay image ID."
 msgstr ""
 
-#: includes/Admin/Admin.php:33 includes/Admin/Admin.php:34
-#: includes/Admin/Settings.php:59 includes/Admin/views/admin-page.php:15
-#: includes/Admin/views/admin-page.php:16
+#. Plugin Name of the plugin/theme
 msgid "Auto Image Generator"
 msgstr ""
 
@@ -285,4 +283,23 @@ msgstr ""
 
 #: includes/Admin/views/admin-page.php:127
 msgid "Preview could not be generated. Save the settings to generate a preview."
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "https://urldev.com/auto-image-generator"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid ""
+"Automatically generate eye-catching featured images and thumbnails for your "
+"posts and pages. Boost your site's visual appeal and SEO effortlessly with "
+"dynamic, customizable image generation."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "UrlDev"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "https://urldev.com"
 msgstr ""
