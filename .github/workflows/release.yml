@@ -77,7 +77,7 @@ jobs:
           payload: |
             {
               "channel": "#announcements",
-              "text": "The release of *Auto Image Generator* version *v${{ env.TAG_NAME }}* has *${{ job.status == 'success' && 'succeeded' || 'failed' }}*.",
+              "text": "The release of *Artificial Image Generator* version *v${{ env.TAG_NAME }}* has *${{ job.status == 'success' && 'succeeded' || 'failed' }}*.",
               "attachments": [
                 {
                   "color": "${{ job.status == 'success' && 'good' || 'danger' }}",

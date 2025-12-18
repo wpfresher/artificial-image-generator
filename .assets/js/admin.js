@@ -1,5 +1,5 @@
 /**
- * Auto Image Generator Admin JS
+ * Artificial Image Generator Admin JS
  * https://urldev.com/
  *
  * Copyright (c) 2025 UrlDev

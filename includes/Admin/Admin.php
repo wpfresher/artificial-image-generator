@@ -1,6 +1,6 @@
 <?php
 
-namespace AutoImageGenerator\Admin;
+namespace ArtificialImageGenerator\Admin;
 
 defined( 'ABSPATH' ) || exit; // Exit if accessed directly.
 
@@ -8,7 +8,7 @@ defined( 'ABSPATH' ) || exit; // Exit if accessed directly.
  * The main admin class.
  *
  * @since 1.0.0
- * @package AutoImageGenerator/Admin
+ * @package ArtificialImageGenerator/Admin
  */
 class Admin {
 	/**
@@ -30,10 +30,10 @@ class Admin {
 	 */
 	public function add_menu() {
 		add_menu_page(
-			__( 'Auto Image Generator', 'auto-image-generator' ),
-			__( 'Auto Image Generator', 'auto-image-generator' ),
+			__( 'Artificial Image Generator', 'artificial-image-generator' ),
+			__( 'Artificial Image Generator', 'artificial-image-generator' ),
 			'manage_options',
-			'auto-image-generator',
+			'artificial-image-generator',
 			array( $this, 'admin_page' ),
 			'dashicons-format-image',
 			80
@@ -59,7 +59,7 @@ class Admin {
 	 * @return void
 	 */
 	public function admin_scripts( $hook ) {
-		if ( 'toplevel_page_auto-image-generator' !== $hook ) {
+		if ( 'toplevel_page_artificial-image-generator' !== $hook ) {
 			return;
 		}
 

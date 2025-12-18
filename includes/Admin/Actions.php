@@ -1,6 +1,6 @@
 <?php
 
-namespace AutoImageGenerator\Admin;
+namespace ArtificialImageGenerator\Admin;
 
 defined( 'ABSPATH' ) || exit; // Exit if accessed directly.
 
@@ -8,7 +8,7 @@ defined( 'ABSPATH' ) || exit; // Exit if accessed directly.
  * The admin Actions class.
  *
  * @since 1.0.0
- * @package AutoImageGenerator/Admin
+ * @package ArtificialImageGenerator/Admin
  */
 class Actions {
 
@@ -18,7 +18,7 @@ class Actions {
 	 * @since 1.0.0
 	 */
 	public function __construct() {
-		add_action( 'admin_post_aimg_auto_image_generator', array( $this, 'save_auto_image_generator_settings' ) );
+		add_action( 'admin_post_aimg_artificial_image_generator', array( $this, 'save_artificial_image_generator_settings' ) );
 		add_action( 'wp_ajax_aimg_save_overlay_images', array( $this, 'save_overlay_images' ) );
 		add_action( 'wp_ajax_aimg_remove_overlay_image', array( $this, 'remove_overlay_image' ) );
 	}
@@ -28,12 +28,12 @@ class Actions {
 	 *
 	 * @since 1.0.0
 	 */
-	public function save_auto_image_generator_settings() {
-		check_admin_referer( 'aimg_auto_image_generator' );
+	public function save_artificial_image_generator_settings() {
+		check_admin_referer( 'aimg_artificial_image_generator' );
 		$referer = wp_get_referer();
 
 		if ( ! current_user_can( 'manage_options' ) ) {
-			aimg_auto_image_generator()->flash_notice( esc_html__( 'You do not have permission to perform this action.', 'auto-image-generator' ), 'error' );
+			aimg_artificial_image_generator()->flash_notice( esc_html__( 'You do not have permission to perform this action.', 'artificial-image-generator' ), 'error' );
 			wp_safe_redirect( $referer );
 			exit();
 		}
@@ -60,7 +60,7 @@ class Actions {
 		// Save the preview image URL in the options.
 		update_option( 'aimg_preview_image_url', $preview_image_url );
 
-		aimg_auto_image_generator()->flash_notice( esc_html__( 'Settings saved successfully.', 'auto-image-generator' ), 'success' );
+		aimg_artificial_image_generator()->flash_notice( esc_html__( 'Settings saved successfully.', 'artificial-image-generator' ), 'success' );
 		wp_safe_redirect( $referer );
 		exit();
 	}
@@ -74,7 +74,7 @@ class Actions {
 		check_ajax_referer( 'aimg_nonce', 'nonce' );
 
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( __( 'You do not have permission to perform this action.', 'auto-image-generator' ) );
+			wp_send_json_error( __( 'You do not have permission to perform this action.', 'artificial-image-generator' ) );
 		}
 
 		$images = isset( $_POST['overlay_images'] ) ? map_deep( wp_unslash( $_POST['overlay_images'] ), 'sanitize_text_field' ) : array();
@@ -98,11 +98,11 @@ class Actions {
 			update_option( 'aimg_overlay_images', $image_ids );
 
 			wp_send_json_success(
-				array( 'message' => __( 'Overlay images saved successfully.', 'auto-image-generator' ) )
+				array( 'message' => __( 'Overlay images saved successfully.', 'artificial-image-generator' ) )
 			);
 		}
 
-		wp_send_json_error( __( 'No overlay images provided.', 'auto-image-generator' ) );
+		wp_send_json_error( __( 'No overlay images provided.', 'artificial-image-generator' ) );
 	}
 
 	/**
@@ -114,7 +114,7 @@ class Actions {
 		check_ajax_referer( 'aimg_nonce', 'nonce' );
 
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( __( 'You do not have permission to perform this action.', 'auto-image-generator' ) );
+			wp_send_json_error( __( 'You do not have permission to perform this action.', 'artificial-image-generator' ) );
 		}
 
 		$image_id = isset( $_POST['image_id'] ) ? absint( $_POST['image_id'] ) : null;
@@ -127,13 +127,13 @@ class Actions {
 				update_option( 'aimg_overlay_images', $existing_images );
 
 				wp_send_json_success(
-					array( 'message' => __( 'Overlay image removed successfully.', 'auto-image-generator' ) )
+					array( 'message' => __( 'Overlay image removed successfully.', 'artificial-image-generator' ) )
 				);
 			} else {
-				wp_send_json_error( __( 'Overlay image not found.', 'auto-image-generator' ) );
+				wp_send_json_error( __( 'Overlay image not found.', 'artificial-image-generator' ) );
 			}
 		}
 
-		wp_send_json_error( __( 'Invalid overlay image ID.', 'auto-image-generator' ) );
+		wp_send_json_error( __( 'Invalid overlay image ID.', 'artificial-image-generator' ) );
 	}
 }

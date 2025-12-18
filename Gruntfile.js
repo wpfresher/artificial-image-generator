@@ -14,7 +14,7 @@ module.exports = function( grunt ) {
             addtextdomain: {
                 options: {
                     expand: true,
-                    text_domain: 'auto-image-generator',
+                    text_domain: 'artificial-image-generator',
                     updateDomains: [ 'framework-text-domain' ],
                 },
                 plugin: {
@@ -31,7 +31,7 @@ module.exports = function( grunt ) {
             },
             checktextdomain: {
                 options: {
-                    text_domain: 'auto-image-generator',
+                    text_domain: 'artificial-image-generator',
                     keywords: [
                         '__:1,2d',
                         '_e:1,2d',
@@ -65,8 +65,8 @@ module.exports = function( grunt ) {
                     options: {
                         domainPath: 'languages',
                         exclude: [ 'packages/*', '.git/*', 'node_modules/*', 'tests/*' ],
-                        mainFile: 'auto-image-generator.php',
-                        potFilename: 'auto-image-generator.pot',
+                        mainFile: 'artificial-image-generator.php',
+                        potFilename: 'artificial-image-generator.pot',
                         potHeaders: {
                             'report-msgid-bugs-to': 'https://urldev.com/support/',
                             poedit: true,

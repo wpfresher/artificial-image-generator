@@ -23,7 +23,7 @@
     <rule ref="WordPress.WP.I18n">
         <properties>
             <property name="text_domain" type="array">
-                <element value="auto-image-generator"/>
+                <element value="artificial-image-generator"/>
             </property>
         </properties>
     </rule>

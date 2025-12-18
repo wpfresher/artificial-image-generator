@@ -1,6 +1,6 @@
 <?php
 
-namespace AutoImageGenerator;
+namespace ArtificialImageGenerator;
 
 defined( 'ABSPATH' ) || exit; // Exit if accessed directly.
 
@@ -8,7 +8,7 @@ defined( 'ABSPATH' ) || exit; // Exit if accessed directly.
  * The main plugin class.
  *
  * @since 1.0.0
- * @package AutoImageGenerator
+ * @package ArtificialImageGenerator
  */
 class Plugin {
 
@@ -204,7 +204,7 @@ class Plugin {
 	 */
 	public function init() {
 		// Load common classes.
-		new GenerateThumbnails();
+		new GenerateImages();
 
 		// Load the admin classes if it's an admin area.
 		if ( is_admin() ) {

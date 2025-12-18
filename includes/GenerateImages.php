@@ -1,21 +1,21 @@
 <?php
 
-namespace AutoImageGenerator;
+namespace ArtificialImageGenerator;
 
 defined( 'ABSPATH' ) || exit; // Exit if accessed directly.
 
 /**
- * Class GenerateThumbnails
+ * Class GenerateImages
  *
  * This class is responsible for generating thumbnails.
  *
  * @since 1.0.0
- * @package AutoImageGenerator
+ * @package ArtificialImageGenerator
  */
-class GenerateThumbnails {
+class GenerateImages {
 
 	/**
-	 * GenerateThumbnails constructor.
+	 * GenerateImages constructor.
 	 *
 	 * @since 1.0.0
 	 */
