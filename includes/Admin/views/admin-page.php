@@ -16,7 +16,7 @@ defined( 'ABSPATH' ) || exit; // Exit if accessed directly.
 		<abbr title="<?php esc_attr_e( 'Artificial Image Generator', 'artificial-image-generator' ); ?>" class="dashicons dashicons-format-image"></abbr>
 	</h1>
 	<p><?php esc_html_e( 'Configure to generate thumbnails.', 'artificial-image-generator' ); ?></p>
-	<form id="artificial-image-generator-form" method="POST" enctype="multipart/form-data" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+	<form id="aimg-form" method="POST" enctype="multipart/form-data" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 		<table class="form-table">
 			<tr>
 				<th scope="row">

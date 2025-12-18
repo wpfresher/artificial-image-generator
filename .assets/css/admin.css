@@ -1,0 +1,51 @@
+#aimg-form .preview-image {
+	background: #fff;
+	border: 1px solid #ccc;
+	height: auto;
+	max-width: 98%;
+	padding: 5px;
+	width: 600px
+}
+
+@media (max-width: 768px) {
+	#aimg-form .form-table, #aimg-form .form-table tbody, #aimg-form .form-table td, #aimg-form .form-table th, #aimg-form .form-table thead, #aimg-form .form-table tr {
+		display: block;
+		width: 100%
+	}
+
+	#aimg-form .form-table th {
+		padding-top: 1em;
+		text-align: left
+	}
+}
+
+.aimg-overlay-images h4 {
+	margin: 0 0 10px
+}
+
+.aimg-overlay-images__items {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px
+}
+
+.aimg-overlay-images__item {
+	position: relative
+}
+
+.aimg-overlay-images__item img {
+	height: 60px;
+	width: 60px
+}
+
+.aimg-overlay-images .remove-overlay {
+	background-color: #f00000;
+	color: #fff;
+	font-size: 12px;
+	line-height: inherit;
+	min-height: inherit;
+	padding: 0 4px;
+	position: absolute;
+	right: 2px;
+	top: 2px
+}
