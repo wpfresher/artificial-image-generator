@@ -30,13 +30,13 @@ class Admin {
 	 */
 	public function add_menu() {
 		add_menu_page(
-			__( 'AI Image Generator', 'artificial-image-generator' ),
-			__( 'AI Image Generator', 'artificial-image-generator' ),
+			__( 'Image Generator', 'artificial-image-generator' ),
+			__( 'Image Generator', 'artificial-image-generator' ),
 			'manage_options',
 			'artificial-image-generator',
 			array( $this, 'admin_page' ),
 			'dashicons-format-image',
-			80
+			26
 		);
 	}
 

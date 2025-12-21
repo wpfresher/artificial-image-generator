@@ -135,7 +135,7 @@ The Roboto font is included under the Apache License 2.0. Full license text avai
 
 == Changelog ==
 
-= 1.0.0 =
+= 1.0.0 ( 22nd December 2025 ) =
 * Initial release
 
 == Support and Feedback ==
