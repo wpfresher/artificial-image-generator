@@ -33,7 +33,7 @@ class Actions {
 		$referer = wp_get_referer();
 
 		if ( ! current_user_can( 'manage_options' ) ) {
-			aimg_artificial_image_generator()->flash_notice( esc_html__( 'You do not have permission to perform this action.', 'artificial-image-generator' ), 'error' );
+			artificial_image_generator()->flash_notice( esc_html__( 'You do not have permission to perform this action.', 'artificial-image-generator' ), 'error' );
 			wp_safe_redirect( $referer );
 			exit();
 		}
@@ -60,7 +60,7 @@ class Actions {
 		// Save the preview image URL in the options.
 		update_option( 'aimg_preview_image_url', $preview_image_url );
 
-		aimg_artificial_image_generator()->flash_notice( esc_html__( 'Settings saved successfully.', 'artificial-image-generator' ), 'success' );
+		artificial_image_generator()->flash_notice( esc_html__( 'Settings saved successfully.', 'artificial-image-generator' ), 'success' );
 		wp_safe_redirect( $referer );
 		exit();
 	}

@@ -30,8 +30,8 @@ class Admin {
 	 */
 	public function add_menu() {
 		add_menu_page(
-			__( 'Artificial Image Generator', 'artificial-image-generator' ),
-			__( 'Artificial Image Generator', 'artificial-image-generator' ),
+			__( 'AI Image Generator', 'artificial-image-generator' ),
+			__( 'AI Image Generator', 'artificial-image-generator' ),
 			'manage_options',
 			'artificial-image-generator',
 			array( $this, 'admin_page' ),

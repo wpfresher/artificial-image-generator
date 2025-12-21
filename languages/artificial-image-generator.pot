@@ -1,10 +1,10 @@
-# Copyright (C) 2025 UrlDev
+# Copyright (C) 2025 BeautifulPlugins
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Artificial Image Generator 1.0.0\n"
-"Report-Msgid-Bugs-To: https://urldev.com/support/\n"
-"POT-Creation-Date: 2025-12-18 21:02:15+00:00\n"
+"Project-Id-Version: AI Image Generator 1.0.0\n"
+"Report-Msgid-Bugs-To: https://beautifulplugins.com/support/\n"
+"POT-Creation-Date: 2025-12-21 09:04:53+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -66,7 +66,7 @@ msgid "Invalid overlay image ID."
 msgstr ""
 
 #. Plugin Name of the plugin/theme
-msgid "Artificial Image Generator"
+msgid "AI Image Generator"
 msgstr ""
 
 #: includes/Admin/Settings.php:35 includes/Admin/Settings.php:36
@@ -79,7 +79,7 @@ msgid "You do not have sufficient permissions to access this page."
 msgstr ""
 
 #: includes/Admin/Settings.php:61
-msgid "Configure the settings for the Artificial Image Generator plugin."
+msgid "Configure the settings for the AI Image Generator plugin."
 msgstr ""
 
 #: includes/Admin/Settings.php:85
@@ -103,7 +103,7 @@ msgid "Enable Page Thumbnails"
 msgstr ""
 
 #: includes/Admin/Settings.php:134
-msgid "Configure the Artificial Image Generator general settings."
+msgid "Configure the AI Image Generator general settings."
 msgstr ""
 
 #: includes/Admin/Settings.php:146
@@ -286,20 +286,19 @@ msgid "Preview could not be generated. Save the settings to generate a preview."
 msgstr ""
 
 #. Plugin URI of the plugin/theme
-msgid "https://urldev.com/artificial-image-generator"
+msgid "https://beautifulplugins.com/ai-image-generator/"
 msgstr ""
 
 #. Description of the plugin/theme
 msgid ""
-"Automatically generate eye-catching featured images for your posts and "
-"pages. Boost your site's visual appeal and SEO effortlessly with dynamic, "
-"customizable image generation."
+"Generate AI-powered images automatically across your WordPress site. Create "
+"stunning visuals for posts, pages, and more with ease."
 msgstr ""
 
 #. Author of the plugin/theme
-msgid "UrlDev"
+msgid "BeautifulPlugins"
 msgstr ""
 
 #. Author URI of the plugin/theme
-msgid "https://urldev.com"
+msgid "https://beautifulplugins.com"
 msgstr ""

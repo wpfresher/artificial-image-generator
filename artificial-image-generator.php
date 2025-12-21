@@ -1,13 +1,13 @@
 <?php
 /**
- * Plugin Name:       Artificial Image Generator
- * Plugin URI:        https://urldev.com/artificial-image-generator
- * Description:       Automatically generate eye-catching featured images for your posts and pages. Boost your site's visual appeal and SEO effortlessly with dynamic, customizable image generation.
+ * Plugin Name:       AI Image Generator
+ * Plugin URI:        https://beautifulplugins.com/ai-image-generator/
+ * Description:       Generate AI-powered images automatically across your WordPress site. Create stunning visuals for posts, pages, and more with ease.
  * Version:           1.0.0
  * Requires at least: 5.0
  * Requires PHP:      7.4
- * Author:            UrlDev
- * Author URI:        https://urldev.com
+ * Author:            BeautifulPlugins
+ * Author URI:        https://beautifulplugins.com
  * License:           GPLv2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       artificial-image-generator
@@ -44,9 +44,9 @@ require_once __DIR__ . '/vendor/autoload.php';
  * @since 1.0.0
  * @return Plugin
  */
-function aimg_artificial_image_generator() {
+function artificial_image_generator() {
 	return Plugin::create( __FILE__, '1.0.0' );
 }
 
 // Initialize the plugin.
-aimg_artificial_image_generator();
+artificial_image_generator();

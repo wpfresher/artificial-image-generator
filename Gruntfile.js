@@ -68,7 +68,7 @@ module.exports = function( grunt ) {
                         mainFile: 'artificial-image-generator.php',
                         potFilename: 'artificial-image-generator.pot',
                         potHeaders: {
-                            'report-msgid-bugs-to': 'https://urldev.com/support/',
+                            'report-msgid-bugs-to': 'https://beautifulplugins.com/support/',
                             poedit: true,
                             'x-poedit-keywordslist': true,
                         },

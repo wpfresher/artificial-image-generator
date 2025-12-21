@@ -1,8 +1,8 @@
 <?php
 /**
- * Artificial Image Generator Admin Page
+ * AI Image Generator Admin Page
  *
- * This file renders the admin page for the Artificial Image Generator plugin.
+ * This file renders the admin page for the AI Image Generator plugin.
  *
  * @package ArtificialImageGenerator
  * @since 1.0.0
@@ -12,8 +12,8 @@ defined( 'ABSPATH' ) || exit; // Exit if accessed directly.
 ?>
 <div class="wrap">
 	<h1>
-		<?php esc_html_e( 'Artificial Image Generator', 'artificial-image-generator' ); ?>
-		<abbr title="<?php esc_attr_e( 'Artificial Image Generator', 'artificial-image-generator' ); ?>" class="dashicons dashicons-format-image"></abbr>
+		<?php esc_html_e( 'AI Image Generator', 'artificial-image-generator' ); ?>
+		<abbr title="<?php esc_attr_e( 'AI Image Generator', 'artificial-image-generator' ); ?>" class="dashicons dashicons-format-image"></abbr>
 	</h1>
 	<p><?php esc_html_e( 'Configure to generate thumbnails.', 'artificial-image-generator' ); ?></p>
 	<form id="aimg-form" method="POST" enctype="multipart/form-data" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
