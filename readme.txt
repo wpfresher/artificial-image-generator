@@ -1,5 +1,5 @@
 === AI Image Generator – Automatic Image Creation for WordPress ===
-Contributors: beautifulplugins, urldev
+Contributors: beautifulplugins
 Tags: ai, ai image, featured images, ai image generator, image generator
 Tested up to: 6.9
 Stable tag: 1.0.0
