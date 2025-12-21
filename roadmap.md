@@ -1,4 +1,4 @@
-auto-image-generator/
+artificial-image-generator/
 │
 ├── Assets/
 │   ├── css/

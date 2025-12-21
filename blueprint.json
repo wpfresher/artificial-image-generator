@@ -1,5 +1,5 @@
 {
-  "landingPage": "/wp-admin/admin.php?page=auto-image-generator",
+  "landingPage": "/wp-admin/admin.php?page=artificial-image-generator",
   "preferredVersions": {
     "php": "7.4",
     "wp": "5.0"

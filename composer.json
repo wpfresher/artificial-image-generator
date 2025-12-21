@@ -1,7 +1,7 @@
 {
-  "name": "urldev/auto-image-generator",
-  "description": "Automatically generate eye-catching featured images and thumbnails for your posts and pages. Boost your site's visual appeal and SEO effortlessly with dynamic, customizable image generation.",
-  "homepage": "https://urldev.com/auto-image-generator",
+  "name": "beautifulplugins/artificial-image-generator",
+  "description": "Generate AI-powered images automatically across your WordPress site. Create stunning visuals for posts, pages, and more with ease.",
+  "homepage": "https://beautifulplugins.com/ai-image-generator",
   "type": "wordpress-plugin",
   "license": "GPL-2.0-or-later",
   "prefer-stable": true,
@@ -13,7 +13,7 @@
   },
   "autoload": {
     "psr-4": {
-      "AutoImageGenerator\\": ["includes/"]
+      "ArtificialImageGenerator\\": ["includes/"]
     }
   },
   "config": {

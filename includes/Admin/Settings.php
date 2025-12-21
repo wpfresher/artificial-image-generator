@@ -1,14 +1,14 @@
 <?php
 
-namespace AutoImageGenerator\Admin;
+namespace ArtificialImageGenerator\Admin;
 
 /**
  * Class Settings
  *
- * This class handles the settings for the Auto Image Generator plugin.
+ * This class handles the settings for the AI Image Generator plugin.
  *
  * @since 1.0.0
- * @package AutoImageGenerator/Admin
+ * @package ArtificialImageGenerator/Admin
  */
 class Settings {
 
@@ -31,11 +31,11 @@ class Settings {
 	 */
 	public function add_settings_page() {
 		add_submenu_page(
-			'auto-image-generator',
-			__( 'Settings', 'auto-image-generator' ),
-			__( 'Settings', 'auto-image-generator' ),
+			'artificial-image-generator',
+			__( 'Settings', 'artificial-image-generator' ),
+			__( 'Settings', 'artificial-image-generator' ),
 			'manage_options',
-			'auto-image-generator-settings',
+			'artificial-image-generator-settings',
 			array( $this, 'settings_page' )
 		);
 	}
@@ -49,20 +49,20 @@ class Settings {
 	public function settings_page() {
 		// Check user capabilities.
 		if ( ! current_user_can( 'manage_options' ) ) {
-			aimg_auto_image_generator()->flash_notice( __( 'You do not have sufficient permissions to access this page.', 'auto-image-generator' ), 'error' );
+			artificial_image_generator()->flash_notice( __( 'You do not have sufficient permissions to access this page.', 'artificial-image-generator' ), 'error' );
 			return;
 		}
 		?>
 		<div class="wrap">
 			<h1>
-				<?php esc_html_e( 'Settings', 'auto-image-generator' ); ?>
-				<abbr title="<?php esc_attr_e( 'Auto Image Generator', 'auto-image-generator' ); ?>" class="dashicons dashicons-format-image"></abbr>
+				<?php esc_html_e( 'Settings', 'artificial-image-generator' ); ?>
+				<abbr title="<?php esc_attr_e( 'AI Image Generator', 'artificial-image-generator' ); ?>" class="dashicons dashicons-format-image"></abbr>
 			</h1>
-			<p><?php esc_html_e( 'Configure the settings for the Auto Image Generator plugin.', 'auto-image-generator' ); ?></p>
+			<p><?php esc_html_e( 'Configure the settings for the AI Image Generator plugin.', 'artificial-image-generator' ); ?></p>
 			<form method="post" action="<?php echo esc_url( admin_url( 'options.php' ) ); ?>">
 				<?php
-				settings_fields( 'auto_image_generator' );
-				do_settings_sections( 'auto-image-generator' );
+				settings_fields( 'artificial_image_generator' );
+				do_settings_sections( 'artificial-image-generator' );
 				submit_button();
 				?>
 			</form>
@@ -77,49 +77,49 @@ class Settings {
 	 * @return void
 	 */
 	public function register_settings() {
-		register_setting( 'auto_image_generator', 'aimg_settings', array( $this, 'sanitize_settings' ) );
+		register_setting( 'artificial_image_generator', 'aimg_settings', array( $this, 'sanitize_settings' ) );
 
 		// Add settings section.
 		add_settings_section(
 			'aimg_general_settings',
-			__( 'General Settings', 'auto-image-generator' ),
+			__( 'General Settings', 'artificial-image-generator' ),
 			array( $this, 'general_settings' ),
-			'auto-image-generator'
+			'artificial-image-generator'
 		);
 
 		// Fallback default bg color for thumbnails.
 		add_settings_field(
 			'aimg_default_bg_color',
-			__( 'Default Background Color', 'auto-image-generator' ),
+			__( 'Default Background Color', 'artificial-image-generator' ),
 			array( $this, 'default_bg_color' ),
-			'auto-image-generator',
+			'artificial-image-generator',
 			'aimg_general_settings'
 		);
 
 		// Fallback default text color for thumbnails.
 		add_settings_field(
 			'aimg_default_text_color',
-			__( 'Default Text Color', 'auto-image-generator' ),
+			__( 'Default Text Color', 'artificial-image-generator' ),
 			array( $this, 'default_text_color' ),
-			'auto-image-generator',
+			'artificial-image-generator',
 			'aimg_general_settings'
 		);
 
 		// Generate Thumbnails for Posts.
 		add_settings_field(
 			'aimg_is_post_thumbnail',
-			__( 'Enable Post Thumbnails', 'auto-image-generator' ),
+			__( 'Enable Post Thumbnails', 'artificial-image-generator' ),
 			array( $this, 'is_post_thumbnail' ),
-			'auto-image-generator',
+			'artificial-image-generator',
 			'aimg_general_settings'
 		);
 
 		// Generate Thumbnails for Pages.
 		add_settings_field(
 			'aimg_is_page_thumbnail',
-			__( 'Enable Page Thumbnails', 'auto-image-generator' ),
+			__( 'Enable Page Thumbnails', 'artificial-image-generator' ),
 			array( $this, 'is_page_thumbnail' ),
-			'auto-image-generator',
+			'artificial-image-generator',
 			'aimg_general_settings'
 		);
 	}
@@ -131,7 +131,7 @@ class Settings {
 	 * @return void
 	 */
 	public function general_settings() {
-		echo '<p>' . esc_html__( 'Configure the Auto Image Generator general settings.', 'auto-image-generator' ) . '</p>';
+		echo '<p>' . esc_html__( 'Configure the AI Image Generator general settings.', 'artificial-image-generator' ) . '</p>';
 	}
 
 	/**
@@ -143,8 +143,8 @@ class Settings {
 	public function default_bg_color() {
 		$default_bg_color = aimg_get_settings( 'default_bg_color' );
 		?>
-		<input type="text" name="aimg_settings[default_bg_color]" id="aimg_settings[default_bg_color]" value="<?php echo esc_attr( $default_bg_color ); ?>" class="regular-text" placeholder="<?php esc_attr_e( '#008000', 'auto-image-generator' ); ?>" />
-		<p class="description"><?php esc_html_e( 'Enter the default background color for the thumbnails. This will be used as a fallback color if no specific color is set.', 'auto-image-generator' ); ?></p>
+		<input type="text" name="aimg_settings[default_bg_color]" id="aimg_settings[default_bg_color]" value="<?php echo esc_attr( $default_bg_color ); ?>" class="regular-text" placeholder="<?php esc_attr_e( '#008000', 'artificial-image-generator' ); ?>" />
+		<p class="description"><?php esc_html_e( 'Enter the default background color for the thumbnails. This will be used as a fallback color if no specific color is set.', 'artificial-image-generator' ); ?></p>
 		<?php
 	}
 
@@ -157,8 +157,8 @@ class Settings {
 	public function default_text_color() {
 		$default_text_color = aimg_get_settings( 'default_text_color' );
 		?>
-		<input type="text" name="aimg_settings[default_text_color]" id="aimg_settings[default_text_color]" value="<?php echo esc_attr( $default_text_color ); ?>" class="regular-text" placeholder="<?php esc_attr_e( '#ffffff', 'auto-image-generator' ); ?>" />
-		<p class="description"><?php esc_html_e( 'Enter the default text color for the thumbnails. This will be used as a fallback color if no specific color is set.', 'auto-image-generator' ); ?></p>
+		<input type="text" name="aimg_settings[default_text_color]" id="aimg_settings[default_text_color]" value="<?php echo esc_attr( $default_text_color ); ?>" class="regular-text" placeholder="<?php esc_attr_e( '#ffffff', 'artificial-image-generator' ); ?>" />
+		<p class="description"><?php esc_html_e( 'Enter the default text color for the thumbnails. This will be used as a fallback color if no specific color is set.', 'artificial-image-generator' ); ?></p>
 		<?php
 	}
 
@@ -173,9 +173,9 @@ class Settings {
 		?>
 		<label for="aimg_settings[is_post_thumbnail]">
 			<input type="checkbox" name="aimg_settings[is_post_thumbnail]" id="aimg_settings[is_post_thumbnail]" value="1" <?php checked( $is_post_thumbnail, 'yes' ); ?> />
-			<?php esc_html_e( 'Enable Post Thumbnails', 'auto-image-generator' ); ?>
+			<?php esc_html_e( 'Enable Post Thumbnails', 'artificial-image-generator' ); ?>
 		</label>
-		<p class="description"><?php esc_html_e( 'Check this box to enable automatic generation of post thumbnails when a post is saved. This will create a thumbnail image based on the post title, using the random background colors and overlay images if configured.', 'auto-image-generator' ); ?></p>
+		<p class="description"><?php esc_html_e( 'Check this box to enable automatic generation of post thumbnails when a post is saved. This will create a thumbnail image based on the post title, using the random background colors and overlay images if configured.', 'artificial-image-generator' ); ?></p>
 		<?php
 	}
 
@@ -190,9 +190,9 @@ class Settings {
 		?>
 		<label for="aimg_settings[is_page_thumbnail]">
 			<input type="checkbox" name="aimg_settings[is_page_thumbnail]" id="aimg_settings[is_page_thumbnail]" value="1" <?php checked( $is_page_thumbnail, 'yes' ); ?> />
-			<?php esc_html_e( 'Enable Page Thumbnails', 'auto-image-generator' ); ?>
+			<?php esc_html_e( 'Enable Page Thumbnails', 'artificial-image-generator' ); ?>
 		</label>
-		<p class="description"><?php esc_html_e( 'Check this box to enable automatic generation of page thumbnails when a page is saved. This will create a thumbnail image based on the page title, using the random background colors and overlay images if configured.', 'auto-image-generator' ); ?></p>
+		<p class="description"><?php esc_html_e( 'Check this box to enable automatic generation of page thumbnails when a page is saved. This will create a thumbnail image based on the page title, using the random background colors and overlay images if configured.', 'artificial-image-generator' ); ?></p>
 		<?php
 	}
 

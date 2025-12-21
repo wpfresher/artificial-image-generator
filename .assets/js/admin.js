@@ -1,8 +1,8 @@
 /**
- * Auto Image Generator Admin JS
- * https://urldev.com/
+ * AI Image Generator Admin JS
+ * https://beautifulplugins.com/
  *
- * Copyright (c) 2025 UrlDev
+ * Copyright (c) 2025 BeautifulPlugins
  * Licensed under the GPLv2+ license.
  */
 jQuery(function ($) {

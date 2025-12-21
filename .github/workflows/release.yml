@@ -14,74 +14,201 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set tag name as environment variable
+        run: echo "TAG_NAME=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+
+      - name: Validate tag format
+        run: |
+          if [[ ! "${{ env.TAG_NAME }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Error: Invalid version tag format. Expected format: v1.2.3"
+            exit 1
+          fi
+
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'
+          php-version: '8.2'  # Adjust this to your PHP version if necessary
           coverage: none
           tools: composer
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '21.7.3'
+          node-version: '20'
+          cache: 'npm'
 
       - name: Authenticate GitHub token for Composer
-        run: composer config -g github-oauth.github.com ${{ secrets.ACCESS_TOKEN }}
+        run: |
+          if [ -n "${{ secrets.ACCESS_TOKEN }}" ]; then
+            composer config -g github-oauth.github.com ${{ secrets.ACCESS_TOKEN }}
+            echo "✓ Composer authenticated with GitHub token"
+          else
+            echo "ℹ︎ No GitHub token provided, skipping composer authentication"
+          fi
 
       - name: Build plugin
         run: |
+          echo "➤ Building plugin..."
           composer install
           composer install --no-dev --no-scripts
           npm install && npm run build
+          echo "✓ Plugin built!"
+
+      - name: Verify build output
+        run: |
+          if [ ! -d "build" ] && [ ! -d "dist" ]; then
+            echo "⚠ Warning: No build/dist directory found after build"
+          else
+            echo "✓ Build output verified"
+          fi
 
       - name: Install Subversion
-        run: sudo apt-get install -y subversion
+        run: sudo apt-get update && sudo apt-get install -y subversion
 
-      - name: Set tag name as environment variable
-        run: echo "TAG_NAME=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
-
-      - name: Checkout to SVN repository
-        run: svn checkout --depth immediates ${{ secrets.SVN_REPOSITORY_URL }} svn
-
-      - name: Update SVN trunk
+      - name: Checkout SVN repository
         run: |
-          svn update svn/trunk
-          rsync -rc --delete --exclude-from='.distignore' --exclude='svn/' ./ svn/trunk/
-          cd svn
-          svn add --force trunk > /dev/null 2>&1 || true
-          svn status
-          svn commit -m "Release version v${{ env.TAG_NAME }}" --username ${{ secrets.SVN_USERNAME }} --password ${{ secrets.SVN_PASSWORD }} --no-auth-cache --non-interactive || true
+          echo "➤ Checking out SVN repo..."
+          svn checkout --depth immediates ${{ secrets.SVN_REPOSITORY_URL }} svn || exit 1
+          svn update --set-depth infinity svn/trunk || exit 1
+          svn update --set-depth infinity svn/assets || exit 1
+          echo "✓ SVN repository checked out!"
+
+      - name: Prepare plugin files for SVN
+        run: |
+          echo "➤ Copying files..."
+          if [[ -r ".distignore" ]]; then
+            echo "ℹ︎ Using .distignore"
+            rsync -rc --exclude-from=".distignore" --exclude='svn/' ./ svn/trunk/ --delete --delete-excluded
+          else
+            echo "⚠ Warning: .distignore file not found"
+            rsync -rc --exclude='svn/' ./ svn/trunk/ --delete
+          fi
+          echo "✓ Files copied!"
+
+          # Remove empty directories from trunk
+          find svn/trunk/ -type d -empty -delete
+          echo "✓ Empty directories cleaned!"
+
 
       - name: Sync WordPress.org assets
         run: |
-          mkdir -p svn/assets
-          rsync -r --delete --include '*/' --include '*.png' --include '*.jpg' --include '*.jpeg' --include '*.gif' --include '*.svg' --exclude '*' .wordpress-org/ svn/assets/
-          mkdir -p svn/assets/blueprints
-          cp blueprint.json svn/assets/blueprints/blueprint.json
-          cd svn
-          svn add --force assets > /dev/null 2>&1 || true
-          svn commit -m "Update assets for version v${{ env.TAG_NAME }}" --username ${{ secrets.SVN_USERNAME }} --password ${{ secrets.SVN_PASSWORD }} --no-auth-cache --non-interactive || true
+          if [[ -d ".wordpress-org" ]]; then
+            echo "➤ Copying assets..."
+            rsync -rc .wordpress-org/ svn/assets/ --delete --delete-excluded
 
-      - name: Delete existing SVN tag (if exists)
-        run: |
-          svn delete ${{ secrets.SVN_REPOSITORY_URL }}/tags/${{ env.TAG_NAME }} -m "Deleting existing tag ${{ env.TAG_NAME }}" --username ${{ secrets.SVN_USERNAME }} --password ${{ secrets.SVN_PASSWORD }} --no-auth-cache --non-interactive || true
+            # Fix screenshots getting force downloaded when clicking them
+            # https://developer.wordpress.org/plugins/wordpress-org/plugin-assets/
+            if test -d "svn/assets" && test -n "$(find svn/assets -maxdepth 1 -name '*.png' -print -quit)"; then
+              svn propset svn:mime-type "image/png" svn/assets/*.png || true
+            fi
+            if test -d "svn/assets" && test -n "$(find svn/assets -maxdepth 1 -name '*.jpg' -print -quit)"; then
+              svn propset svn:mime-type "image/jpeg" svn/assets/*.jpg || true
+            fi
+            if test -d "svn/assets" && test -n "$(find svn/assets -maxdepth 1 -name '*.gif' -print -quit)"; then
+              svn propset svn:mime-type "image/gif" svn/assets/*.gif || true
+            fi
+            if test -d "svn/assets" && test -n "$(find svn/assets -maxdepth 1 -name '*.svg' -print -quit)"; then
+              svn propset svn:mime-type "image/svg+xml" svn/assets/*.svg || true
+            fi
+            echo "✓ Assets copied!"
+          else
+            echo "ℹ︎ No .wordpress-org directory found, skipping assets"
+          fi
 
-      - name: Create new SVN tag by copying trunk
+          if [ -f "blueprint.json" ]; then
+            echo "➤ Copying blueprint.json..."
+            mkdir -p svn/assets/blueprints
+            cp blueprint.json svn/assets/blueprints/blueprint.json
+            echo "✓ Blueprint copied!"
+          fi
+
+
+      - name: Create or update SVN tag
         run: |
-          svn copy ${{ secrets.SVN_REPOSITORY_URL }}/trunk ${{ secrets.SVN_REPOSITORY_URL }}/tags/${{ env.TAG_NAME }} -m "Tagging version ${{ env.TAG_NAME }}" --username ${{ secrets.SVN_USERNAME }} --password ${{ secrets.SVN_PASSWORD }} --no-auth-cache --non-interactive
+          echo "➤ Versioning..."
+          echo "ℹ︎ SVN tag is ${{ env.TAG_NAME }}"
+
+          if svn list ${{ secrets.SVN_REPOSITORY_URL }}/tags/${{ env.TAG_NAME }} >/dev/null 2>&1; then
+            echo "ℹ︎ Tag already exists. Pulling files..."
+            svn update --set-depth infinity svn/tags/${{ env.TAG_NAME }}
+            rsync -rc svn/trunk/ svn/tags/${{ env.TAG_NAME }}/ --delete --delete-excluded
+            echo "✓ Tag files synced!"
+          else
+            echo "ℹ︎ Tag does not exist. Creating tag..."
+            svn copy svn/trunk svn/tags/${{ env.TAG_NAME }} >/dev/null
+            echo "✓ SVN tag created!"
+          fi
+
+      - name: Update and commit all changes to SVN
+        run: |
+          echo "➤ Updating files..."
+          cd svn || exit 1
+          svn add . --force >/dev/null
+          # SVN delete all deleted files
+          svn status | grep '^\!' | sed 's/! *//' | xargs -I% svn rm % >/dev/null
+          svn update  # Fix directory is out of date error
+          svn status
+          cd - || exit 1
+          echo "✓ Files updated!"
+
+          # Check if there are changes to commit
+          if [[ -n "$(svn status svn)" ]]; then
+            echo "ℹ︎ There are changes to commit."
+            echo "➤ Committing all changes (trunk, assets, and tag)..."
+            svn commit svn -m "Release ${{ env.TAG_NAME }}" \
+              --username ${{ secrets.SVN_USERNAME }} \
+              --password ${{ secrets.SVN_PASSWORD }} \
+              --no-auth-cache \
+              --non-interactive
+            if [ $? -ne 0 ]; then
+              echo "❌ Error: Failed to commit to SVN"
+              exit 1
+            fi
+            echo "✓ All changes committed successfully!"
+          else
+            echo "ℹ︎ No changes to commit."
+          fi
 
       - name: Send Slack notification
+        if: always()
         uses: slackapi/slack-github-action@v1.18.0
         with:
           payload: |
             {
-              "channel": "#announcements",
-              "text": "The release of *Auto Image Generator* version *v${{ env.TAG_NAME }}* has *${{ job.status == 'success' && 'succeeded' || 'failed' }}*.",
+              "channel": "#announcement",
+              "text": "WordPress.org release of *AI Image Generator* version *${{ env.TAG_NAME }}* has *${{ job.status == 'success' && 'succeeded ✅' || job.status == 'failure' && 'failed ❌' || 'been cancelled' }}*",
               "attachments": [
                 {
-                  "color": "${{ job.status == 'success' && 'good' || 'danger' }}",
-                  "text": "${{ job.status == 'success' && 'Release completed successfully.' || 'Release failed. Check GitHub Actions logs for details.' }}"
+                  "color": "${{ job.status == 'success' && 'good' || job.status == 'failure' && 'danger' || 'warning' }}",
+                  "fields": [
+                    {
+                      "title": "Version",
+                      "value": "${{ env.TAG_NAME }}",
+                      "short": true
+                    },
+                    {
+                      "title": "Status",
+                      "value": "${{ job.status }}",
+                      "short": true
+                    },
+                    {
+                      "title": "Repository",
+                      "value": "${{ github.repository }}",
+                      "short": true
+                    },
+                    {
+                      "title": "Triggered by",
+                      "value": "${{ github.actor }}",
+                      "short": true
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "type": "button",
+                      "text": "View Workflow Run",
+                      "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    }
+                  ]
                 }
               ]
             }

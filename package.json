@@ -1,10 +1,10 @@
 {
-  "name": "auto-image-generator",
-  "title": "Auto Image Generator",
+  "name": "artificial-image-generator",
+  "title": "AI Image Generator",
   "version": "1.0.0",
-  "description": "Automatically generate eye-catching featured images and thumbnails for your posts and pages. Boost your site's visual appeal and SEO effortlessly with dynamic, customizable image generation.",
-  "author": "UrlDev",
-  "homepage": "https://urldev.com/auto-image-generator",
+  "description": "Generate AI-powered images automatically across your WordPress site. Create stunning visuals for posts, pages, and more with ease.",
+  "author": "BeautifulPlugins",
+  "homepage": "https://beautifulplugins.com/ai-image-generator",
   "license": "GPL-v2.0-or-later",
   "prettier": "@wordpress/prettier-config",
   "scripts": {
