@@ -2,7 +2,7 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: AI Image Generator 1.0.0\n"
+"Project-Id-Version: Image Generator 1.0.0\n"
 "Report-Msgid-Bugs-To: https://beautifulplugins.com/support/\n"
 "POT-Creation-Date: 2025-12-21 18:10:55+00:00\n"
 "MIME-Version: 1.0\n"
@@ -65,7 +65,7 @@ msgstr ""
 msgid "Invalid overlay image ID."
 msgstr ""
 
-#: includes/Admin/Admin.php:33 includes/Admin/Admin.php:34
+#. Plugin Name of the plugin/theme
 msgid "Image Generator"
 msgstr ""
 
@@ -78,12 +78,8 @@ msgstr ""
 msgid "You do not have sufficient permissions to access this page."
 msgstr ""
 
-#. Plugin Name of the plugin/theme
-msgid "AI Image Generator"
-msgstr ""
-
 #: includes/Admin/Settings.php:61
-msgid "Configure the settings for the AI Image Generator plugin."
+msgid "Configure the settings for the Image Generator plugin."
 msgstr ""
 
 #: includes/Admin/Settings.php:85
@@ -107,7 +103,7 @@ msgid "Enable Page Thumbnails"
 msgstr ""
 
 #: includes/Admin/Settings.php:134
-msgid "Configure the AI Image Generator general settings."
+msgid "Configure the Image Generator general settings."
 msgstr ""
 
 #: includes/Admin/Settings.php:146
@@ -290,7 +286,7 @@ msgid "Preview could not be generated. Save the settings to generate a preview."
 msgstr ""
 
 #. Plugin URI of the plugin/theme
-msgid "https://beautifulplugins.com/ai-image-generator/"
+msgid "https://beautifulplugins.com/image-generator/"
 msgstr ""
 
 #. Description of the plugin/theme

@@ -1,5 +1,5 @@
 /**
- * AI Image Generator Admin JS
+ * Image Generator Admin JS
  * https://beautifulplugins.com/
  *
  * Copyright (c) 2025 BeautifulPlugins

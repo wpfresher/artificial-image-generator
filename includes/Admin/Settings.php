@@ -5,7 +5,7 @@ namespace ArtificialImageGenerator\Admin;
 /**
  * Class Settings
  *
- * This class handles the settings for the AI Image Generator plugin.
+ * This class handles the settings for the Image Generator plugin.
  *
  * @since 1.0.0
  * @package ArtificialImageGenerator/Admin
@@ -56,9 +56,9 @@ class Settings {
 		<div class="wrap">
 			<h1>
 				<?php esc_html_e( 'Settings', 'artificial-image-generator' ); ?>
-				<abbr title="<?php esc_attr_e( 'AI Image Generator', 'artificial-image-generator' ); ?>" class="dashicons dashicons-format-image"></abbr>
+				<abbr title="<?php esc_attr_e( 'Image Generator', 'artificial-image-generator' ); ?>" class="dashicons dashicons-format-image"></abbr>
 			</h1>
-			<p><?php esc_html_e( 'Configure the settings for the AI Image Generator plugin.', 'artificial-image-generator' ); ?></p>
+			<p><?php esc_html_e( 'Configure the settings for the Image Generator plugin.', 'artificial-image-generator' ); ?></p>
 			<form method="post" action="<?php echo esc_url( admin_url( 'options.php' ) ); ?>">
 				<?php
 				settings_fields( 'artificial_image_generator' );
@@ -131,7 +131,7 @@ class Settings {
 	 * @return void
 	 */
 	public function general_settings() {
-		echo '<p>' . esc_html__( 'Configure the AI Image Generator general settings.', 'artificial-image-generator' ) . '</p>';
+		echo '<p>' . esc_html__( 'Configure the Image Generator general settings.', 'artificial-image-generator' ) . '</p>';
 	}
 
 	/**

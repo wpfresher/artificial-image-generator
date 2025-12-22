@@ -176,7 +176,7 @@ jobs:
           payload: |
             {
               "channel": "#announcement",
-              "text": "WordPress.org release of *AI Image Generator* version *${{ env.TAG_NAME }}* has *${{ job.status == 'success' && 'succeeded ✅' || job.status == 'failure' && 'failed ❌' || 'been cancelled' }}*",
+              "text": "WordPress.org release of *Image Generator* version *${{ env.TAG_NAME }}* has *${{ job.status == 'success' && 'succeeded ✅' || job.status == 'failure' && 'failed ❌' || 'been cancelled' }}*",
               "attachments": [
                 {
                   "color": "${{ job.status == 'success' && 'good' || job.status == 'failure' && 'danger' || 'warning' }}",
