@@ -1,4 +1,4 @@
-=== AI Image Generator – Automatic Image Creation for WordPress ===
+=== Image Generator – Automatic Image Creation for WordPress ===
 Contributors: beautifulplugins
 Tags: ai, ai image, featured images, ai image generator, image generator
 Tested up to: 6.9
@@ -10,9 +10,9 @@ Generate AI-powered images automatically across your WordPress site. Create stun
 
 == Description ==
 
-**AI Image Generator** is a easy-to-use and user-friendly plugin that automatically creates stunning featured images and post thumbnails for your WordPress posts, pages, and custom post types. Say goodbye to the hassle of manually setting featured images for every post! With this plugin, you can effortlessly enhance your content with eye-catching thumbnails that improve user engagement and boost your site’s SEO.
+**Image Generator** is a easy-to-use and user-friendly plugin that automatically creates stunning featured images and post thumbnails for your WordPress posts, pages, and custom post types. Say goodbye to the hassle of manually setting featured images for every post! With this plugin, you can effortlessly enhance your content with eye-catching thumbnails that improve user engagement and boost your site’s SEO.
 
-Featured images and thumbnails play a crucial role in engaging your audience and boosting your website’s SEO performance. With **AI Image Generator**, you never have to worry about manually setting featured images again. Save time, improve your content’s visual impact, and ensure every post shines with a captivating image.
+Featured images and thumbnails play a crucial role in engaging your audience and boosting your website’s SEO performance. With **Image Generator**, you never have to worry about manually setting featured images again. Save time, improve your content’s visual impact, and ensure every post shines with a captivating image.
 
 **Why Auto Featured Images Matter?**
 
@@ -22,13 +22,13 @@ Featured images and thumbnails play a crucial role in engaging your audience and
 - **Social Media Sharing**: Featured images are often used when sharing posts on social media, making your content more shareable and visually appealing.
 - **Automation**: No more manual work! Automatically generate thumbnail images for new posts, pages, and custom post types without lifting a finger.
 
-**What AI Image Generator Does?**
+**What Image Generator Does?**
 
 - Automatically creates featured images for new posts, pages, and custom post types.
 - Provides customizable settings to control how thumbnails are generated.
 - Seamlessly integrates with popular themes, page builders, and plugins.
 
-Whether you’re running a blog, news site, portfolio, or online store, **AI Image Generator** makes it easy to generate professional-grade images with zero hassle.
+Whether you’re running a blog, news site, portfolio, or online store, **Image Generator** makes it easy to generate professional-grade images with zero hassle.
 
 == Key Features ==
 
@@ -75,12 +75,12 @@ Easy-to-use interface—no need to edit theme files or code snippets.
 
 == Usage ==
 
-1. After activation, go to **AI Image Generator** in your WordPress admin dashboard.
+1. After activation, go to **Image Generator** in your WordPress admin dashboard.
    - Here you can configure the plugin settings to suit your needs.
 2. Choose your preferred image generation options:
    - Set the default thumbnail style, dimensions, and more.
 3. Save your changes.
-4. Whenever you create a new post or page, **AI Image Generator** will automatically generate a featured image for you.
+4. Whenever you create a new post or page, **Image Generator** will automatically generate a featured image for you.
 
 == Frequently Asked Questions ==
 
@@ -91,7 +91,7 @@ Currently, the plugin automatically generates images for new posts and pages. We
 Yes! The plugin provides settings to customize how thumbnails are generated. Additional customization options will be added in future updates.
 
 = 3. Does it work with page builders like Elementor and Gutenberg? =
-Absolutely! AI Image Generator works seamlessly with popular page builders and themes.
+Absolutely! Image Generator works seamlessly with popular page builders and themes.
 
 = 4. Will this slow down my website? =
 No. The plugin is lightweight and optimized for performance, ensuring minimal impact on site speed.
@@ -108,9 +108,9 @@ Make sure your theme supports featured images (`add_theme_support( 'post-thumbna
 Clear your browser cache and any caching plugins you’re using. If issues persist, reach out via the support forum.
 
 - **Compatibility issues?**
-AI Image Generator is tested with major themes and plugins. If you notice any conflicts, let us know!
+Image Generator is tested with major themes and plugins. If you notice any conflicts, let us know!
 
-== Best Practices for Using AI Image Generator ==
+== Best Practices for Using Image Generator ==
 
 ✅ **Enable featured image support in your theme** to ensure thumbnails display correctly.
 ✅ **Choose the right thumbnail size** that matches your site layout for the best visual impact.
@@ -129,7 +129,7 @@ The Roboto font is included under the Apache License 2.0. Full license text avai
 
 == Screenshots ==
 
-1. AI Image Generator - Image Configuration Page
+1. Image Generator - Image Configuration Page
 2. Plugin Settings
 3. Visual preview of a blog post with the automatically generated featured image
 
@@ -147,5 +147,5 @@ Have questions, need help, or want to suggest a feature? We’d love to hear fro
 
 This plugin is released under the GPLv2 or later. See [https://www.gnu.org/licenses/gpl-2.0.html](https://www.gnu.org/licenses/gpl-2.0.html) for details.
 
-**Thank you for using AI Image Generator!**
+**Thank you for using Image Generator!**
 We’re dedicated to helping you create visually stunning, SEO-optimized posts and pages with ease.

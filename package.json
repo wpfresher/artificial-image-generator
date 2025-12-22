@@ -1,10 +1,10 @@
 {
   "name": "artificial-image-generator",
-  "title": "AI Image Generator",
+  "title": "Image Generator",
   "version": "1.0.0",
   "description": "Generate AI-powered images automatically across your WordPress site. Create stunning visuals for posts, pages, and more with ease.",
   "author": "BeautifulPlugins",
-  "homepage": "https://beautifulplugins.com/ai-image-generator",
+  "homepage": "https://beautifulplugins.com/image-generator/",
   "license": "GPL-v2.0-or-later",
   "prettier": "@wordpress/prettier-config",
   "scripts": {
