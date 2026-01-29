@@ -1,14 +1,14 @@
-# Copyright (C) 2025 BeautifulPlugins
+# Copyright (C) 2026 BeautifulPlugins
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
 "Project-Id-Version: Image Generator 1.0.0\n"
 "Report-Msgid-Bugs-To: https://beautifulplugins.com/support/\n"
-"POT-Creation-Date: 2025-12-21 18:10:55+00:00\n"
+"POT-Creation-Date: 2026-01-29 06:54:01+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2025-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2026-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: en\n"
@@ -24,49 +24,87 @@ msgstr ""
 "X-Textdomain-Support: yes\n"
 "X-Generator: grunt-wp-i18n 1.0.3\n"
 
-#: includes/Admin/views/admin-page.php:53
+#: includes/Admin/views/add-img-template.php:65
+#: includes/Admin/views/edit-img-template.php:66
 msgid "40"
 msgstr ""
 
-#: includes/Admin/views/admin-page.php:44
+#: includes/Admin/views/add-img-template.php:56
+#: includes/Admin/views/edit-img-template.php:57
 msgid "800"
 msgstr ""
 
-#: includes/Admin/views/admin-page.php:35
+#: includes/Admin/views/add-img-template.php:47
+#: includes/Admin/views/edit-img-template.php:48
 msgid "1200"
 msgstr ""
 
-#: includes/Admin/Actions.php:36 includes/Admin/Actions.php:77
-#: includes/Admin/Actions.php:117
-msgid "You do not have permission to perform this action."
+#: includes/Admin/Actions.php:35
+msgid "You do not have permission to process this action"
 msgstr ""
 
-#: includes/Admin/Actions.php:63
-msgid "Settings saved successfully."
+#: includes/Admin/Actions.php:93
+msgid "Image template updated successfully."
 msgstr ""
 
-#: includes/Admin/Actions.php:101
-msgid "Overlay images saved successfully."
-msgstr ""
-
-#: includes/Admin/Actions.php:105
-msgid "No overlay images provided."
-msgstr ""
-
-#: includes/Admin/Actions.php:130
-msgid "Overlay image removed successfully."
-msgstr ""
-
-#: includes/Admin/Actions.php:133
-msgid "Overlay image not found."
-msgstr ""
-
-#: includes/Admin/Actions.php:137
-msgid "Invalid overlay image ID."
+#: includes/Admin/Actions.php:95
+msgid "Image template added successfully."
 msgstr ""
 
 #. Plugin Name of the plugin/theme
 msgid "Image Generator"
+msgstr ""
+
+#: includes/Admin/Admin.php:46 includes/Admin/Admin.php:47
+#: includes/Admin/views/img-templates.php:16
+msgid "Image Templates"
+msgstr ""
+
+#: includes/Admin/Admin.php:94
+msgid "Image templates per page"
+msgstr ""
+
+#: includes/Admin/Admin.php:157
+msgid "You do not have permission to perform this action."
+msgstr ""
+
+#: includes/Admin/Admin.php:182
+#. translators: %s: number of accounts.
+msgid "%s item(s) deleted successfully."
+msgstr ""
+
+#: includes/Admin/ListTables/TemplatesTable.php:91
+msgid "No templates found."
+msgstr ""
+
+#: includes/Admin/ListTables/TemplatesTable.php:104
+msgid "Name"
+msgstr ""
+
+#: includes/Admin/ListTables/TemplatesTable.php:105
+#: includes/Admin/views/add-img-template.php:121
+#: includes/Admin/views/add-img-template.php:125
+#: includes/Admin/views/edit-img-template.php:140
+#: includes/Admin/views/edit-img-template.php:144
+msgid "Preview Image"
+msgstr ""
+
+#: includes/Admin/ListTables/TemplatesTable.php:106
+msgid "Date"
+msgstr ""
+
+#: includes/Admin/ListTables/TemplatesTable.php:164
+#. translators: %d: key id.
+msgid "ID: %d"
+msgstr ""
+
+#: includes/Admin/ListTables/TemplatesTable.php:165
+msgid "Edit"
+msgstr ""
+
+#: includes/Admin/ListTables/TemplatesTable.php:166
+#: includes/Admin/ListTables/TemplatesTable.php:179
+msgid "Delete"
 msgstr ""
 
 #: includes/Admin/Settings.php:35 includes/Admin/Settings.php:36
@@ -140,149 +178,237 @@ msgid ""
 "using the random background colors and overlay images if configured."
 msgstr ""
 
-#: includes/Admin/views/admin-page.php:18
-msgid "Configure to generate thumbnails."
+#: includes/Admin/views/add-img-template.php:15
+msgid "Add New Image Template"
 msgstr ""
 
-#: includes/Admin/views/admin-page.php:23
+#: includes/Admin/views/add-img-template.php:18
+#: includes/Admin/views/edit-img-template.php:19
+msgid "Configure the template options to generate images."
+msgstr ""
+
+#: includes/Admin/views/add-img-template.php:26
+#: includes/Admin/views/edit-img-template.php:27
+msgid "Title"
+msgstr ""
+
+#: includes/Admin/views/add-img-template.php:29
+#: includes/Admin/views/edit-img-template.php:30
+msgid "Awesome image template"
+msgstr ""
+
+#: includes/Admin/views/add-img-template.php:30
+#: includes/Admin/views/edit-img-template.php:31
+msgid "Enter the title for the image template."
+msgstr ""
+
+#: includes/Admin/views/add-img-template.php:35
+#: includes/Admin/views/edit-img-template.php:36
 msgid "Background Colors"
 msgstr ""
 
-#: includes/Admin/views/admin-page.php:26
+#: includes/Admin/views/add-img-template.php:38
+#: includes/Admin/views/edit-img-template.php:39
 msgid "e.g. #e74c3c, #2ecc71, #9b59b6"
 msgstr ""
 
-#: includes/Admin/views/admin-page.php:27
+#: includes/Admin/views/add-img-template.php:39
+#: includes/Admin/views/edit-img-template.php:40
 msgid ""
 "Enter the background colors for the thumbnails. Use comma to separate "
 "multiple colors."
 msgstr ""
 
-#: includes/Admin/views/admin-page.php:32
+#: includes/Admin/views/add-img-template.php:44
+#: includes/Admin/views/edit-img-template.php:45
 msgid "Width"
 msgstr ""
 
-#: includes/Admin/views/admin-page.php:36
+#: includes/Admin/views/add-img-template.php:48
+#: includes/Admin/views/edit-img-template.php:49
 msgid "Enter the width for the thumbnails in pixels."
 msgstr ""
 
-#: includes/Admin/views/admin-page.php:41
+#: includes/Admin/views/add-img-template.php:53
+#: includes/Admin/views/edit-img-template.php:54
 msgid "Height"
 msgstr ""
 
-#: includes/Admin/views/admin-page.php:45
+#: includes/Admin/views/add-img-template.php:57
+#: includes/Admin/views/edit-img-template.php:58
 msgid "Enter the height for the thumbnails in pixels."
 msgstr ""
 
-#: includes/Admin/views/admin-page.php:50
+#: includes/Admin/views/add-img-template.php:62
+#: includes/Admin/views/edit-img-template.php:63
 msgid "Title Font Size"
 msgstr ""
 
-#: includes/Admin/views/admin-page.php:54
+#: includes/Admin/views/add-img-template.php:66
+#: includes/Admin/views/edit-img-template.php:67
 msgid "Enter the font size for the title in pixels."
 msgstr ""
 
-#: includes/Admin/views/admin-page.php:59
+#: includes/Admin/views/add-img-template.php:71
+#: includes/Admin/views/edit-img-template.php:72
 msgid "Enable Overlay Images"
 msgstr ""
 
-#: includes/Admin/views/admin-page.php:64
+#: includes/Admin/views/add-img-template.php:76
+#: includes/Admin/views/edit-img-template.php:77
 msgid "Enable"
 msgstr ""
 
-#: includes/Admin/views/admin-page.php:66
+#: includes/Admin/views/add-img-template.php:78
+#: includes/Admin/views/edit-img-template.php:79
 msgid "Check this box to enable overlay images in the thumbnails."
 msgstr ""
 
-#: includes/Admin/views/admin-page.php:72
+#: includes/Admin/views/add-img-template.php:84
+#: includes/Admin/views/edit-img-template.php:85
 msgid "Overlay Images"
 msgstr ""
 
-#: includes/Admin/views/admin-page.php:84
-msgid "Overlay Image"
-msgstr ""
-
-#: includes/Admin/views/admin-page.php:85
-msgid "X"
-msgstr ""
-
-#: includes/Admin/views/admin-page.php:90
-msgid "No overlay images selected."
-msgstr ""
-
-#: includes/Admin/views/admin-page.php:94
+#: includes/Admin/views/add-img-template.php:89
+#: includes/Admin/views/edit-img-template.php:108
 msgid "Select Images"
 msgstr ""
 
-#: includes/Admin/views/admin-page.php:95
+#: includes/Admin/views/add-img-template.php:91
+#: includes/Admin/views/edit-img-template.php:110
 msgid ""
 "Select one or more transparent PNG images to use as overlay images in the "
 "thumbnails. Randomly one will be selected while generating the thumbnail."
 msgstr ""
 
-#: includes/Admin/views/admin-page.php:101
+#: includes/Admin/views/add-img-template.php:97
+#: includes/Admin/views/edit-img-template.php:116
 msgid "Overlay Image Position"
 msgstr ""
 
-#: includes/Admin/views/admin-page.php:106
+#: includes/Admin/views/add-img-template.php:102
+#: includes/Admin/views/edit-img-template.php:121
 msgid "Top Left"
 msgstr ""
 
-#: includes/Admin/views/admin-page.php:107
+#: includes/Admin/views/add-img-template.php:103
+#: includes/Admin/views/edit-img-template.php:122
 msgid "Top Center"
 msgstr ""
 
-#: includes/Admin/views/admin-page.php:108
+#: includes/Admin/views/add-img-template.php:104
+#: includes/Admin/views/edit-img-template.php:123
 msgid "Top Right"
 msgstr ""
 
-#: includes/Admin/views/admin-page.php:109
+#: includes/Admin/views/add-img-template.php:105
+#: includes/Admin/views/edit-img-template.php:124
 msgid "Left Center"
 msgstr ""
 
-#: includes/Admin/views/admin-page.php:110
+#: includes/Admin/views/add-img-template.php:106
+#: includes/Admin/views/edit-img-template.php:125
 msgid "Center Center"
 msgstr ""
 
-#: includes/Admin/views/admin-page.php:111
+#: includes/Admin/views/add-img-template.php:107
+#: includes/Admin/views/edit-img-template.php:126
 msgid "Right Center"
 msgstr ""
 
-#: includes/Admin/views/admin-page.php:112
+#: includes/Admin/views/add-img-template.php:108
+#: includes/Admin/views/edit-img-template.php:127
 msgid "Bottom Left"
 msgstr ""
 
-#: includes/Admin/views/admin-page.php:113
+#: includes/Admin/views/add-img-template.php:109
+#: includes/Admin/views/edit-img-template.php:128
 msgid "Bottom Center"
 msgstr ""
 
-#: includes/Admin/views/admin-page.php:114
+#: includes/Admin/views/add-img-template.php:110
+#: includes/Admin/views/edit-img-template.php:129
 msgid "Bottom Right"
 msgstr ""
 
-#: includes/Admin/views/admin-page.php:116
+#: includes/Admin/views/add-img-template.php:112
+#: includes/Admin/views/edit-img-template.php:131
 msgid ""
 "Select the position for the overlay images in the thumbnails. The overlay "
 "image will be positioned based on this selection. Default is \"Center "
 "Center\"."
 msgstr ""
 
-#: includes/Admin/views/admin-page.php:120
-msgid "Preview"
-msgstr ""
-
-#: includes/Admin/views/admin-page.php:124
-msgid "Preview Image"
-msgstr ""
-
-#: includes/Admin/views/admin-page.php:125
+#: includes/Admin/views/add-img-template.php:127
+#: includes/Admin/views/edit-img-template.php:146
 msgid ""
-"This is a preview of how the thumbnail will look like based on the current "
-"settings. Save the settings to generate a new preview."
+"This is a preview of how the image will look like based on the current "
+"settings. Save changes to generate a new preview."
 msgstr ""
 
-#: includes/Admin/views/admin-page.php:127
-msgid "Preview could not be generated. Save the settings to generate a preview."
+#: includes/Admin/views/add-img-template.php:129
+#: includes/Admin/views/edit-img-template.php:148
+msgid "Preview could not be generated. Save changes to generate a preview."
+msgstr ""
+
+#: includes/Admin/views/edit-img-template.php:16
+msgid "Edit Image Template"
+msgstr ""
+
+#: includes/Admin/views/edit-img-template.php:98
+msgid "Overlay Image"
+msgstr ""
+
+#: includes/Admin/views/edit-img-template.php:99
+msgid "X"
+msgstr ""
+
+#: includes/Admin/views/edit-img-template.php:104
+msgid "No overlay images selected."
+msgstr ""
+
+#: includes/Admin/views/img-templates.php:18
+msgid "Add New"
+msgstr ""
+
+#: includes/Admin/views/img-templates.php:25
+msgid "Search"
+msgstr ""
+
+#: includes/PostTypes.php:38
+msgid "Add New Images Template"
+msgstr ""
+
+#: includes/PostTypes.php:39
+msgid "New Images Template"
+msgstr ""
+
+#: includes/PostTypes.php:40
+msgid "Edit Images Template"
+msgstr ""
+
+#: includes/PostTypes.php:41
+msgid "View Images Template"
+msgstr ""
+
+#: includes/PostTypes.php:42
+msgid "All Image Templates"
+msgstr ""
+
+#: includes/PostTypes.php:43
+msgid "Search Image Templates"
+msgstr ""
+
+#: includes/PostTypes.php:44
+msgid "Parent Image Templates:"
+msgstr ""
+
+#: includes/PostTypes.php:45
+msgid "No image templates found."
+msgstr ""
+
+#: includes/PostTypes.php:46
+msgid "No image templates found in Trash."
 msgstr ""
 
 #. Plugin URI of the plugin/theme
@@ -301,4 +427,29 @@ msgstr ""
 
 #. Author URI of the plugin/theme
 msgid "https://beautifulplugins.com"
+msgstr ""
+
+#: includes/PostTypes.php:33
+msgctxt "post type general name"
+msgid "Image Templates"
+msgstr ""
+
+#: includes/PostTypes.php:34
+msgctxt "post type singular name"
+msgid "Images Template"
+msgstr ""
+
+#: includes/PostTypes.php:35
+msgctxt "admin menu"
+msgid "Image Templates"
+msgstr ""
+
+#: includes/PostTypes.php:36
+msgctxt "add new on admin bar"
+msgid "Images Template"
+msgstr ""
+
+#: includes/PostTypes.php:37
+msgctxt "ticket"
+msgid "Add New"
 msgstr ""

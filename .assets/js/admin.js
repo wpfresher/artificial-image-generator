@@ -2,7 +2,7 @@
  * Image Generator Admin JS
  * https://beautifulplugins.com/
  *
- * Copyright (c) 2025 BeautifulPlugins
+ * Copyright (c) 2026 BeautifulPlugins
  * Licensed under the GPLv2+ license.
  */
 jQuery(function ($) {
@@ -62,36 +62,29 @@ jQuery(function ($) {
 					});
 				});
 
-				// Send the data to the server via AJAX
-				$.ajax({
-					url: aimg_object.ajax_url,
-					type: 'POST',
-					data: {
-						action: 'aimg_save_overlay_images',
-						overlay_images: overlayImages,
-						nonce: aimg_object.nonce
-					},
-					success: function (response) {
-						if (response.success) {
-							// Loop through overlayImages and append only new ones.
-							$.each(overlayImages, function (index, image) {
-								if (existingImageIds.indexOf(image.id) === -1) {
-									var container = $('<div class="aimg-overlay-images__item" data-id="' + image.id + '"></div>');
-									container.append('<img src="' + image.url + '" alt="' + image.title + '" style="width:60px;height:60px;" />');
-									container.append('<input type="hidden" name="aimg_overlay_image_ids[]" value="' + image.id + '">');
-									container.append('<button type="button" class="remove-overlay button button-secondary">X</button>');
+				// Loop through overlayImages and append only new ones.
+				$.each(overlayImages, function (index, image) {
+					if (existingImageIds.indexOf(image.id) === -1) {
+						var container = $('<div class="aimg-overlay-images__item" data-id="' + image.id + '"></div>');
+						container.append('<img src="' + image.url + '" alt="' + image.title + '" style="width:60px;height:60px;" />');
+						container.append('<input type="hidden" name="aimg_overlay_image_ids[]" value="' + image.id + '">');
+						container.append('<button type="button" class="remove-overlay button button-secondary">X</button>');
 
-									$('#overlay-image-list').append(container);
-								}
-							});
-						} else {
-							alert(response.data.message || 'Failed to save images.');
-						}
-					},
-					error: function () {
-						alert('An error occurred while uploading images.');
+						$('#overlay-image-list').append(container);
 					}
 				});
+
+				// Update the hidden input as araay of images ids only.
+				var currentIds = $('#overlay_images').val();
+				var overlayImageIds = currentIds ? JSON.parse(currentIds) : [];
+				$.each(overlayImages, function (index, image) {
+					if (overlayImageIds.indexOf(image.id) === -1) {
+						overlayImageIds.push(image.id);
+					}
+				});
+
+				// Save the updated IDs back to the hidden input.
+				$('#overlay_images').val(JSON.stringify(overlayImageIds));
 			});
 
 			mediaUploader.open();
@@ -103,26 +96,19 @@ jQuery(function ($) {
 			var $item = $(this).closest('.aimg-overlay-images__item');
 			var imageId = $item.data('id');
 
-			// Send AJAX request to remove the image from the server.
-			$.ajax({
-				url: aimg_object.ajax_url,
-				type: 'POST',
-				data: {
-					action: 'aimg_remove_overlay_image',
-					image_id: imageId,
-					nonce: aimg_object.nonce
-				},
-				success: function (response) {
-					if (response.success) {
-						$item.remove();
-					} else {
-						alert(response.data.message || 'Failed to remove image.');
-					}
-				},
-				error: function () {
-					alert('An error occurred while removing the image.');
-				}
-			});
+			// Update the hidden input by removing the image ID.
+			var currentIds = $('#overlay_images').val();
+			var overlayImageIds = currentIds ? JSON.parse(currentIds) : [];
+			var index = overlayImageIds.indexOf(imageId);
+			if (index !== -1) {
+				overlayImageIds.splice(index, 1);
+			}
+
+			// Save the updated IDs back to the hidden input.
+			$('#overlay_images').val(JSON.stringify(overlayImageIds));
+
+			// Remove the item from the UI immediately.
+			$item.remove();
 		}
 	};
 

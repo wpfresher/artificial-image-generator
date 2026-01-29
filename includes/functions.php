@@ -3,6 +3,54 @@
 defined( 'ABSPATH' ) || exit; // Exit if accessed directly.
 
 /**
+ * Get template post object.
+ *
+ * @param mixed $data The data.
+ *
+ * @since 1.0.0
+ * @return WP_Post|false The template object, or false if not found.
+ */
+function aimg_get_template( $data ) {
+
+	if ( is_numeric( $data ) ) {
+		$data = get_post( $data );
+	}
+
+	if ( $data instanceof WP_Post && 'aimg_template' === $data->post_type ) {
+		return $data;
+	}
+
+	return false;
+}
+
+/**
+ * Get templates.
+ *
+ * @param array $args The args.
+ * @param bool  $count Whether to return a count.
+ *
+ * @since 1.0.0
+ * @return array|int The templates.
+ */
+function aimg_get_templates( $args = array(), $count = false ) {
+	$defaults = array(
+		'post_type'      => 'aimg_template',
+		'posts_per_page' => - 1,
+		'orderby'        => 'date',
+		'order'          => 'ASC',
+	);
+
+	$args  = wp_parse_args( $args, $defaults );
+	$query = new WP_Query( $args );
+
+	if ( $count ) {
+		return $query->found_posts;
+	}
+
+	return array_map( 'aimg_get_template', $query->posts );
+}
+
+/**
  * Get settings option.
  *
  * @param string $option Option name.
@@ -25,10 +73,11 @@ function aimg_get_settings( $option, $default_value = null ) {
  * @param int    $width    Image width.
  * @param int    $height   Image height.
  * @param array  $overlays Array of attachment IDs for overlays.
+ * @param int    $post_id  Post ID for unique naming.
  *
  * @return string|false Image URL or false on failure.
  */
-function aimg_generate_preview( $title, $colors, $width, $height, $overlays = array() ) {
+function aimg_generate_preview( $title, $colors, $width, $height, $overlays = array(), $post_id = 0 ) {
 
 	if ( is_string( $colors ) ) {
 		$colors = array_filter( array_map( 'trim', explode( ',', $colors ) ) );
@@ -56,6 +105,7 @@ function aimg_generate_preview( $title, $colors, $width, $height, $overlays = ar
 			'width'    => $width,
 			'height'   => $height,
 			'overlays' => $overlays_path,
+			'post_id'  => $post_id,
 			'preview'  => true,
 		)
 	);
