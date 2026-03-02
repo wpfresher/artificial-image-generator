@@ -8,8 +8,8 @@ module.exports = [
         ...defaultConfig,
         entry: {
             ...defaultConfig.entry(),
-            'css/admin': './.assets/css/admin.scss',
-            'js/admin': './.assets/js/admin.js',
+            'css/admin': './resources/css/admin.scss',
+            'js/admin': './resources/js/admin.js',
         },
         output: {
             ...defaultConfig.output,
@@ -18,15 +18,15 @@ module.exports = [
         },
         plugins: [
             ...defaultConfig.plugins,
-			// Copy images to the build folder.
+			// Copy images to the assets folder.
 			new CopyWebpackPlugin({
 				patterns: [
 					// {
-					// 	from: path.resolve(__dirname, '.assets/images'),
+					// 	from: path.resolve(__dirname, 'resources/images'),
 					// 	to: path.resolve(__dirname, 'assets/images'),
 					// },
 					{
-						from: path.resolve(__dirname, '.assets/fonts'),
+						from: path.resolve(__dirname, 'resources/fonts'),
 						to: path.resolve(__dirname, 'assets/fonts'),
 					}
 				]
