@@ -31,14 +31,14 @@ class PostTypes {
 	public static function register_cpt() {
 		$labels = array(
 			'name'               => _x( 'Image Templates', 'post type general name', 'artificial-image-generator' ),
-			'singular_name'      => _x( 'Images Template', 'post type singular name', 'artificial-image-generator' ),
+			'singular_name'      => _x( 'Image Template', 'post type singular name', 'artificial-image-generator' ),
 			'menu_name'          => _x( 'Image Templates', 'admin menu', 'artificial-image-generator' ),
-			'name_admin_bar'     => _x( 'Images Template', 'add new on admin bar', 'artificial-image-generator' ),
+			'name_admin_bar'     => _x( 'Image Templates', 'add new on admin bar', 'artificial-image-generator' ),
 			'add_new'            => _x( 'Add New', 'ticket', 'artificial-image-generator' ),
 			'add_new_item'       => __( 'Add New Images Template', 'artificial-image-generator' ),
 			'new_item'           => __( 'New Images Template', 'artificial-image-generator' ),
-			'edit_item'          => __( 'Edit Images Template', 'artificial-image-generator' ),
-			'view_item'          => __( 'View Images Template', 'artificial-image-generator' ),
+			'edit_item'          => __( 'Edit Image Template', 'artificial-image-generator' ),
+			'view_item'          => __( 'View Image Template', 'artificial-image-generator' ),
 			'all_items'          => __( 'All Image Templates', 'artificial-image-generator' ),
 			'search_items'       => __( 'Search Image Templates', 'artificial-image-generator' ),
 			'parent_item_colon'  => __( 'Parent Image Templates:', 'artificial-image-generator' ),

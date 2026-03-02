@@ -191,7 +191,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Hello team! Version *v${{ env.TAG_NAME }}* of Artificial Image Generator has been successfully released! Check it out at <https://wordpress.org/plugins/essential-elements|wordpress.org/plugins/essential-elements>. Please take a moment to test the new version and share your feedback or report any issues!"
+                    "text": "Hello team! Version *v${{ env.TAG_NAME }}* of Artificial Image Generator has been successfully released! Check it out at <https://wordpress.org/plugins/artificial-image-generator|wordpress.org/plugins/artificial-image-generator>. Please take a moment to test the new version and share your feedback or report any issues!"
                   }
                 },
                 {

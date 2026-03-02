@@ -57,7 +57,7 @@ function aimg_get_templates( $args = array(), $count = false ) {
  * @param mixed  $default_value Default value.
  *
  * @since 1.0.0
- * @retun mixed|null
+ * @return mixed|null
  */
 function aimg_get_settings( $option, $default_value = null ) {
 	$options = get_option( 'aimg_settings', array() );
