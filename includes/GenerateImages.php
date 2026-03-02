@@ -72,8 +72,23 @@ class GenerateImages {
 			return;
 		}
 
-		$colors         = get_option( 'aimg_bg_colors', '#e74c3c,#2ecc71,#9b59b6' );
-		$overlay_images = get_option( 'aimg_overlay_images', array() );
+		// Get a random image template ID.
+		$templates = get_posts(
+			array(
+				'post_type'      => 'aimg_template',
+				'posts_per_page' => 1,
+				'post_status'    => 'publish',
+				'fields'         => 'ids',
+				'orderby'        => 'rand',
+			)
+		);
+
+		if ( empty( $templates ) || ! is_array( $templates ) ) {
+			return;
+		}
+
+		$template_id = reset( $templates );
+		$colors      = get_post_meta( $template_id, '_aimg_bg_colors', true );
 
 		// Make sure colors are split into an array if they are a string.
 		if ( is_string( $colors ) ) {
@@ -82,26 +97,30 @@ class GenerateImages {
 
 		// Get absolute paths of overlay images.
 		$overlays = array();
-		foreach ( $overlay_images as $id ) {
-			$path = get_attached_file( $id );
-			if ( $path && file_exists( $path ) ) {
-				$overlays[] = $path;
-			}
-		}
+		if ( 'yes' === get_post_meta( $template_id, '_aimg_is_overlay_image', true ) ) {
+			$overlay_images = json_decode( get_post_meta( $template_id, '_aimg_overlay_images', true ) );
 
-		// Keep only single overlay if multiple are provided.
-		if ( count( $overlays ) > 1 ) {
-			$overlays = array( $overlays[ array_rand( $overlays ) ] );
+			foreach ( $overlay_images as $id ) {
+				$path = get_attached_file( $id );
+				if ( $path && file_exists( $path ) ) {
+					$overlays[] = $path;
+				}
+			}
+
+			// Keep only single overlay if multiple are provided.
+			if ( count( $overlays ) > 1 ) {
+				$overlays = array( $overlays[ array_rand( $overlays ) ] );
+			}
 		}
 
 		$image_path = aimg_generate_thumbnail(
 			array(
+				'post_id'  => $template_id,
 				'title'    => $title,
 				'colors'   => $colors,
-				'width'    => get_option( 'aimg_width', 1200 ),
-				'height'   => get_option( 'aimg_height', 800 ),
+				'width'    => get_post_meta( $template_id, '_aimg_width', true ),
+				'height'   => get_post_meta( $template_id, '_aimg_height', true ),
 				'overlays' => $overlays,
-				'post_id'  => $post_id,
 			)
 		);
 

@@ -41,6 +41,12 @@ class Actions {
 		$title       = isset( $_POST['title'] ) ? sanitize_text_field( wp_unslash( $_POST['title'] ) ) : '';
 		$status      = isset( $_POST['status'] ) ? sanitize_text_field( wp_unslash( $_POST['status'] ) ) : 'publish';
 
+		if ( empty( $title ) ) {
+			artificial_image_generator()->flash_notice( __( 'The title field is required.', 'artificial-image-generator' ), 'error' );
+			wp_safe_redirect( $referer );
+			exit;
+		}
+
 		// Create or Update Product Tab.
 		$post_args = array(
 			'post_type'    => 'aimg_template',
@@ -80,16 +86,18 @@ class Actions {
 		update_post_meta( $post, '_aimg_overlay_images', $overlay_images );
 		update_post_meta( $post, '_aimg_overlay_position', $overlay_position );
 
-		// Flash success message and redirect.
-		if ( $template_id ) {
-			// Generate the thumbnail image if the settings are saved.
+		// Generate the thumbnail image if the settings are saved successfully.
+		if ( $post ) {
 			$colors            = empty( $bg_colors ) ? '#e74c3c,#2ecc71,#9b59b6' : $bg_colors;
-			$overlay_images    = json_decode( $overlay_images );
-			$preview_image_url = aimg_generate_preview( 'Dynamic Post Title Will be Available Here', $colors, $width, $height, $overlay_images, $post );
+			$overlay_images    = 'yes' === $is_overlay_image ? json_decode( $overlay_images ) : array();
+			$preview_image_url = aimg_generate_preview( $post, $colors, $width, $height, $overlay_images );
 
 			// Update the preview image URL as post meta.
 			update_post_meta( $post, '_aimg_preview_image_url', $preview_image_url );
+		}
 
+		// Flash success message and redirect.
+		if ( $template_id ) {
 			artificial_image_generator()->flash_notice( __( 'Image template updated successfully.', 'artificial-image-generator' ) );
 		} else {
 			artificial_image_generator()->flash_notice( __( 'Image template added successfully.', 'artificial-image-generator' ) );

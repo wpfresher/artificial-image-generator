@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Image Generator 1.0.0\n"
 "Report-Msgid-Bugs-To: https://beautifulplugins.com/support/\n"
-"POT-Creation-Date: 2026-01-29 06:54:01+00:00\n"
+"POT-Creation-Date: 2026-03-02 08:05:35+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -43,11 +43,15 @@ msgstr ""
 msgid "You do not have permission to process this action"
 msgstr ""
 
-#: includes/Admin/Actions.php:93
+#: includes/Admin/Actions.php:45
+msgid "The title field is required."
+msgstr ""
+
+#: includes/Admin/Actions.php:101
 msgid "Image template updated successfully."
 msgstr ""
 
-#: includes/Admin/Actions.php:95
+#: includes/Admin/Actions.php:103
 msgid "Image template added successfully."
 msgstr ""
 
@@ -82,8 +86,7 @@ msgid "Name"
 msgstr ""
 
 #: includes/Admin/ListTables/TemplatesTable.php:105
-#: includes/Admin/views/add-img-template.php:121
-#: includes/Admin/views/add-img-template.php:125
+#: includes/Admin/views/add-img-template.php:120
 #: includes/Admin/views/edit-img-template.php:140
 #: includes/Admin/views/edit-img-template.php:144
 msgid "Preview Image"
@@ -286,52 +289,52 @@ msgstr ""
 msgid "Overlay Image Position"
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:102
+#: includes/Admin/views/add-img-template.php:101
 #: includes/Admin/views/edit-img-template.php:121
 msgid "Top Left"
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:103
+#: includes/Admin/views/add-img-template.php:102
 #: includes/Admin/views/edit-img-template.php:122
 msgid "Top Center"
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:104
+#: includes/Admin/views/add-img-template.php:103
 #: includes/Admin/views/edit-img-template.php:123
 msgid "Top Right"
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:105
+#: includes/Admin/views/add-img-template.php:104
 #: includes/Admin/views/edit-img-template.php:124
 msgid "Left Center"
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:106
+#: includes/Admin/views/add-img-template.php:105
 #: includes/Admin/views/edit-img-template.php:125
 msgid "Center Center"
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:107
+#: includes/Admin/views/add-img-template.php:106
 #: includes/Admin/views/edit-img-template.php:126
 msgid "Right Center"
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:108
+#: includes/Admin/views/add-img-template.php:107
 #: includes/Admin/views/edit-img-template.php:127
 msgid "Bottom Left"
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:109
+#: includes/Admin/views/add-img-template.php:108
 #: includes/Admin/views/edit-img-template.php:128
 msgid "Bottom Center"
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:110
+#: includes/Admin/views/add-img-template.php:109
 #: includes/Admin/views/edit-img-template.php:129
 msgid "Bottom Right"
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:112
+#: includes/Admin/views/add-img-template.php:111
 #: includes/Admin/views/edit-img-template.php:131
 msgid ""
 "Select the position for the overlay images in the thumbnails. The overlay "
@@ -339,14 +342,7 @@ msgid ""
 "Center\"."
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:127
-#: includes/Admin/views/edit-img-template.php:146
-msgid ""
-"This is a preview of how the image will look like based on the current "
-"settings. Save changes to generate a new preview."
-msgstr ""
-
-#: includes/Admin/views/add-img-template.php:129
+#: includes/Admin/views/add-img-template.php:121
 #: includes/Admin/views/edit-img-template.php:148
 msgid "Preview could not be generated. Save changes to generate a preview."
 msgstr ""
@@ -365,6 +361,12 @@ msgstr ""
 
 #: includes/Admin/views/edit-img-template.php:104
 msgid "No overlay images selected."
+msgstr ""
+
+#: includes/Admin/views/edit-img-template.php:146
+msgid ""
+"This is a preview of how the image will look like based on the current "
+"settings. Save changes to generate a new preview."
 msgstr ""
 
 #: includes/Admin/views/img-templates.php:18

@@ -68,16 +68,18 @@ function aimg_get_settings( $option, $default_value = null ) {
 /**
  * Generate a thumbnail image for preview on settings page.
  *
- * @param string $title    The title text.
+ * @param int    $post_id  Post ID for which the preview is being generated.
  * @param string $colors   Comma separated hex colors.
  * @param int    $width    Image width.
  * @param int    $height   Image height.
  * @param array  $overlays Array of attachment IDs for overlays.
- * @param int    $post_id  Post ID for unique naming.
  *
  * @return string|false Image URL or false on failure.
  */
-function aimg_generate_preview( $title, $colors, $width, $height, $overlays = array(), $post_id = 0 ) {
+function aimg_generate_preview( $post_id, $colors, $width, $height, $overlays = array() ) {
+	if ( empty( $post_id ) || empty( $colors ) || empty( $width ) || empty( $height ) ) {
+		return false;
+	}
 
 	if ( is_string( $colors ) ) {
 		$colors = array_filter( array_map( 'trim', explode( ',', $colors ) ) );
@@ -100,13 +102,12 @@ function aimg_generate_preview( $title, $colors, $width, $height, $overlays = ar
 	// Generate image.
 	$filepath = aimg_generate_thumbnail(
 		array(
-			'title'    => $title,
+			'post_id'  => $post_id,
+			'title'    => get_the_title( $post_id ),
 			'colors'   => $colors,
 			'width'    => $width,
 			'height'   => $height,
 			'overlays' => $overlays_path,
-			'post_id'  => $post_id,
-			'preview'  => true,
 		)
 	);
 
@@ -116,8 +117,8 @@ function aimg_generate_preview( $title, $colors, $width, $height, $overlays = ar
 
 	// Get URL from filepath.
 	$upload_dir = wp_upload_dir();
-	$basedir    = trailingslashit( $upload_dir['basedir'] );
-	$baseurl    = trailingslashit( $upload_dir['baseurl'] );
+	$basedir    = wp_normalize_path( trailingslashit( $upload_dir['basedir'] ) );
+	$baseurl    = wp_normalize_path( trailingslashit( $upload_dir['baseurl'] ) );
 
 	if ( strpos( $filepath, $basedir ) === 0 ) {
 		return $baseurl . ltrim( substr( $filepath, strlen( $basedir ) ), '/' );
@@ -137,26 +138,29 @@ function aimg_generate_preview( $title, $colors, $width, $height, $overlays = ar
  */
 function aimg_generate_thumbnail( $args = array() ) {
 	$default_args = array(
+		'post_id'  => 0,
 		'title'    => '',
 		'colors'   => array(),
 		'width'    => 1200,
 		'height'   => 600,
 		'overlays' => array(),
-		'post_id'  => 0,
-		'preview'  => false,
 	);
 
 	$args = wp_parse_args( $args, $default_args );
 
 	// Extract arguments for easier access.
+	$post_id  = isset( $args['post_id'] ) ? absint( $args['post_id'] ) : 0;
 	$title    = isset( $args['title'] ) ? $args['title'] : '';
 	$colors   = isset( $args['colors'] ) && is_array( $args['colors'] ) ? $args['colors'] : array();
 	$width    = isset( $args['width'] ) ? absint( $args['width'] ) : 1200;
 	$height   = isset( $args['height'] ) ? absint( $args['height'] ) : 600;
 	$overlays = isset( $args['overlays'] ) && is_array( $args['overlays'] ) ? $args['overlays'] : array();
-	$preview  = isset( $args['preview'] ) ? (bool) $args['preview'] : false;
 
-	$font_size = get_option( 'aimg_title_font_size', 40 );
+	if ( empty( $post_id ) || empty( $title ) || empty( $width ) || empty( $height ) ) {
+		return false;
+	}
+
+	$font_size = get_post_meta( $post_id, '_aimg_title_font_size', true );
 	$font_path = AIMG_ASSETS_PATH . 'fonts/Roboto-Bold.ttf';
 
 	if ( ! file_exists( $font_path ) ) {
@@ -190,7 +194,7 @@ function aimg_generate_thumbnail( $args = array() ) {
 				continue;
 			}
 
-			$overlay_position = get_option( 'aimg_overlay_position', 'center-center' );
+			$overlay_position = get_post_meta( $post_id, '_aimg_overlay_position', true );
 			$overlay          = imagecreatefrompng( $overlay_path );
 
 			imagesavealpha( $overlay, true );
@@ -332,12 +336,8 @@ function aimg_generate_thumbnail( $args = array() ) {
 	}
 
 	// Generate filename.
-	if ( $preview ) {
-		$filename = 'aimg-preview-thumbnail-image.png';
-	} else {
-		$suffix   = isset( $args['post_id'] ) ? absint( $args['post_id'] ) : wp_rand( 10000, 99999 );
-		$filename = sanitize_title( $title ) . '-' . $suffix . '.png';
-	}
+	$suffix   = isset( $args['post_id'] ) ? absint( $args['post_id'] ) : wp_rand( 10000, 99999 );
+	$filename = sanitize_title( $title ) . '-' . $suffix . '.png';
 
 	// Save image to uploads directory.
 	$upload_dir = wp_upload_dir();

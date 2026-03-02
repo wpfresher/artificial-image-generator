@@ -35,7 +35,7 @@ defined( 'ABSPATH' ) || exit; // Exit if accessed directly.
 							<label for="bg_colors"><?php esc_html_e( 'Background Colors', 'artificial-image-generator' ); ?> <span class="required">*</span></label>
 						</th>
 						<td>
-							<input type="text" id="bg_colors" name="bg_colors" class="regular-text" placeholder="<?php esc_attr_e( 'e.g. #e74c3c, #2ecc71, #9b59b6', 'artificial-image-generator' ); ?>" value="<?php echo esc_attr( get_option( 'aimg_bg_colors', '#e74c3c,#2ecc71,#9b59b6' ) ); ?>" required />
+							<input type="text" id="bg_colors" name="bg_colors" class="regular-text" placeholder="<?php esc_attr_e( 'e.g. #e74c3c, #2ecc71, #9b59b6', 'artificial-image-generator' ); ?>" required />
 							<p class="description"><?php esc_html_e( 'Enter the background colors for the thumbnails. Use comma to separate multiple colors.', 'artificial-image-generator' ); ?></p>
 						</td>
 					</tr>
@@ -44,7 +44,7 @@ defined( 'ABSPATH' ) || exit; // Exit if accessed directly.
 							<label for="width"><?php esc_html_e( 'Width', 'artificial-image-generator' ); ?> <span class="required">*</span></label>
 						</th>
 						<td>
-							<input type="number" id="width" name="width" class="regular-text" placeholder="<?php esc_attr_e( '1200', 'artificial-image-generator' ); ?>" value="<?php echo esc_attr( get_option( 'aimg_width', 1200 ) ); ?>" min="1" required />
+							<input type="number" id="width" name="width" class="regular-text" placeholder="<?php esc_attr_e( '1200', 'artificial-image-generator' ); ?>" min="1" required />
 							<p class="description"><?php esc_html_e( 'Enter the width for the thumbnails in pixels.', 'artificial-image-generator' ); ?></p>
 						</td>
 					</tr>
@@ -53,7 +53,7 @@ defined( 'ABSPATH' ) || exit; // Exit if accessed directly.
 							<label for="height"><?php esc_html_e( 'Height', 'artificial-image-generator' ); ?> <span class="required">*</span></label>
 						</th>
 						<td>
-							<input type="number" id="height" name="height" class="regular-text" placeholder="<?php esc_attr_e( '800', 'artificial-image-generator' ); ?>" value="<?php echo esc_attr( get_option( 'aimg_height', 800 ) ); ?>" min="1" required />
+							<input type="number" id="height" name="height" class="regular-text" placeholder="<?php esc_attr_e( '800', 'artificial-image-generator' ); ?>" min="1" required />
 							<p class="description"><?php esc_html_e( 'Enter the height for the thumbnails in pixels.', 'artificial-image-generator' ); ?></p>
 						</td>
 					</tr>
@@ -62,7 +62,7 @@ defined( 'ABSPATH' ) || exit; // Exit if accessed directly.
 							<label for="title_font_size"><?php esc_html_e( 'Title Font Size', 'artificial-image-generator' ); ?> <span class="required">*</span></label>
 						</th>
 						<td>
-							<input type="number" id="title_font_size" name="title_font_size" class="regular-text" placeholder="<?php esc_attr_e( '40', 'artificial-image-generator' ); ?>" value="<?php echo esc_attr( get_option( 'aimg_title_font_size', 40 ) ); ?>" min="1" required />
+							<input type="number" id="title_font_size" name="title_font_size" class="regular-text" placeholder="<?php esc_attr_e( '40', 'artificial-image-generator' ); ?>" min="1" required />
 							<p class="description"><?php esc_html_e( 'Enter the font size for the title in pixels.', 'artificial-image-generator' ); ?></p>
 						</td>
 					</tr>
@@ -72,7 +72,7 @@ defined( 'ABSPATH' ) || exit; // Exit if accessed directly.
 						</th>
 						<td>
 							<label for="is_overlay_image">
-								<input type="checkbox" id="is_overlay_image" name="is_overlay_image" value="1" <?php checked( get_option( 'aimg_is_overlay_image', 'no' ), 'yes' ); ?> />
+								<input type="checkbox" id="is_overlay_image" name="is_overlay_image" value="1" />
 								<?php esc_html_e( 'Enable', 'artificial-image-generator' ); ?>
 							</label>
 							<p class="description"><?php esc_html_e( 'Check this box to enable overlay images in the thumbnails.', 'artificial-image-generator' ); ?></p>
@@ -97,17 +97,16 @@ defined( 'ABSPATH' ) || exit; // Exit if accessed directly.
 							<label for="overlay_position"><?php esc_html_e( 'Overlay Image Position', 'artificial-image-generator' ); ?></label>
 						</th>
 						<td>
-							<?php $aimg_overlay_position = get_option( 'aimg_overlay_position', 'center-center' ); ?>
 							<select name="overlay_position" id="overlay_position" class="regular-text">
-								<option value="top-left" <?php selected( $aimg_overlay_position, 'top-left' ); ?>><?php esc_html_e( 'Top Left', 'artificial-image-generator' ); ?></option>
-								<option value="top-center" <?php selected( $aimg_overlay_position, 'top-center' ); ?>><?php esc_html_e( 'Top Center', 'artificial-image-generator' ); ?></option>
-								<option value="top-right" <?php selected( $aimg_overlay_position, 'top-right' ); ?>><?php esc_html_e( 'Top Right', 'artificial-image-generator' ); ?></option>
-								<option value="left-center" <?php selected( $aimg_overlay_position, 'left-center' ); ?>><?php esc_html_e( 'Left Center', 'artificial-image-generator' ); ?></option>
-								<option value="center-center" <?php selected( $aimg_overlay_position, 'center-center' ); ?>><?php esc_html_e( 'Center Center', 'artificial-image-generator' ); ?></option>
-								<option value="right-center" <?php selected( $aimg_overlay_position, 'right-center' ); ?>><?php esc_html_e( 'Right Center', 'artificial-image-generator' ); ?></option>
-								<option value="bottom-left" <?php selected( $aimg_overlay_position, 'bottom-left' ); ?>><?php esc_html_e( 'Bottom Left', 'artificial-image-generator' ); ?></option>
-								<option value="bottom-center" <?php selected( $aimg_overlay_position, 'bottom-center' ); ?>><?php esc_html_e( 'Bottom Center', 'artificial-image-generator' ); ?></option>
-								<option value="bottom-right" <?php selected( $aimg_overlay_position, 'bottom-right' ); ?>><?php esc_html_e( 'Bottom Right', 'artificial-image-generator' ); ?></option>
+								<option value="top-left"><?php esc_html_e( 'Top Left', 'artificial-image-generator' ); ?></option>
+								<option value="top-center"><?php esc_html_e( 'Top Center', 'artificial-image-generator' ); ?></option>
+								<option value="top-right"><?php esc_html_e( 'Top Right', 'artificial-image-generator' ); ?></option>
+								<option value="left-center"><?php esc_html_e( 'Left Center', 'artificial-image-generator' ); ?></option>
+								<option value="center-center" selected><?php esc_html_e( 'Center Center', 'artificial-image-generator' ); ?></option>
+								<option value="right-center"><?php esc_html_e( 'Right Center', 'artificial-image-generator' ); ?></option>
+								<option value="bottom-left"><?php esc_html_e( 'Bottom Left', 'artificial-image-generator' ); ?></option>
+								<option value="bottom-center"><?php esc_html_e( 'Bottom Center', 'artificial-image-generator' ); ?></option>
+								<option value="bottom-right"><?php esc_html_e( 'Bottom Right', 'artificial-image-generator' ); ?></option>
 							</select>
 							<p class="description"><?php esc_html_e( 'Select the position for the overlay images in the thumbnails. The overlay image will be positioned based on this selection. Default is "Center Center".', 'artificial-image-generator' ); ?></p>
 						</td>
@@ -119,15 +118,7 @@ defined( 'ABSPATH' ) || exit; // Exit if accessed directly.
 			<div class="column column-right">
 				<div class="preview-section">
 					<h2><?php esc_html_e( 'Preview Image', 'artificial-image-generator' ); ?></h2>
-					<?php $aimg_preview_image_url = get_option( 'aimg_preview_image_url' ); ?>
-					<?php if ( $aimg_preview_image_url ) : ?>
-						<div class="preview-image">
-							<img src="<?php echo esc_url( $aimg_preview_image_url ); ?>" alt="<?php esc_attr_e( 'Preview Image', 'artificial-image-generator' ); ?>"/>
-						</div>
-						<p><?php esc_html_e( 'This is a preview of how the image will look like based on the current settings. Save changes to generate a new preview.', 'artificial-image-generator' ); ?></p>
-					<?php else : ?>
-						<p><?php esc_html_e( 'Preview could not be generated. Save changes to generate a preview.', 'artificial-image-generator' ); ?></p>
-					<?php endif; ?>
+					<p><?php esc_html_e( 'Preview could not be generated. Save changes to generate a preview.', 'artificial-image-generator' ); ?></p>
 				</div>
 			</div>
 		</div>
