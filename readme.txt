@@ -2,7 +2,7 @@
 Contributors: beautifulplugins
 Tags: ai, ai image, featured images, ai image generator, image generator
 Tested up to: 6.9
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -134,9 +134,17 @@ The Roboto font is included under the Apache License 2.0. Full license text avai
 3. Visual preview of a blog post with the automatically generated featured image
 
 == Changelog ==
+= 1.1.0 ( 3rd March 2026 ) =
+* New: Added support for creating unlimited image templates with custom styles and layouts.
+* Fix: Resolved compatibility issues with the latest version of WordPress.
+* Enhance: Optimized image generation process for faster performance and reduced server load.
 
 = 1.0.0 ( 22nd December 2025 ) =
 * Initial release
+
+== Upgrade Notice ==
+= 1.1.0 =
+Major update with new features and improvements. Please backup your site before updating.
 
 == Support and Feedback ==
 

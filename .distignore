@@ -75,8 +75,8 @@ Thumbs.db
 *.*.map
 
 # Build related files
-/src
+/resources
 /blueprint.json
 
-# Ignore all extra files in the root directory
+# Plugin specific files
 /roadmap.md

@@ -47,9 +47,5 @@ codeception.yml
 /tests/_data/dump.sql
 .env.testing
 
-# Framework specific
-lib
-
-# Build files
+# Build related files
 /assets
-

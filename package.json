@@ -1,11 +1,11 @@
 {
   "name": "artificial-image-generator",
   "title": "Image Generator",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Generate AI-powered images automatically across your WordPress site. Create stunning visuals for posts, pages, and more with ease.",
-  "author": "BeautifulPlugins",
   "homepage": "https://beautifulplugins.com/image-generator/",
   "license": "GPL-v2.0-or-later",
+  "author": "BeautifulPlugins",
   "prettier": "@wordpress/prettier-config",
   "scripts": {
     "build": "wp-scripts build && grunt build",
@@ -24,7 +24,7 @@
   },
   "devDependencies": {
     "@lodder/time-grunt": "^4.0.0",
-    "@wordpress/scripts": "^31.0.0",
+    "@wordpress/scripts": "^31.5.0",
     "clean-webpack-plugin": "^4.0.0",
     "copy-webpack-plugin": "^11.0.0",
     "grunt": "^1.6.1",
@@ -35,7 +35,6 @@
   },
   "browserslist": [
     "> 0.1%",
-    "ie 8",
-    "ie 9"
+    "not ie <= 11"
   ]
 }

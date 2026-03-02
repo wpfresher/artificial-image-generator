@@ -6,8 +6,6 @@
   "license": "GPL-2.0-or-later",
   "prefer-stable": true,
   "minimum-stability": "dev",
-  "repositories": [],
-  "require-dev": {},
   "require": {
     "php": ">=7.4"
   },
@@ -24,7 +22,6 @@
       "dealerdirect/phpcodesniffer-composer-installer": false
     }
   },
-  "autoload-dev": {},
   "scripts": {
     "post-install-cmd": [
       "composer dump-autoload"
@@ -32,6 +29,5 @@
     "post-update-cmd": [
       "composer dump-autoload"
     ]
-  },
-  "extra": {}
+  }
 }

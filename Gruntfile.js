@@ -23,7 +23,6 @@ module.exports = function( grunt ) {
                             '*.php',
                             '**/*.php',
                             '!node_modules/**',
-                            '!tests/**',
                             '!vendor/**',
                         ],
                     },
@@ -54,7 +53,6 @@ module.exports = function( grunt ) {
                         '**/*.php',
                         '!packages/**',
                         '!node_modules/**',
-                        '!tests/**',
                         '!vendor/**',
                     ],
                     expand: true,
@@ -64,7 +62,7 @@ module.exports = function( grunt ) {
                 target: {
                     options: {
                         domainPath: 'languages',
-                        exclude: [ 'packages/*', '.git/*', 'node_modules/*', 'tests/*' ],
+                        exclude: [ 'packages/*', '.git/*', 'node_modules/*' ],
                         mainFile: 'artificial-image-generator.php',
                         potFilename: 'artificial-image-generator.pot',
                         potHeaders: {

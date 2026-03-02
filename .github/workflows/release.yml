@@ -171,44 +171,35 @@ jobs:
 
       - name: Send Slack notification
         if: always()
-        uses: slackapi/slack-github-action@v1.18.0
+        uses: slackapi/slack-github-action@v2.1.1
         with:
+          webhook-type: webhook-trigger
           payload: |
             {
               "channel": "#announcement",
-              "text": "WordPress.org release of *Image Generator* version *${{ env.TAG_NAME }}* has *${{ job.status == 'success' && 'succeeded ✅' || job.status == 'failure' && 'failed ❌' || 'been cancelled' }}*",
-              "attachments": [
+              "username": "Beautiful Plugins Bot",
+              "icon_emoji": ":rocket:",
+              "blocks": [
                 {
-                  "color": "${{ job.status == 'success' && 'good' || job.status == 'failure' && 'danger' || 'warning' }}",
-                  "fields": [
-                    {
-                      "title": "Version",
-                      "value": "${{ env.TAG_NAME }}",
-                      "short": true
-                    },
-                    {
-                      "title": "Status",
-                      "value": "${{ job.status }}",
-                      "short": true
-                    },
-                    {
-                      "title": "Repository",
-                      "value": "${{ github.repository }}",
-                      "short": true
-                    },
-                    {
-                      "title": "Triggered by",
-                      "value": "${{ github.actor }}",
-                      "short": true
-                    }
-                  ],
-                  "actions": [
-                    {
-                      "type": "button",
-                      "text": "View Workflow Run",
-                      "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-                    }
-                  ]
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*${{ github.actor }}*\n:package: *Artificial Image Generator v${{ env.TAG_NAME }} has been released!*"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "Hello team! Version *v${{ env.TAG_NAME }}* of Artificial Image Generator has been successfully released! Check it out at <https://wordpress.org/plugins/essential-elements|wordpress.org/plugins/essential-elements>. Please take a moment to test the new version and share your feedback or report any issues!"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": ":tada: Well done, team! Let's keep the momentum going!"
+                  }
                 }
               ]
             }

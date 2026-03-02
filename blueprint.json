@@ -1,8 +1,8 @@
 {
   "landingPage": "/wp-admin/admin.php?page=artificial-image-generator",
   "preferredVersions": {
-    "php": "7.4",
-    "wp": "5.2"
+    "php": "8.2",
+    "wp": "5.9"
   },
   "phpExtensionBundles": [
     "kitchen-sink"
