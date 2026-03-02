@@ -28,6 +28,7 @@ class TemplatesTable extends \WP_List_Table {
 				'singular' => 'template',
 				'plural'   => 'templates',
 				'ajax'     => false,
+				'screen'   => get_current_screen(),
 			)
 		);
 	}
