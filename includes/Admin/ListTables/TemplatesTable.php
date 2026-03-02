@@ -40,16 +40,15 @@ class TemplatesTable extends \WP_List_Table {
 	 * @return void
 	 */
 	public function prepare_items() {
-		wp_verify_nonce( '_wpnonce' );
 		$columns               = $this->get_columns();
 		$hidden                = $this->get_hidden_columns();
 		$sortable              = $this->get_sortable_columns();
 		$this->_column_headers = array( $columns, $hidden, $sortable );
 		$per_page              = $this->get_items_per_page( 'aimg_img_templates_per_page', 20 );
 		$paged                 = $this->get_pagenum();
-		$order_by              = isset( $_GET['orderby'] ) ? sanitize_text_field( wp_unslash( $_GET['orderby'] ) ) : '';
-		$order                 = isset( $_GET['order'] ) ? sanitize_text_field( wp_unslash( $_GET['order'] ) ) : '';
-		$search                = isset( $_GET['s'] ) ? sanitize_text_field( wp_unslash( $_GET['s'] ) ) : '';
+		$order_by              = isset( $_GET['orderby'] ) ? sanitize_text_field( wp_unslash( $_GET['orderby'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read only operation.
+		$order                 = isset( $_GET['order'] ) ? sanitize_text_field( wp_unslash( $_GET['order'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read only operation.
+		$search                = isset( $_GET['s'] ) ? sanitize_text_field( wp_unslash( $_GET['s'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read only operation.
 
 		$args = array(
 			'post_type'      => 'aimg_template',

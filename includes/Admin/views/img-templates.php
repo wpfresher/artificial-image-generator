@@ -25,7 +25,7 @@ defined( 'ABSPATH' ) || exit; // Exit if accessed directly.
 		$list_table->search_box( __( 'Search', 'artificial-image-generator' ), 'search' );
 		$list_table->display();
 		?>
-		<input type="hidden" name="page" value="artificial-image-generator">
+		<input type="hidden" name="page" value="image-generator">
 	</form>
 </div>
 <?php
