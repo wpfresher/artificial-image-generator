@@ -31,11 +31,11 @@ class Settings {
 	 */
 	public function add_settings_page() {
 		add_submenu_page(
-			'artificial-image-generator',
+			'image-generator',
 			__( 'Settings', 'artificial-image-generator' ),
 			__( 'Settings', 'artificial-image-generator' ),
 			'manage_options',
-			'artificial-image-generator-settings',
+			'aimg-settings',
 			array( $this, 'settings_page' )
 		);
 	}
@@ -61,8 +61,8 @@ class Settings {
 			<p><?php esc_html_e( 'Configure the settings for the Image Generator plugin.', 'artificial-image-generator' ); ?></p>
 			<form method="post" action="<?php echo esc_url( admin_url( 'options.php' ) ); ?>">
 				<?php
-				settings_fields( 'artificial_image_generator' );
-				do_settings_sections( 'artificial-image-generator' );
+				settings_fields( 'aimg' );
+				do_settings_sections( 'aimg-settings' );
 				submit_button();
 				?>
 			</form>
@@ -77,14 +77,14 @@ class Settings {
 	 * @return void
 	 */
 	public function register_settings() {
-		register_setting( 'artificial_image_generator', 'aimg_settings', array( $this, 'sanitize_settings' ) );
+		register_setting( 'aimg', 'aimg_settings', array( $this, 'sanitize_settings' ) );
 
 		// Add settings section.
 		add_settings_section(
 			'aimg_general_settings',
 			__( 'General Settings', 'artificial-image-generator' ),
 			array( $this, 'general_settings' ),
-			'artificial-image-generator'
+			'aimg-settings'
 		);
 
 		// Fallback default bg color for thumbnails.
@@ -92,7 +92,7 @@ class Settings {
 			'aimg_default_bg_color',
 			__( 'Default Background Color', 'artificial-image-generator' ),
 			array( $this, 'default_bg_color' ),
-			'artificial-image-generator',
+			'aimg-settings',
 			'aimg_general_settings'
 		);
 
@@ -101,7 +101,7 @@ class Settings {
 			'aimg_default_text_color',
 			__( 'Default Text Color', 'artificial-image-generator' ),
 			array( $this, 'default_text_color' ),
-			'artificial-image-generator',
+			'aimg-settings',
 			'aimg_general_settings'
 		);
 
@@ -110,7 +110,7 @@ class Settings {
 			'aimg_is_post_thumbnail',
 			__( 'Enable Post Thumbnails', 'artificial-image-generator' ),
 			array( $this, 'is_post_thumbnail' ),
-			'artificial-image-generator',
+			'aimg-settings',
 			'aimg_general_settings'
 		);
 
@@ -119,7 +119,7 @@ class Settings {
 			'aimg_is_page_thumbnail',
 			__( 'Enable Page Thumbnails', 'artificial-image-generator' ),
 			array( $this, 'is_page_thumbnail' ),
-			'artificial-image-generator',
+			'aimg-settings',
 			'aimg_general_settings'
 		);
 	}

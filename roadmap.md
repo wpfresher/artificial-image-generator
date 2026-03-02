@@ -3,22 +3,32 @@ artificial-image-generator/
 ├── Assets/
 │   ├── css/
 │   │   └── admin.css
-│   └── images/
-│       └── image.png
+│   ├── images/
+│   │   └── image.png
 │   └── js/
 │       └── admin.js
 │
 ├── Includes/
+│   ├── functions.php
+│   ├── Plugin.php
+│   ├── GeneratedImages.php
 │   ├── Admin/
-│   │   └── class-admin.php
-│   └── Cron/
-│       └── class-cron.php
+│   │   ├── views/
+│   │   │   ├── dashboard.php
+│   │   │   └── admin-page.php
+│   │   ├── Admin.php
+│   │   ├── Actions.php
+│   │   ├── Dashboard.php
+│   │   └── Settings.php
+│   └── ListTables/
+│       └── TemplatesTable.php
 │
-├── src/
-│   ├── class-template.php
-│   └── class-campaign.php
+├── languages/
+│   └── artificial-image-generator.pot
 │
 ├── Uninstall.php
 ├── composer.json
 ├── package.json
-└── image-generator.php
+├── blueprint.json
+├── readme.txt
+└── artificial-image-generator.php

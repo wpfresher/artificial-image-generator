@@ -204,6 +204,7 @@ class Plugin {
 	 */
 	public function init() {
 		// Load common classes.
+		new PostTypes();
 		new GenerateImages();
 
 		// Load the admin classes if it's an admin area.
