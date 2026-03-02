@@ -23,7 +23,6 @@ class TemplatesTable extends \WP_List_Table {
 	 * @since 1.0.0
 	 */
 	public function __construct() {
-		$this->screen = get_current_screen();
 		parent::__construct(
 			array(
 				'singular' => 'template',
