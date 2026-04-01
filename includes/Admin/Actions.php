@@ -22,7 +22,7 @@ class Actions {
 	}
 
 	/**
-	 * Add product tabs data.
+	 * Update or create a new image template.
 	 *
 	 * @since 1.0.0
 	 * @return void
@@ -47,7 +47,7 @@ class Actions {
 			exit;
 		}
 
-		// Create or Update Product Tab.
+		// Create or Update image template.
 		$post_args = array(
 			'post_type'    => 'aimg_template',
 			'post_title'   => wp_strip_all_tags( $title ),

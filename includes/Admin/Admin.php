@@ -200,7 +200,6 @@ class Admin {
 	 * @return void
 	 */
 	public function enqueue_scripts( $hook ) {
-
 		if ( 'toplevel_page_image-generator' !== $hook ) {
 			return;
 		}
