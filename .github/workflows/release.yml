@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set tag name as environment variable
         run: echo "TAG_NAME=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
@@ -29,12 +29,12 @@ jobs:
         with:
           php-version: '8.2'  # Adjust this to your PHP version if necessary
           coverage: none
-          tools: composer
+          tools: composer, wp-cli
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
-          node-version: '20'
+          node-version: '24'
           cache: 'npm'
 
       - name: Authenticate GitHub token for Composer
@@ -171,7 +171,7 @@ jobs:
 
       - name: Send Slack notification
         if: always()
-        uses: slackapi/slack-github-action@v2.1.1
+        uses: slackapi/slack-github-action@v2
         with:
           webhook-type: webhook-trigger
           payload: |
@@ -191,7 +191,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Hello team! Version *v${{ env.TAG_NAME }}* of Artificial Image Generator has been successfully released! Check it out at <https://wordpress.org/plugins/artificial-image-generator|wordpress.org/plugins/artificial-image-generator>. Please take a moment to test the new version and share your feedback or report any issues!"
+                    "text": "Hello team! Version *v${{ env.TAG_NAME }}* of Artificial Image Generator has been successfully released! Check it out at <https://wordpress.org/plugins/artificial-image-generator/|wordpress.org/plugins/artificial-image-generator/>. Please take a moment to test the new version and share your feedback or report any issues!"
                   }
                 },
                 {

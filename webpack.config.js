@@ -8,8 +8,8 @@ module.exports = [
         ...defaultConfig,
         entry: {
             ...defaultConfig.entry(),
-            'css/admin': './resources/css/admin.scss',
-            'js/admin': './resources/js/admin.js',
+            'css/admin': './src/css/admin.scss',
+            'js/admin': './src/js/admin.js',
         },
         output: {
             ...defaultConfig.output,
@@ -22,11 +22,11 @@ module.exports = [
 			new CopyWebpackPlugin({
 				patterns: [
 					// {
-					// 	from: path.resolve(__dirname, 'resources/images'),
+					// 	from: path.resolve(__dirname, 'src/images'),
 					// 	to: path.resolve(__dirname, 'assets/images'),
 					// },
 					{
-						from: path.resolve(__dirname, 'resources/fonts'),
+						from: path.resolve(__dirname, 'src/fonts'),
 						to: path.resolve(__dirname, 'assets/fonts'),
 					}
 				]

@@ -9,7 +9,6 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Generate AI-powered images automatically across your WordPress site. Create stunning visuals for posts, pages, and more with ease.
 
 == Description ==
-
 **Image Generator** is a easy-to-use and user-friendly plugin that automatically creates stunning featured images and post thumbnails for your WordPress posts, pages, and custom post types. Say goodbye to the hassle of manually setting featured images for every post! With this plugin, you can effortlessly enhance your content with eye-catching thumbnails that improve user engagement and boost your site’s SEO.
 
 Featured images and thumbnails play a crucial role in engaging your audience and boosting your website’s SEO performance. With **Image Generator**, you never have to worry about manually setting featured images again. Save time, improve your content’s visual impact, and ensure every post shines with a captivating image.
@@ -31,7 +30,6 @@ Featured images and thumbnails play a crucial role in engaging your audience and
 Whether you’re running a blog, news site, portfolio, or online store, **Image Generator** makes it easy to generate professional-grade images with zero hassle.
 
 == Key Features ==
-
 ✅ **Automatic Thumbnail Image Creation**
 Generate featured images for new posts and pages automatically upon publication.
 
@@ -67,7 +65,6 @@ Easy-to-use interface—no need to edit theme files or code snippets.
 - Improve social media sharing by ensuring every post has an eye-catching featured image.
 
 == Installation ==
-
 1. Upload the `artificial-image-generator` plugin folder to the `/wp-content/plugins/` directory.
 2. Activate the plugin through the "Plugins" menu in WordPress.
 3. Navigate to **Thumbnails** in the WordPress admin panel to configure your settings.
@@ -83,7 +80,6 @@ Easy-to-use interface—no need to edit theme files or code snippets.
 4. Whenever you create a new post or page, **Image Generator** will automatically generate a featured image for you.
 
 == Frequently Asked Questions ==
-
 = 1. Will this plugin generate images for existing posts? =
 Currently, the plugin automatically generates images for new posts and pages. We are working on a future update to support bulk thumbnail generation for existing content.
 
@@ -128,7 +124,6 @@ Source: https://fonts.google.com/specimen/Roboto
 The Roboto font is included under the Apache License 2.0. Full license text available at the URI above.
 
 == Screenshots ==
-
 1. Image Generator - Image Configuration Page
 2. Plugin Settings
 3. Visual preview of a blog post with the automatically generated featured image
@@ -152,7 +147,6 @@ Have questions, need help, or want to suggest a feature? We’d love to hear fro
 - **Plugin Support Forum:** [https://wordpress.org/support/plugin/artificial-image-generator](https://wordpress.org/support/plugin/artificial-image-generator)
 
 == License ==
-
 This plugin is released under the GPLv2 or later. See [https://www.gnu.org/licenses/gpl-2.0.html](https://www.gnu.org/licenses/gpl-2.0.html) for details.
 
 **Thank you for using Image Generator!**
