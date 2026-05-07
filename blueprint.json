@@ -1,7 +1,7 @@
 {
   "landingPage": "/wp-admin/admin.php?page=image-generator",
   "preferredVersions": {
-    "php": "8.2",
+    "php": "8.3",
     "wp": "6.9"
   },
   "phpExtensionBundles": [

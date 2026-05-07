@@ -75,7 +75,7 @@ Thumbs.db
 *.*.map
 
 # Build related files
-/resources
+/src
 /blueprint.json
 
 # Plugin specific files

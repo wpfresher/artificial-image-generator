@@ -3,40 +3,45 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Image Generator 1.1.0\n"
-"Report-Msgid-Bugs-To: https://beautifulplugins.com/support/\n"
-"POT-Creation-Date: 2026-03-02 19:03:46+00:00\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2026-MO-DA HO:MI+ZONE\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/artificial-image-generator\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: en\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Poedit-Country: United States\n"
-"X-Poedit-SourceCharset: UTF-8\n"
-"X-Poedit-KeywordsList: "
-"__;_e;_x:1,2c;_ex:1,2c;_n:1,2;_nx:1,2,4c;_n_noop:1,2;_nx_noop:1,2,3c;esc_"
-"attr__;esc_html__;esc_attr_e;esc_html_e;esc_attr_x:1,2c;esc_html_x:1,2c;\n"
-"X-Poedit-Basepath: ../\n"
-"X-Poedit-SearchPath-0: .\n"
-"X-Poedit-Bookmarks: \n"
-"X-Textdomain-Support: yes\n"
-"X-Generator: grunt-wp-i18n 1.0.3\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-04-12T04:51:49+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: artificial-image-generator\n"
 
-#: includes/Admin/views/add-img-template.php:65
-#: includes/Admin/views/edit-img-template.php:66
-msgid "40"
+#. Plugin Name of the plugin
+#: artificial-image-generator.php
+#: includes/Admin/Admin.php:35
+#: includes/Admin/Admin.php:36
+#: includes/Admin/Settings.php:59
+#: includes/Admin/views/add-img-template.php:16
+#: includes/Admin/views/edit-img-template.php:17
+msgid "Image Generator"
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:56
-#: includes/Admin/views/edit-img-template.php:57
-msgid "800"
+#. Plugin URI of the plugin
+#: artificial-image-generator.php
+msgid "https://beautifulplugins.com/image-generator/"
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:47
-#: includes/Admin/views/edit-img-template.php:48
-msgid "1200"
+#. Description of the plugin
+#: artificial-image-generator.php
+msgid "Generate AI-powered images automatically across your WordPress site. Create stunning visuals for posts, pages, and more with ease."
+msgstr ""
+
+#. Author of the plugin
+#: artificial-image-generator.php
+msgid "BeautifulPlugins"
+msgstr ""
+
+#. Author URI of the plugin
+#: artificial-image-generator.php
+msgid "https://beautifulplugins.com"
 msgstr ""
 
 #: includes/Admin/Actions.php:35
@@ -55,11 +60,8 @@ msgstr ""
 msgid "Image template added successfully."
 msgstr ""
 
-#. Plugin Name of the plugin/theme
-msgid "Image Generator"
-msgstr ""
-
-#: includes/Admin/Admin.php:46 includes/Admin/Admin.php:47
+#: includes/Admin/Admin.php:46
+#: includes/Admin/Admin.php:47
 #: includes/Admin/views/img-templates.php:16
 msgid "Image Templates"
 msgstr ""
@@ -72,8 +74,9 @@ msgstr ""
 msgid "You do not have permission to perform this action."
 msgstr ""
 
-#: includes/Admin/Admin.php:182
 #. translators: %s: number of accounts.
+#: includes/Admin/Admin.php:182
+#, php-format
 msgid "%s item(s) deleted successfully."
 msgstr ""
 
@@ -96,8 +99,9 @@ msgstr ""
 msgid "Date"
 msgstr ""
 
-#: includes/Admin/ListTables/TemplatesTable.php:163
 #. translators: %d: key id.
+#: includes/Admin/ListTables/TemplatesTable.php:163
+#, php-format
 msgid "ID: %d"
 msgstr ""
 
@@ -110,7 +114,8 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
-#: includes/Admin/Settings.php:35 includes/Admin/Settings.php:36
+#: includes/Admin/Settings.php:35
+#: includes/Admin/Settings.php:36
 #: includes/Admin/Settings.php:58
 msgid "Settings"
 msgstr ""
@@ -135,11 +140,13 @@ msgstr ""
 msgid "Default Text Color"
 msgstr ""
 
-#: includes/Admin/Settings.php:111 includes/Admin/Settings.php:176
+#: includes/Admin/Settings.php:111
+#: includes/Admin/Settings.php:176
 msgid "Enable Post Thumbnails"
 msgstr ""
 
-#: includes/Admin/Settings.php:120 includes/Admin/Settings.php:193
+#: includes/Admin/Settings.php:120
+#: includes/Admin/Settings.php:193
 msgid "Enable Page Thumbnails"
 msgstr ""
 
@@ -152,9 +159,7 @@ msgid "#008000"
 msgstr ""
 
 #: includes/Admin/Settings.php:147
-msgid ""
-"Enter the default background color for the thumbnails. This will be used as "
-"a fallback color if no specific color is set."
+msgid "Enter the default background color for the thumbnails. This will be used as a fallback color if no specific color is set."
 msgstr ""
 
 #: includes/Admin/Settings.php:160
@@ -162,23 +167,15 @@ msgid "#ffffff"
 msgstr ""
 
 #: includes/Admin/Settings.php:161
-msgid ""
-"Enter the default text color for the thumbnails. This will be used as a "
-"fallback color if no specific color is set."
+msgid "Enter the default text color for the thumbnails. This will be used as a fallback color if no specific color is set."
 msgstr ""
 
 #: includes/Admin/Settings.php:178
-msgid ""
-"Check this box to enable automatic generation of post thumbnails when a "
-"post is saved. This will create a thumbnail image based on the post title, "
-"using the random background colors and overlay images if configured."
+msgid "Check this box to enable automatic generation of post thumbnails when a post is saved. This will create a thumbnail image based on the post title, using the random background colors and overlay images if configured."
 msgstr ""
 
 #: includes/Admin/Settings.php:195
-msgid ""
-"Check this box to enable automatic generation of page thumbnails when a "
-"page is saved. This will create a thumbnail image based on the page title, "
-"using the random background colors and overlay images if configured."
+msgid "Check this box to enable automatic generation of page thumbnails when a page is saved. This will create a thumbnail image based on the page title, using the random background colors and overlay images if configured."
 msgstr ""
 
 #: includes/Admin/views/add-img-template.php:15
@@ -217,14 +214,17 @@ msgstr ""
 
 #: includes/Admin/views/add-img-template.php:39
 #: includes/Admin/views/edit-img-template.php:40
-msgid ""
-"Enter the background colors for the thumbnails. Use comma to separate "
-"multiple colors."
+msgid "Enter the background colors for the thumbnails. Use comma to separate multiple colors."
 msgstr ""
 
 #: includes/Admin/views/add-img-template.php:44
 #: includes/Admin/views/edit-img-template.php:45
 msgid "Width"
+msgstr ""
+
+#: includes/Admin/views/add-img-template.php:47
+#: includes/Admin/views/edit-img-template.php:48
+msgid "1200"
 msgstr ""
 
 #: includes/Admin/views/add-img-template.php:48
@@ -237,6 +237,11 @@ msgstr ""
 msgid "Height"
 msgstr ""
 
+#: includes/Admin/views/add-img-template.php:56
+#: includes/Admin/views/edit-img-template.php:57
+msgid "800"
+msgstr ""
+
 #: includes/Admin/views/add-img-template.php:57
 #: includes/Admin/views/edit-img-template.php:58
 msgid "Enter the height for the thumbnails in pixels."
@@ -245,6 +250,11 @@ msgstr ""
 #: includes/Admin/views/add-img-template.php:62
 #: includes/Admin/views/edit-img-template.php:63
 msgid "Title Font Size"
+msgstr ""
+
+#: includes/Admin/views/add-img-template.php:65
+#: includes/Admin/views/edit-img-template.php:66
+msgid "40"
 msgstr ""
 
 #: includes/Admin/views/add-img-template.php:66
@@ -279,9 +289,7 @@ msgstr ""
 
 #: includes/Admin/views/add-img-template.php:91
 #: includes/Admin/views/edit-img-template.php:110
-msgid ""
-"Select one or more transparent PNG images to use as overlay images in the "
-"thumbnails. Randomly one will be selected while generating the thumbnail."
+msgid "Select one or more transparent PNG images to use as overlay images in the thumbnails. Randomly one will be selected while generating the thumbnail."
 msgstr ""
 
 #: includes/Admin/views/add-img-template.php:97
@@ -336,10 +344,7 @@ msgstr ""
 
 #: includes/Admin/views/add-img-template.php:111
 #: includes/Admin/views/edit-img-template.php:131
-msgid ""
-"Select the position for the overlay images in the thumbnails. The overlay "
-"image will be positioned based on this selection. Default is \"Center "
-"Center\"."
+msgid "Select the position for the overlay images in the thumbnails. The overlay image will be positioned based on this selection. Default is \"Center Center\"."
 msgstr ""
 
 #: includes/Admin/views/add-img-template.php:121
@@ -347,7 +352,8 @@ msgstr ""
 msgid "Preview could not be generated. Save changes to generate a preview."
 msgstr ""
 
-#: includes/Admin/views/edit-img-template.php:16 includes/PostTypes.php:40
+#: includes/Admin/views/edit-img-template.php:16
+#: includes/PostTypes.php:40
 msgid "Edit Image Template"
 msgstr ""
 
@@ -364,9 +370,7 @@ msgid "No overlay images selected."
 msgstr ""
 
 #: includes/Admin/views/edit-img-template.php:146
-msgid ""
-"This is a preview of how the image will look like based on the current "
-"settings. Save changes to generate a new preview."
+msgid "This is a preview of how the image will look like based on the current settings. Save changes to generate a new preview."
 msgstr ""
 
 #: includes/Admin/views/img-templates.php:18
@@ -375,6 +379,31 @@ msgstr ""
 
 #: includes/Admin/views/img-templates.php:25
 msgid "Search"
+msgstr ""
+
+#: includes/PostTypes.php:33
+msgctxt "post type general name"
+msgid "Image Templates"
+msgstr ""
+
+#: includes/PostTypes.php:34
+msgctxt "post type singular name"
+msgid "Image Template"
+msgstr ""
+
+#: includes/PostTypes.php:35
+msgctxt "admin menu"
+msgid "Image Templates"
+msgstr ""
+
+#: includes/PostTypes.php:36
+msgctxt "add new on admin bar"
+msgid "Image Templates"
+msgstr ""
+
+#: includes/PostTypes.php:37
+msgctxt "ticket"
+msgid "Add New"
 msgstr ""
 
 #: includes/PostTypes.php:38
@@ -407,47 +436,4 @@ msgstr ""
 
 #: includes/PostTypes.php:46
 msgid "No image templates found in Trash."
-msgstr ""
-
-#. Plugin URI of the plugin/theme
-msgid "https://beautifulplugins.com/image-generator/"
-msgstr ""
-
-#. Description of the plugin/theme
-msgid ""
-"Generate AI-powered images automatically across your WordPress site. Create "
-"stunning visuals for posts, pages, and more with ease."
-msgstr ""
-
-#. Author of the plugin/theme
-msgid "BeautifulPlugins"
-msgstr ""
-
-#. Author URI of the plugin/theme
-msgid "https://beautifulplugins.com"
-msgstr ""
-
-#: includes/PostTypes.php:33
-msgctxt "post type general name"
-msgid "Image Templates"
-msgstr ""
-
-#: includes/PostTypes.php:34
-msgctxt "post type singular name"
-msgid "Image Template"
-msgstr ""
-
-#: includes/PostTypes.php:35
-msgctxt "admin menu"
-msgid "Image Templates"
-msgstr ""
-
-#: includes/PostTypes.php:36
-msgctxt "add new on admin bar"
-msgid "Image Templates"
-msgstr ""
-
-#: includes/PostTypes.php:37
-msgctxt "ticket"
-msgid "Add New"
 msgstr ""

@@ -28,6 +28,7 @@
     ],
     "post-update-cmd": [
       "composer dump-autoload"
-    ]
+    ],
+    "makepot": "wp --allow-root i18n make-pot . --include=*.php,assets,includes,templates --domain=artificial-image-generator"
   }
 }

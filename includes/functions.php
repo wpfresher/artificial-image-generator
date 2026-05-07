@@ -341,7 +341,7 @@ function aimg_generate_thumbnail( $args = array() ) {
 
 	// Save image to uploads directory.
 	$upload_dir = wp_upload_dir();
-	$filepath   = trailingslashit( $upload_dir['path'] ) . $filename;
+	$filepath   = wp_normalize_path( trailingslashit( $upload_dir['path'] ) . $filename );
 
 	imagepng( $img, $filepath );
 	imagedestroy( $img );
