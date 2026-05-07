@@ -9,7 +9,9 @@ module.exports = [
         entry: {
             ...defaultConfig.entry(),
             'css/admin': './src/css/admin.scss',
+            'css/block-editor': './src/css/block-editor.scss',
             'js/admin': './src/js/admin.js',
+            'js/block-editor': './src/js/block-editor.js',
         },
         output: {
             ...defaultConfig.output,

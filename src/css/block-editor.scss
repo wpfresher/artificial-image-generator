@@ -1,0 +1,91 @@
+/* ── AI Image Generator — Editor Styles ─────────────────────────────────── */
+
+/* Toolbar button: subtle highlight so it stands out from native controls */
+.aimg-toolbar-button {
+    color: #7c3aed !important;   /* purple accent — change to match your brand */
+}
+
+.aimg-toolbar-button:hover,
+.aimg-toolbar-button:focus {
+    color: #5b21b6 !important;
+    background-color: rgba( 124, 58, 237, 0.08 ) !important;
+}
+
+/* ── Modal ────────────────────────────────────────────────────────────────── */
+.aimg-modal .components-modal__frame {
+    width: min( 520px, 92vw );
+}
+
+.aimg-modal .components-modal__header {
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 12px;
+    margin-bottom: 4px;
+}
+
+.aimg-modal .components-modal__header-heading {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* Textarea */
+.aimg-modal .components-textarea-control__input {
+    font-size: 14px;
+    resize: vertical;
+    border-radius: 6px;
+    border-color: #d1d5db;
+    transition: border-color 0.15s;
+}
+
+.aimg-modal .components-textarea-control__input:focus {
+    border-color: #7c3aed;
+    box-shadow: 0 0 0 2px rgba( 124, 58, 237, 0.2 );
+}
+
+/* Help text */
+.aimg-modal .components-base-control__help {
+    font-size: 12px;
+    color: #6b7280;
+    margin-top: 4px;
+}
+
+/* ── Action row ───────────────────────────────────────────────────────────── */
+.aimg-modal__actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.aimg-modal__generate-btn {
+    background: #7c3aed !important;
+    border-color: #7c3aed !important;
+    min-width: 148px;
+    justify-content: center;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.aimg-modal__generate-btn:hover:not( :disabled ) {
+    background: #5b21b6 !important;
+    border-color: #5b21b6 !important;
+}
+
+.aimg-modal__generate-btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+/* Spinner inside button */
+.aimg-modal__generate-btn .components-spinner {
+    margin: 0 6px 0 0;
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+}
+
+/* Error notice */
+.aimg-modal .components-notice.is-error {
+    margin: 0 0 14px;
+    border-radius: 6px;
+}
