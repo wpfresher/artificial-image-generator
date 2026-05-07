@@ -156,13 +156,10 @@ class Plugin {
 		$dismissible_text = ( $dismissible ) ? 'is-dismissible' : '';
 
 		// Add new notice.
-		array_push(
-			$notices,
-			array(
-				'notice'      => wp_kses_post( $notice ),
-				'type'        => sanitize_key( $type ),
-				'dismissible' => $dismissible_text,
-			)
+		$notices[] = array(
+			'notice'      => wp_kses_post( $notice ),
+			'type'        => sanitize_key( $type ),
+			'dismissible' => $dismissible_text,
 		);
 
 		// Update the notices array.
