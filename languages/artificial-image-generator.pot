@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-05-07T12:39:23+00:00\n"
+"POT-Creation-Date: 2026-05-07T14:21:07+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: artificial-image-generator\n"
@@ -436,4 +436,60 @@ msgstr ""
 
 #: includes/PostTypes.php:46
 msgid "No image templates found in Trash."
+msgstr ""
+
+#: assets/js/block-editor.js:1
+msgid "No image URL returned by the API."
+msgstr ""
+
+#: assets/js/block-editor.js:1
+msgid "Generate Image with AI"
+msgstr ""
+
+#: assets/js/block-editor.js:1
+msgid "Describe the image you want"
+msgstr ""
+
+#: assets/js/block-editor.js:1
+msgid "Ctrl + Enter to generate."
+msgstr ""
+
+#: assets/js/block-editor.js:1
+msgid "e.g. A sunlit forest path in autumn, photorealistic"
+msgstr ""
+
+#: assets/js/block-editor.js:1
+msgid " Generating…"
+msgstr ""
+
+#: assets/js/block-editor.js:1
+msgid "Generate Image"
+msgstr ""
+
+#: assets/js/block-editor.js:1
+msgid "Cancel"
+msgstr ""
+
+#: assets/js/block-editor.js:1
+msgid "Current featured image"
+msgstr ""
+
+#: assets/js/block-editor.js:1
+msgid "No attachment ID returned. Ensure the PHP endpoint sideloads the image."
+msgstr ""
+
+#: assets/js/block-editor.js:1
+msgid "Something went wrong. Please try again."
+msgstr ""
+
+#: assets/js/block-editor.js:1
+msgid "Please enter a prompt."
+msgstr ""
+
+#: assets/js/block-editor.js:1
+msgid "Generate with AI"
+msgstr ""
+
+#: assets/js/block-editor.js:1
+msgid "AI Featured Image"
 msgstr ""
