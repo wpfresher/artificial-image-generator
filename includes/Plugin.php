@@ -126,7 +126,7 @@ class Plugin {
 	 */
 	protected function init_hooks() {
 		register_activation_hook( AIMG_FILE, array( $this, 'activate' ) );
-		register_deactivation_hook( TODOM_FILE, array( $this, 'deactivate' ) );
+		register_deactivation_hook( AIMG_FILE, array( $this, 'deactivate' ) );
 		add_action( 'admin_notices', array( $this, 'display_flash_notices' ), 12 );
 		add_action( 'init', array( $this, 'init' ), 0 );
 	}
