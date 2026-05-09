@@ -7,7 +7,12 @@
       "PowerShell(Get-ChildItem -Path \"C:\\\\Sites\\\\wpplugins\\\\wp-content\\\\plugins\\\\artificial-image-generator\" -Filter \".cursorrules\" -ErrorAction SilentlyContinue | ForEach-Object { $_.Name })",
       "PowerShell(Get-ChildItem -Path \"C:\\\\Sites\\\\wpplugins\\\\wp-content\\\\plugins\\\\artificial-image-generator\" -Filter \"CLAUDE.md\" -ErrorAction SilentlyContinue | ForEach-Object { $_.Name })",
       "PowerShell(Get-ChildItem -Path \"C:\\\\Sites\\\\wpplugins\\\\wp-content\\\\plugins\\\\artificial-image-generator\\\\bin\" -ErrorAction SilentlyContinue | ForEach-Object { $_.Name })",
-      "PowerShell(tree.com /F \"C:\\\\Sites\\\\wpplugins\\\\wp-content\\\\plugins\\\\artificial-image-generator\" 2>$null | Select-Object -First 100)"
+      "PowerShell(tree.com /F \"C:\\\\Sites\\\\wpplugins\\\\wp-content\\\\plugins\\\\artificial-image-generator\" 2>$null | Select-Object -First 100)",
+      "Bash(npm run *)",
+      "Bash(php -l includes/RestAPI.php)",
+      "Bash(php -l includes/Admin/Editor.php)",
+      "Bash(php -l includes/Admin/Settings.php)",
+      "Bash(claude config *)"
     ]
   }
 }
