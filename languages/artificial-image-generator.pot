@@ -2,14 +2,14 @@
 # This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Image Generator 1.1.0\n"
+"Project-Id-Version: Image Generator 1.3.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/artificial-image-generator\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-04-12T04:51:49+00:00\n"
+"POT-Creation-Date: 2026-05-09T11:55:24+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: artificial-image-generator\n"
@@ -141,40 +141,60 @@ msgid "Default Text Color"
 msgstr ""
 
 #: includes/Admin/Settings.php:111
-#: includes/Admin/Settings.php:176
+#: includes/Admin/Settings.php:236
 msgid "Enable Post Thumbnails"
 msgstr ""
 
 #: includes/Admin/Settings.php:120
-#: includes/Admin/Settings.php:193
+#: includes/Admin/Settings.php:253
 msgid "Enable Page Thumbnails"
 msgstr ""
 
-#: includes/Admin/Settings.php:134
-msgid "Configure the Image Generator general settings."
+#: includes/Admin/Settings.php:129
+msgid "AI Service"
 msgstr ""
 
-#: includes/Admin/Settings.php:146
-msgid "#008000"
+#: includes/Admin/Settings.php:137
+msgid "API Key"
 msgstr ""
 
-#: includes/Admin/Settings.php:147
-msgid "Enter the default background color for the thumbnails. This will be used as a fallback color if no specific color is set."
-msgstr ""
-
-#: includes/Admin/Settings.php:160
-msgid "#ffffff"
-msgstr ""
-
-#: includes/Admin/Settings.php:161
-msgid "Enter the default text color for the thumbnails. This will be used as a fallback color if no specific color is set."
+#: includes/Admin/Settings.php:151
+msgid "Configure the AI image generation service used by the block editor. The API key is used when generating images from a custom prompt."
 msgstr ""
 
 #: includes/Admin/Settings.php:178
+msgid "Your API key is currently defined via the AIMG_API_KEY PHP constant and cannot be edited here."
+msgstr ""
+
+#: includes/Admin/Settings.php:180
+msgid "Enter your image generation API key (e.g. an OpenAI key for DALL·E). For maximum security you can instead define the AIMG_API_KEY constant in wp-config.php."
+msgstr ""
+
+#: includes/Admin/Settings.php:194
+msgid "Configure the Image Generator general settings."
+msgstr ""
+
+#: includes/Admin/Settings.php:206
+msgid "#008000"
+msgstr ""
+
+#: includes/Admin/Settings.php:207
+msgid "Enter the default background color for the thumbnails. This will be used as a fallback color if no specific color is set."
+msgstr ""
+
+#: includes/Admin/Settings.php:220
+msgid "#ffffff"
+msgstr ""
+
+#: includes/Admin/Settings.php:221
+msgid "Enter the default text color for the thumbnails. This will be used as a fallback color if no specific color is set."
+msgstr ""
+
+#: includes/Admin/Settings.php:238
 msgid "Check this box to enable automatic generation of post thumbnails when a post is saved. This will create a thumbnail image based on the post title, using the random background colors and overlay images if configured."
 msgstr ""
 
-#: includes/Admin/Settings.php:195
+#: includes/Admin/Settings.php:255
 msgid "Check this box to enable automatic generation of page thumbnails when a page is saved. This will create a thumbnail image based on the page title, using the random background colors and overlay images if configured."
 msgstr ""
 
@@ -436,4 +456,148 @@ msgstr ""
 
 #: includes/PostTypes.php:46
 msgid "No image templates found in Trash."
+msgstr ""
+
+#: includes/RestAPI.php:86
+msgid "You do not have permission to access image templates."
+msgstr ""
+
+#: includes/RestAPI.php:108
+msgid "You do not have permission to generate images."
+msgstr ""
+
+#: includes/RestAPI.php:119
+msgid "You must supply either a prompt or a template_id."
+msgstr ""
+
+#: includes/RestAPI.php:188
+msgid "No prompt or template_id provided."
+msgstr ""
+
+#: includes/RestAPI.php:207
+msgid "Invalid template ID."
+msgstr ""
+
+#: includes/RestAPI.php:253
+msgid "Failed to generate image from template."
+msgstr ""
+
+#: includes/RestAPI.php:287
+msgid "No API key configured. Please add your API key on the Image Generator settings page."
+msgstr ""
+
+#: includes/RestAPI.php:354
+msgid "The image generation API returned an error."
+msgstr ""
+
+#: includes/RestAPI.php:368
+msgid "No image returned by the API."
+msgstr ""
+
+#: assets/js/block-editor.js:1
+msgid "Failed to load image templates."
+msgstr ""
+
+#: assets/js/block-editor.js:1
+msgid "Loading templates…"
+msgstr ""
+
+#: assets/js/block-editor.js:1
+msgid "No templates available"
+msgstr ""
+
+#: assets/js/block-editor.js:1
+msgid "Create at least one image template under Image Generator → Image Templates to use this option."
+msgstr ""
+
+#: assets/js/block-editor.js:1
+msgid "Title text (optional)"
+msgstr ""
+
+#: assets/js/block-editor.js:1
+msgid "This text is rendered onto the generated image. Leave blank to use the post title."
+msgstr ""
+
+#: assets/js/block-editor.js:1
+msgid "Image templates"
+msgstr ""
+
+#: assets/js/block-editor.js:1
+msgid "No AI API key is configured yet. Add one to enable prompt-based generation."
+msgstr ""
+
+#: assets/js/block-editor.js:1
+msgid "Open settings"
+msgstr ""
+
+#: assets/js/block-editor.js:1
+msgid "Describe the image you want"
+msgstr ""
+
+#: assets/js/block-editor.js:1
+msgid "Tip: press Ctrl + Enter (⌘ + Enter on Mac) to generate."
+msgstr ""
+
+#: assets/js/block-editor.js:1
+msgid "e.g. A sunlit forest path in autumn, photorealistic, soft lighting"
+msgstr ""
+
+#: assets/js/block-editor.js:1
+msgid "Templates"
+msgstr ""
+
+#: assets/js/block-editor.js:1
+msgid "Custom Prompt"
+msgstr ""
+
+#: assets/js/block-editor.js:1
+msgid "Generate Image with Image Generator & AI"
+msgstr ""
+
+#: assets/js/block-editor.js:1
+msgid "Generating…"
+msgstr ""
+
+#: assets/js/block-editor.js:1
+msgid "Generate Image"
+msgstr ""
+
+#: assets/js/block-editor.js:1
+msgid "Cancel"
+msgstr ""
+
+#: assets/js/block-editor.js:1
+msgid "Generating image — this can take up to a minute…"
+msgstr ""
+
+#: assets/js/block-editor.js:1
+msgid "No image URL returned by the API."
+msgstr ""
+
+#: assets/js/block-editor.js:1
+msgid "Something went wrong. Please try again."
+msgstr ""
+
+#: assets/js/block-editor.js:1
+msgid "The generated image could not be added to the Media Library — a featured image needs an attachment ID."
+msgstr ""
+
+#: assets/js/block-editor.js:1
+msgid "Current featured image"
+msgstr ""
+
+#: assets/js/block-editor.js:1
+msgid "Generate Featured Image"
+msgstr ""
+
+#: assets/js/block-editor.js:1
+msgid "Generate with Image generator & AI"
+msgstr ""
+
+#: assets/js/block-editor.js:1
+msgid "Generate Image with Image generator & AI"
+msgstr ""
+
+#: assets/js/block-editor.js:1
+msgid "AI Featured Image"
 msgstr ""

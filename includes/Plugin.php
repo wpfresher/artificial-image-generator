@@ -203,12 +203,14 @@ class Plugin {
 		// Load common classes.
 		new PostTypes();
 		new GenerateImages();
+		new RestAPI();
 
 		// Load the admin classes if it's an admin area.
 		if ( is_admin() ) {
 			new Admin\Admin();
 			new Admin\Settings();
 			new Admin\Actions();
+			new Admin\Editor();
 		}
 	}
 }

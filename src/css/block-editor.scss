@@ -1,0 +1,241 @@
+/* Global color variables */
+$aimg-accent:        #7c3aed;
+$aimg-accent-hover:  #5b21b6;
+$aimg-accent-soft:   rgba( 124, 58, 237, 0.08 );
+$aimg-accent-ring:   rgba( 124, 58, 237, 0.25 );
+$aimg-border:        #e5e7eb;
+$aimg-muted:         #6b7280;
+
+/* Toolbar button: subtle highlight so it stands out from native controls */
+.aimg-toolbar-button {
+	color: $aimg-accent !important;
+
+	&:hover,
+	&:focus {
+		color: $aimg-accent-hover !important;
+		background-color: $aimg-accent-soft !important;
+	}
+}
+
+/* ── Modal frame ─────────────────────────────────────────────────────────── */
+.aimg-modal.components-modal__frame {
+    width: min( 768px, 94vw );
+    max-height: min( 88vh, 760px );
+
+	.components-modal__header {
+		border-bottom: 1px solid $aimg-border;
+	}
+
+	.aimg-modal__notice {
+		margin: 0 0 12px;
+		border-radius: 6px;
+	}
+}
+
+
+/* ── Tab panel ───────────────────────────────────────────────────────────── */
+.aimg-modal__tabs {
+	.components-tab-panel__tabs {
+		border-bottom: 1px solid $aimg-border;
+		margin-bottom: 16px;
+	}
+
+	.components-tab-panel__tabs-item.is-active {
+		color: $aimg-accent;
+		box-shadow: inset 0 -2px 0 0 $aimg-accent;
+	}
+}
+
+/* ── Templates grid ──────────────────────────────────────────────────────── */
+.aimg-templates__grid {
+    display: grid;
+    grid-template-columns: repeat( auto-fill, minmax( 160px, 1fr ) );
+    gap: 12px;
+    margin-top: 12px;
+    max-height: 420px;
+    overflow-y: auto;
+
+	.aimg-template-card {
+		appearance: none;
+		background: #fff;
+		border: 1px solid $aimg-border;
+		border-radius: 8px;
+		cursor: pointer;
+		overflow: hidden;
+		padding: 0;
+		text-align: left;
+		transition: border-color 0.15s, box-shadow 0.15s, transform 0.05s;
+		display: flex;
+		flex-direction: column;
+
+		&:hover:not(:disabled) {
+			border-color: $aimg-accent;
+			box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.06 );
+		}
+
+		&:focus-visible {
+			outline: none;
+			border-color: $aimg-accent;
+			box-shadow: 0 0 0 2px $aimg-accent-ring;
+		}
+
+		&.is-selected {
+			border-color: $aimg-accent;
+			box-shadow: 0 0 0 2px $aimg-accent-ring;
+		}
+
+		&:disabled {
+			opacity: 0.55;
+			cursor: not-allowed;
+		}
+
+		&__preview {
+			aspect-ratio: 16 / 9;
+			background: #f3f4f6;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			overflow: hidden;
+
+			img {
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+				display: block;
+			}
+		}
+
+		&__placeholder {
+			color: $aimg-muted;
+			opacity: 0.5;
+		}
+
+		&__meta {
+			padding: 8px 5px;
+			display: flex;
+			flex-direction: column;
+			gap: 2px;
+		}
+
+		&__title {
+			font-size: 12px;
+			font-weight: 500;
+			color: #111827;
+			line-height: 1.3;
+			word-break: break-word;
+		}
+
+		&__size {
+			font-size: 10px;
+			color: $aimg-muted;
+		}
+	}
+}
+
+/* ── Custom prompt textarea ──────────────────────────────────────────────── */
+.aimg-modal .components-textarea-control {
+	&__input {
+		font-size: 14px;
+		resize: vertical;
+		border-radius: 6px;
+		border-color: #d1d5db;
+		transition: border-color 0.15s;
+
+		&:focus {
+			border-color: $aimg-accent;
+			box-shadow: 0 0 0 2px $aimg-accent-ring;
+		}
+	}
+
+	&__help {
+		font-size: 12px;
+		color: $aimg-muted;
+		margin-top: 4px;
+	}
+}
+
+/* ── Inline loading row inside tabs ──────────────────────────────────────── */
+.aimg-modal__loading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 24px;
+    color: $aimg-muted;
+}
+
+/* ── Action row ──────────────────────────────────────────────────────────── */
+.aimg-modal__actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid $aimg-border;
+
+	.aimg-modal__generate-btn {
+		background: $aimg-accent !important;
+		border-color: $aimg-accent !important;
+		min-width: 160px;
+		justify-content: center;
+		transition: background 0.15s, border-color 0.15s;
+
+		&:hover:not(:disabled) {
+			background: $aimg-accent-hover !important;
+			border-color: $aimg-accent-hover !important;
+		}
+
+		&:disabled {
+			opacity: 0.55;
+			cursor: not-allowed;
+		}
+
+		.components-spinner {
+			margin: 0 6px 0 0;
+			width: 16px;
+			height: 16px;
+			vertical-align: middle;
+			color: #fff;
+		}
+	}
+}
+
+/* ── Loading overlay ─────────────────────────────────────────────────────── */
+.aimg-modal__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba( 255, 255, 255, 0.8 );
+    backdrop-filter: blur( 2px );
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    z-index: 10;
+    border-radius: 4px;
+}
+
+.aimg-modal__overlay-text {
+    color: #374151;
+    font-size: 14px;
+    margin: 0;
+}
+
+/* ── Featured Image sidebar panel ────────────────────────────────────────── */
+.aimg-featured__wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+	.aimg-featured__preview {
+		width: 100%;
+		height: auto;
+		border-radius: 6px;
+		border: 1px solid $aimg-border;
+		display: block;
+	}
+
+	.aimg-featured__btn {
+		width: 100%;
+		justify-content: center;
+	}
+}

@@ -122,6 +122,66 @@ class Settings {
 			'aimg-settings',
 			'aimg_general_settings'
 		);
+
+		// AI service section.
+		add_settings_section(
+			'aimg_ai_service_settings',
+			__( 'AI Service', 'artificial-image-generator' ),
+			array( $this, 'ai_service_settings' ),
+			'aimg-settings'
+		);
+
+		// API key field for AI service.
+		add_settings_field(
+			'aimg_api_key',
+			__( 'API Key', 'artificial-image-generator' ),
+			array( $this, 'api_key_field' ),
+			'aimg-settings',
+			'aimg_ai_service_settings'
+		);
+	}
+
+	/**
+	 * Display AI service settings section description.
+	 *
+	 * @since 1.0.0
+	 * @return void
+	 */
+	public function ai_service_settings() {
+		echo '<p>' . esc_html__( 'Configure the AI image generation service used by the block editor. The API key is used when generating images from a custom prompt.', 'artificial-image-generator' ) . '</p>';
+	}
+
+	/**
+	 * Render API key field.
+	 *
+	 * @since 1.0.0
+	 * @return void
+	 */
+	public function api_key_field() {
+		$is_constant = defined( 'AIMG_API_KEY' ) && AIMG_API_KEY;
+		$api_key     = $is_constant ? AIMG_API_KEY : aimg_get_settings( 'api_key', '' );
+		$masked      = $api_key ? str_repeat( '•', max( 0, strlen( $api_key ) - 4 ) ) . substr( $api_key, -4 ) : '';
+		?>
+		<input
+			type="password"
+			name="aimg_settings[api_key]"
+			id="aimg_settings_api_key"
+			value="<?php echo esc_attr( $is_constant ? '' : $api_key ); ?>"
+			class="regular-text"
+			autocomplete="off"
+			placeholder="<?php echo $is_constant ? esc_attr( $masked ) : 'sk-...'; ?>"
+			<?php disabled( $is_constant ); ?>
+		/>
+		<p class="description">
+			<?php
+			if ( $is_constant ) {
+				esc_html_e( 'Your API key is currently defined via the AIMG_API_KEY PHP constant and cannot be edited here.', 'artificial-image-generator' );
+			} else {
+				esc_html_e( 'Enter your image generation API key (e.g. an OpenAI key for DALL·E). For maximum security you can instead define the AIMG_API_KEY constant in wp-config.php.', 'artificial-image-generator' );
+			}
+			?>
+		</p>
+		<?php
 	}
 
 	/**
@@ -218,6 +278,13 @@ class Settings {
 
 		// Sanitize the is page thumbnail setting.
 		$sanitized_settings['is_page_thumbnail'] = isset( $settings['is_page_thumbnail'] ) ? 'yes' : 'no';
+
+		// Sanitize the API key. If the constant is defined, never persist a value here.
+		if ( defined( 'AIMG_API_KEY' ) && AIMG_API_KEY ) {
+			$sanitized_settings['api_key'] = '';
+		} else {
+			$sanitized_settings['api_key'] = isset( $settings['api_key'] ) ? trim( sanitize_text_field( $settings['api_key'] ) ) : '';
+		}
 
 		return $sanitized_settings;
 	}

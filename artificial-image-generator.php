@@ -3,8 +3,8 @@
  * Plugin Name:       Image Generator
  * Plugin URI:        https://beautifulplugins.com/image-generator/
  * Description:       Generate AI-powered images automatically across your WordPress site. Create stunning visuals for posts, pages, and more with ease.
- * Version:           1.2.0
- * Requires at least: 5.0
+ * Version:           1.3.0
+ * Requires at least: 6.0
  * Requires PHP:      7.4
  * Tested up to:      6.9
  * Author:            BeautifulPlugins
@@ -31,7 +31,7 @@ require_once __DIR__ . '/vendor/autoload.php';
  * @return Plugin The plugin instance.
  */
 function artificial_image_generator() {
-	return Plugin::create( __FILE__, '1.2.0' );
+	return Plugin::create( __FILE__, '1.3.0' );
 }
 
 // Initialize the plugin.
