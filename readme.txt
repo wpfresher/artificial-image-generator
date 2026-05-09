@@ -245,7 +245,7 @@ Prompt-based image generation calls a third-party API (**OpenAI** by default). Y
 
 == Changelog ==
 
-= 1.3.0 ( 15th June 2026 ) =
+= 1.3.0 ( 9th May 2026 ) =
 * New: Full **block editor (Gutenberg) integration** — toolbar button on Image and Media & Text blocks, plus an AI Featured Image panel in the document sidebar.
 * New: Generate images directly inside the editor from a saved template or a custom AI prompt.
 * New: **AI image generation via OpenAI DALL·E 3** (configurable API key, swappable endpoint and model via filters).
