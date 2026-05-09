@@ -126,6 +126,7 @@ class Plugin {
 	 */
 	protected function init_hooks() {
 		register_activation_hook( AIMG_FILE, array( $this, 'activate' ) );
+		register_deactivation_hook( TODOM_FILE, array( $this, 'deactivate' ) );
 		add_action( 'admin_notices', array( $this, 'display_flash_notices' ), 12 );
 		add_action( 'init', array( $this, 'init' ), 0 );
 	}
@@ -137,8 +138,22 @@ class Plugin {
 	 * @since 1.0.0
 	 * @return void
 	 */
-	public function activate() {
+	public function activate(): void {
 		update_option( 'aimg_version', AIMG_VERSION );
+
+		// Flash rewrite rules.
+		flush_rewrite_rules();
+	}
+
+	/**
+	 * Plugin deactivation
+	 * This method is called when the plugin is deactivated.
+	 *
+	 * @since 1.0.0
+	 * @return void
+	 */
+	public function deactivate(): void {
+		flush_rewrite_rules();
 	}
 
 	/**
