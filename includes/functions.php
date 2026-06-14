@@ -72,7 +72,7 @@ function aimg_get_settings( $option, $default_value = null ) {
  * key is configured, and the Media Library URL used for post-generation
  * redirects.
  *
- * @since 1.0.0
+ * @since  1.4.0
  * @return array
  */
 function aimg_get_js_data() {

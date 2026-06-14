@@ -242,7 +242,7 @@ Prompt-based image generation calls a third-party API (**OpenAI** by default). Y
 2. Image Templates — Pre-made list of image templates.
 3. Image Template editor — colors, dimensions, overlays, and live preview.
 4. Preview of generated image in the frontend in a post.
-5. Preview of generated another image in the frontend in a post.
+5. Preview of another generated image in the frontend in a post.
 6. Plugin settings — defaults and AI API key configuration.
 
 == Changelog ==
@@ -250,7 +250,7 @@ Prompt-based image generation calls a third-party API (**OpenAI** by default). Y
 * New: Added **image generation** in the Media Library via the "Generate Image" button, allowing users to create images without opening a post or page.
 * New: Added updated plugin screenshots to the WordPress.org plugin page.
 * Enhance: Improved template editor with live preview and better color contrast checks.
-* Fix: Resolved few minor issues.
+* Fix: Resolved a few minor issues.
 * Compatibility: Tested up to WordPress 7.0.
 
 = 1.3.0 ( 9th May 2026 ) =

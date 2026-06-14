@@ -11,7 +11,7 @@ defined( 'ABSPATH' ) || exit; // Exit if accessed directly.
  * on the Media Library (upload.php) and Add New Media (media-new.php) screens so
  * the same "Generate Image" modal used in the block editor is available there.
  *
- * @since 1.0.0
+ * @since 1.4.0
  * @package ArtificialImageGenerator\Admin
  */
 class MediaLibrary {
@@ -28,7 +28,7 @@ class MediaLibrary {
 	 *
 	 * @param string $hook The current admin page hook.
 	 *
-	 * @since 1.0.0
+	 * @since 1.4.0
 	 * @return void
 	 */
 	public function enqueue_assets( $hook ) {
