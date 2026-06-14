@@ -98,12 +98,14 @@ class GenerateImages {
 		// Get absolute paths of overlay images.
 		$overlays = array();
 		if ( 'yes' === get_post_meta( $template_id, '_aimg_is_overlay_image', true ) ) {
-			$overlay_images = json_decode( get_post_meta( $template_id, '_aimg_overlay_images', true ) );
+			$overlay_images = json_decode( (string) get_post_meta( $template_id, '_aimg_overlay_images', true ) );
 
-			foreach ( $overlay_images as $id ) {
-				$path = get_attached_file( $id );
-				if ( $path && file_exists( $path ) ) {
-					$overlays[] = $path;
+			if ( is_array( $overlay_images ) ) {
+				foreach ( $overlay_images as $id ) {
+					$path = get_attached_file( $id );
+					if ( $path && file_exists( $path ) ) {
+						$overlays[] = $path;
+					}
 				}
 			}
 

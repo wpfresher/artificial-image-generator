@@ -16,7 +16,8 @@
       "Bash(npx wp-scripts *)",
       "Bash(php -l includes/Admin/MediaLibrary.php)",
       "Bash(php -l includes/functions.php)",
-      "Bash(php -l includes/Plugin.php)"
+      "Bash(php -l includes/Plugin.php)",
+      "Bash(php -l includes/GenerateImages.php)"
     ]
   }
 }

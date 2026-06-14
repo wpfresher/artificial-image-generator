@@ -115,6 +115,7 @@ function aimg_generate_preview( $post_id, $colors, $width, $height, $overlays = 
 
 	// Get absolute paths of overlay images.
 	$overlays_path = array();
+	$overlays      = is_array( $overlays ) ? $overlays : array();
 	foreach ( $overlays as $id ) {
 		$path = get_attached_file( $id );
 		if ( $path && file_exists( $path ) ) {
