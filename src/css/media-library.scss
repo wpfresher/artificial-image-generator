@@ -1,0 +1,12 @@
+@use 'aimg-modal' as *;
+
+/* "Generate Image" button sitting beside the page title action(s) */
+.aimg-generate-action.page-title-action {
+	cursor: pointer;
+
+	&:hover,
+	&:focus {
+		border-color: $aimg-accent;
+		color: $aimg-accent;
+	}
+}

@@ -226,6 +226,7 @@ class Plugin {
 			new Admin\Settings();
 			new Admin\Actions();
 			new Admin\Editor();
+			new Admin\MediaLibrary();
 		}
 	}
 }

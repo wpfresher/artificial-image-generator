@@ -62,23 +62,6 @@ class Editor {
 			wp_set_script_translations( 'aimg-editor', 'artificial-image-generator' );
 		}
 
-		$has_api_key = ( defined( 'AIMG_API_KEY' ) && AIMG_API_KEY )
-			|| ! empty( aimg_get_settings( 'api_key', '' ) );
-
-		wp_localize_script(
-			'aimg-editor',
-			'aimgData',
-			array(
-				'endpoints' => array(
-					'generate'  => rest_url( 'aimg/v1/generate' ),
-					'templates' => rest_url( 'aimg/v1/templates' ),
-				),
-				'nonce'     => wp_create_nonce( 'wp_rest' ),
-				'settings'  => array(
-					'hasApiKey'  => (bool) $has_api_key,
-					'settingsUrl' => admin_url( 'admin.php?page=aimg-settings' ),
-				),
-			)
-		);
+		wp_localize_script( 'aimg-editor', 'aimgData', aimg_get_js_data() );
 	}
 }
