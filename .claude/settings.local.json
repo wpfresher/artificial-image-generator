@@ -12,7 +12,11 @@
       "Bash(php -l includes/RestAPI.php)",
       "Bash(php -l includes/Admin/Editor.php)",
       "Bash(php -l includes/Admin/Settings.php)",
-      "Bash(claude config *)"
+      "Bash(claude config *)",
+      "Bash(npx wp-scripts *)",
+      "Bash(php -l includes/Admin/MediaLibrary.php)",
+      "Bash(php -l includes/functions.php)",
+      "Bash(php -l includes/Plugin.php)"
     ]
   }
 }

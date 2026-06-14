@@ -2,9 +2,9 @@
 Contributors: beautifulplugins, kawsarahmedr
 Tags: ai, ai image, image generator, featured image, block editor
 Requires at least: 6.0
-Tested up to: 6.9
+Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.3.0
+Stable tag: 1.4.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ AI image generator for WordPress. Auto-create featured images, post thumbnails &
 
 == Description ==
 
-**Image Generator** is the all-in-one **AI image generator and automatic featured image plugin for WordPress**. Create eye-catching **featured images, post thumbnails, hero banners, and social media images** in two clicks — directly inside the **Gutenberg block editor**, or automatically every time you publish a post or page.
+[**Image Generator**](https://beautifulplugins.com/plugins/image-generator-pro/) is the all-in-one **AI image generator and automatic featured image plugin for WordPress**. Create eye-catching **featured images, post thumbnails, hero banners, and social media images** in two clicks — directly inside the **Gutenberg block editor**, or automatically every time you publish a post or page.
 
 Stop wasting hours on stock photo sites. Stop publishing posts with broken thumbnail spots. With **Image Generator** you can:
 
@@ -23,21 +23,23 @@ Stop wasting hours on stock photo sites. Stop publishing posts with broken thumb
 
 Whether you run a blog, news site, magazine, portfolio, affiliate site, online store, or membership platform, this plugin gives every post a polished, **SEO-friendly featured image** — without the manual work.
 
+[**🚀 Upgrade to Pro**](https://beautifulplugins.com/plugins/image-generator-pro/) | [**📄 Plugin Documentation**](https://beautifulplugins.com/docs/) | [**💻 Support**](https://beautifulplugins.com/contact/)
+
 = Two Powerful Ways to Create Images =
 
-1. **Inside the block editor (on demand)** — generate an image while you're writing and drop it straight into an Image block, a Media & Text block, or set it as the post's Featured Image.
-2. **Automatic on publish (hands-off)** — when a post or page has no featured image, the plugin picks one of your saved templates and renders a custom thumbnail using the post title, your brand colors, fonts, and overlay images.
+1. **Inside the block editor (on demand)**: generate an image while you're writing and drop it straight into an Image block, a Media & Text block, or set it as the post's Featured Image.
+2. **Automatic on publish (hands-off)**: when a post or page has no featured image, the plugin picks one of your saved templates and renders a custom thumbnail using the post title, your brand colors, fonts, and overlay images.
 
-Every generated image — whether AI-created or template-rendered — is saved to the **WordPress Media Library** with proper alt text, so it works with any theme, page builder, CDN, image-optimization plugin, lazy loader, or SEO plugin.
+Every generated image, whether AI-created or template-rendered — is saved to the **WordPress Media Library** with proper alt text, so it works with any theme, page builder, CDN, image-optimization plugin, lazy loader, or SEO plugin.
 
 = Why Featured Images Matter for SEO and Engagement =
 
-- **Higher search rankings** — Google rewards visually rich content with better placement in search results and Google Discover.
-- **Better click-through rates** — posts with attractive thumbnails get noticeably more clicks from search results, archive pages, and category listings.
-- **More social shares** — Facebook, Twitter/X, LinkedIn, and Pinterest all use the featured image when someone shares your URL. No featured image = no preview = fewer clicks.
-- **Pinterest traffic** — pin-worthy custom images can drive long-tail referral traffic for years.
-- **Brand consistency** — reusable templates keep every post on-brand without hiring a designer.
-- **Improved Core Web Vitals** — properly attached, optimized featured images load predictably and avoid layout shift.
+- **Higher search rankings**: Google rewards visually rich content with better placement in search results and Google Discover.
+- **Better click-through rates**: posts with attractive thumbnails get noticeably more clicks from search results, archive pages, and category listings.
+- **More social shares**: Facebook, Twitter/X, LinkedIn, and Pinterest all use the featured image when someone shares your URL. No featured image = no preview = fewer clicks.
+- **Pinterest traffic**: pin-worthy custom images can drive long-tail referral traffic for years.
+- **Brand consistency**: reusable templates keep every post on-brand without hiring a designer.
+- **Improved Core Web Vitals**: properly attached, optimized featured images load predictably and avoid layout shift.
 
 = Perfect For =
 
@@ -52,34 +54,34 @@ Every generated image — whether AI-created or template-rendered — is saved t
 == Key Features ==
 
 ✅ **AI Image Generation with DALL·E**
-Plug in your **OpenAI API key** (or define the `AIMG_API_KEY` constant in `wp-config.php`) and generate unique images from natural-language prompts — *"a sunlit forest path in autumn, photorealistic, soft lighting"* — without leaving WordPress.
+Plug in your **OpenAI API key** (or define the `AIMG_API_KEY` constant in `wp-config.php`) and generate unique images from natural-language prompts *"a sunlit forest path in autumn, photorealistic, soft lighting"*, without leaving WordPress.
 
 ✅ **Block Editor (Gutenberg) Integration**
-Adds an **"AI Generate" sparkle button** to the toolbar of core Image and Media & Text blocks, plus a dedicated **AI Featured Image panel** in the document sidebar. No setup, no shortcodes — it just shows up.
+Adds an **"AI Generate" sparkle button** to the toolbar of core Image and Media & Text blocks, plus a dedicated **AI Featured Image panel** in the document sidebar. No setup, no shortcodes, it just shows up.
 
 ✅ **Two Generation Modes in One Modal**
 A single, unified modal lets editors switch between **Templates** (fast, on-brand, free) and **Custom Prompt** (AI-generated, unique). Pick the right tool for each post.
 
 ✅ **Unlimited Reusable Image Templates**
-Build as many image templates as you want with custom **background colors, text colors, dimensions, fonts, and PNG overlays**. Each template is rendered server-side using PHP's GD library — no external dependency.
+Build as many image templates as you want with custom **background colors, text colors, dimensions, fonts, and PNG overlays**. Each template is rendered server-side using PHP's GD library, no external dependency.
 
 ✅ **Automatic Featured Image on Save**
 When a post, page, or custom post type is saved without a featured image, the plugin renders one from a random template using the post title. Hands-off, instant, every time.
 
 ✅ **Custom Post Type & WooCommerce Support**
-Works with **posts, pages, WooCommerce products**, and any public custom post type that supports featured images — including LearnDash lessons, BuddyBoss content, Easy Digital Downloads products, and more.
+Works with **posts, pages, WooCommerce products**, and any public custom post type that supports featured images, including LearnDash lessons, BuddyBoss content, Easy Digital Downloads products, and more.
 
 ✅ **Native WordPress Media Library**
-Every image — AI or template — is **sideloaded into the Media Library** with attachment ID and alt text. So image optimization plugins (Smush, ShortPixel, Imagify, EWWW), CDNs (Cloudflare, BunnyCDN, KeyCDN), and SEO plugins (Yoast, Rank Math, AIOSEO) all see it as a regular attachment.
+Every image, AI or template — is **sideloaded into the Media Library** with attachment ID and alt text. So image optimization plugins (Smush, ShortPixel, Imagify, EWWW), CDNs (Cloudflare, BunnyCDN, KeyCDN), and SEO plugins (Yoast, Rank Math, AIOSEO) all see it as a regular attachment.
 
 ✅ **REST API for Headless & Custom Workflows**
-Public endpoints (`/wp-json/aimg/v1/generate`, `/wp-json/aimg/v1/templates`) with capability checks (`edit_posts`, `upload_files`) and nonce protection — perfect for **headless WordPress, decoupled frontends, and bulk automation scripts**.
+Public endpoints (`/wp-json/aimg/v1/generate`, `/wp-json/aimg/v1/templates`) with capability checks (`edit_posts`, `upload_files`) and nonce protection, perfect for **headless WordPress, decoupled frontends, and bulk automation scripts**.
 
 ✅ **Developer-Friendly Filters**
 Swap the AI endpoint, change the model, customize the request body, and hook into the generation pipeline with `aimg_generate_endpoint` and `aimg_generate_request_body` filters.
 
 ✅ **Translation Ready (i18n)**
-Fully translatable via the bundled `.pot` file — both PHP and editor JavaScript strings are registered with `wp_set_script_translations`. Compatible with WPML, Polylang, Loco Translate, and TranslatePress.
+Fully translatable via the bundled `.pot` file, both PHP and editor JavaScript strings are registered with `wp_set_script_translations`. Compatible with WPML, Polylang, Loco Translate, and TranslatePress.
 
 ✅ **Lightweight, Fast, and Secure**
 No bloated dependencies. Uses native WordPress components, the GD library (already part of PHP), and the REST API. API keys can be stored outside the database via the `AIMG_API_KEY` constant.
@@ -92,10 +94,10 @@ Simple admin UI under **Image Generator** in the WordPress dashboard. Build a te
 = Generate from the Block Editor (On Demand) =
 
 1. Open any post or page in the **Gutenberg editor**.
-2. Click the ✨ sparkle icon in the toolbar of an **Image** or **Media & Text** block — *or* open the **AI Featured Image** panel in the document sidebar.
+2. Click the ✨ sparkle icon in the toolbar of an **Image** or **Media & Text** block or open the **AI Featured Image** panel in the document sidebar.
 3. Choose a tab in the modal:
-   - **Templates** — pick a saved image template. The title text defaults to the current post title.
-   - **Custom Prompt** — describe the image you want and press *Generate* (or Ctrl + Enter / ⌘ + Enter).
+   - **Templates**: pick a saved image template. The title text defaults to the current post title.
+   - **Custom Prompt**: describe the image you want and press *Generate* (or Ctrl + Enter / ⌘ + Enter).
 4. The image is generated, added to the Media Library, and **inserted into the block** or **assigned as the featured image** automatically.
 
 = Auto-Generate Featured Images on Publish =
@@ -111,7 +113,7 @@ Simple admin UI under **Image Generator** in the WordPress dashboard. Build a te
 Publish a post, hit Update, and walk away. Your readers and Google get a polished featured image every time, without you ever opening Canva.
 
 = News and Magazine Sites =
-Generate consistent on-brand thumbnails for breaking news pieces and category archives — no designer in the loop.
+Generate consistent on-brand thumbnails for breaking news pieces and category archives, no designer in the loop.
 
 = WooCommerce Stores =
 Auto-generate placeholder product images for new SKUs while real photos are still being shot. Then replace at your own pace.
@@ -189,7 +191,7 @@ The on-demand generation modal is built for Gutenberg. **Automatic featured imag
 Yes. Each site on the network can configure its own templates and API key.
 
 = Is the plugin GDPR-friendly? =
-Template-based generation runs entirely on your server — nothing leaves your site. AI prompt-based generation sends only the prompt you type to OpenAI; no visitor data, post content, or personal information is transmitted unless you put it in the prompt.
+Template-based generation runs entirely on your server, nothing leaves your site. AI prompt-based generation sends only the prompt you type to OpenAI; no visitor data, post content, or personal information is transmitted unless you put it in the prompt.
 
 = Can I translate the plugin? =
 **Yes.** The plugin is fully translation-ready with a bundled `.pot` file. Both PHP and JavaScript strings are translatable.
@@ -199,13 +201,13 @@ Use the [plugin support forum on WordPress.org](https://wordpress.org/support/pl
 
 == Troubleshooting ==
 
-- **"No API key configured" notice in the editor** — add a key under **Image Generator → Settings**, or define `AIMG_API_KEY` in `wp-config.php`.
-- **Thumbnails not displaying on the frontend** — make sure your theme calls `add_theme_support( 'post-thumbnails' )` in `functions.php`.
-- **AI generation fails or times out** — check that your server can make outbound HTTPS requests, that PHP's `max_execution_time` is at least 60 seconds, and that your OpenAI API key has billing enabled.
-- **"No templates available" in the editor modal** — create at least one template under **Image Generator → Image Templates**.
-- **Image looks wrong / wrong colors** — check your template's background color, text color, and overlay PNG transparency.
-- **Cache plugins showing stale images** — clear page, object, and CDN caches after generating new images.
-- **Compatibility issues** — temporarily disable other plugins to identify conflicts and let us know via the support forum.
+- **"No API key configured" notice in the editor**: add a key under **Image Generator → Settings**, or define `AIMG_API_KEY` in `wp-config.php`.
+- **Thumbnails not displaying on the frontend**: make sure your theme calls `add_theme_support( 'post-thumbnails' )` in `functions.php`.
+- **AI generation fails or times out**: check that your server can make outbound HTTPS requests, that PHP's `max_execution_time` is at least 60 seconds, and that your OpenAI API key has billing enabled.
+- **"No templates available" in the editor modal**: create at least one template under **Image Generator → Image Templates**.
+- **Image looks wrong / wrong colors**: check your template's background color, text color, and overlay PNG transparency.
+- **Cache plugins showing stale images**: clear page, object, and CDN caches after generating new images.
+- **Compatibility issues**: temporarily disable other plugins to identify conflicts and let us know via the support forum.
 
 == Best Practices ==
 
@@ -237,13 +239,19 @@ Prompt-based image generation calls a third-party API (**OpenAI** by default). Y
 
 == Screenshots ==
 1. Block editor toolbar — generate an image directly into an Image block with one click.
-2. AI Featured Image panel in the Gutenberg document sidebar.
-3. Generation modal — Templates and Custom Prompt tabs in a single workflow.
-4. Image Templates list screen.
-5. Template editor — colors, dimensions, overlays, and live preview.
+2. Image Templates — Pre-made list of image templates.
+3. Image Template editor — colors, dimensions, overlays, and live preview.
+4. Preview of generated image in the frontend in a post.
+5. Preview of generated another image in the frontend in a post.
 6. Plugin settings — defaults and AI API key configuration.
 
 == Changelog ==
+= 1.4.0 ( 14th June 2026 ) =
+* New: Added **image generation** in the Media Library via the "Generate Image" button, allowing users to create images without opening a post or page.
+* New: Added updated plugin screenshots to the WordPress.org plugin page.
+* Enhance: Improved template editor with live preview and better color contrast checks.
+* Fix: Resolved few minor issues.
+* Compatibility: Tested up to WordPress 7.0.
 
 = 1.3.0 ( 9th May 2026 ) =
 * New: Full **block editor (Gutenberg) integration** — toolbar button on Image and Media & Text blocks, plus an AI Featured Image panel in the document sidebar.
@@ -253,7 +261,7 @@ Prompt-based image generation calls a third-party API (**OpenAI** by default). Y
 * New: `AIMG_API_KEY` PHP constant for storing the API key outside the database.
 * New: Featured-image generation now supports **every public post type**, including WooCommerce products and custom post types.
 * Fix: Resolved minor bugs in the template image generation pipeline.
-* Compatibility: Tested up to **WordPress 6.9**.
+* Compatibility: Tested up to WordPress 6.9.
 
 = 1.1.0 ( 3rd March 2026 ) =
 * New: Unlimited image templates with custom styles, dimensions, and overlay images.
@@ -265,8 +273,8 @@ Prompt-based image generation calls a third-party API (**OpenAI** by default). Y
 
 == Upgrade Notice ==
 
-= 1.3.0 =
-Major release: block editor integration and AI prompt-based generation. Back up your site before updating and review the new Settings → AI Service section.
+= 1.4.0 =
+Major release: Added image generation in the Media Library, improved template editor, and enhanced block editor integration. Please backup your site before updating.
 
 = 1.1.0 =
 Major update with new features and improvements. Please backup your site before updating.
@@ -275,7 +283,7 @@ Major update with new features and improvements. Please backup your site before 
 
 Have questions, need help, or want to suggest a feature? We'd love to hear from you!
 - **Plugin Support Forum:** [https://wordpress.org/support/plugin/artificial-image-generator](https://wordpress.org/support/plugin/artificial-image-generator)
-- **Plugin Homepage:** [https://beautifulplugins.com/image-generator/](https://beautifulplugins.com/image-generator/)
+- **Plugin Homepage:** [https://beautifulplugins.com/plugins/image-generator-pro/](https://beautifulplugins.com/plugins/image-generator-pro/)
 
 == License ==
 This plugin is released under the GPLv2 or later. See [https://www.gnu.org/licenses/gpl-2.0.html](https://www.gnu.org/licenses/gpl-2.0.html) for details.

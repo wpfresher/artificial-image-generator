@@ -66,6 +66,34 @@ function aimg_get_settings( $option, $default_value = null ) {
 }
 
 /**
+ * Build the data passed to the generator JS (block editor + media library).
+ *
+ * Exposes the REST endpoints, a REST nonce, the settings link, whether an API
+ * key is configured, and the Media Library URL used for post-generation
+ * redirects.
+ *
+ * @since 1.0.0
+ * @return array
+ */
+function aimg_get_js_data() {
+	$has_api_key = ( defined( 'AIMG_API_KEY' ) && AIMG_API_KEY )
+		|| ! empty( aimg_get_settings( 'api_key', '' ) );
+
+	return array(
+		'endpoints' => array(
+			'generate'  => rest_url( 'aimg/v1/generate' ),
+			'templates' => rest_url( 'aimg/v1/templates' ),
+		),
+		'nonce'      => wp_create_nonce( 'wp_rest' ),
+		'uploadUrl'  => admin_url( 'upload.php' ),
+		'settings'   => array(
+			'hasApiKey'   => (bool) $has_api_key,
+			'settingsUrl' => admin_url( 'admin.php?page=aimg-settings' ),
+		),
+	);
+}
+
+/**
  * Generate a thumbnail image for preview on settings page.
  *
  * @param int    $post_id  Post ID for which the preview is being generated.
