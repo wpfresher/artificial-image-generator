@@ -1,0 +1,190 @@
+name: Weekly Plugin Auto Release
+
+on:
+  schedule:
+    - cron: '0 0 * * 0' # Every Sunday at midnight UTC — biweekly check below filters alternate weeks
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  check-and-release:
+    name: Check and Auto Release
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch all history for tags
+          token: ${{ secrets.ACCESS_TOKEN }}
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      - name: Check biweekly schedule
+        id: biweekly
+        run: |
+          WEEK_NUM=$(date +%V)
+          echo "Current ISO week number: ${WEEK_NUM}"
+
+          if (( WEEK_NUM % 2 != 0 )); then
+            echo "run=true" >> $GITHUB_OUTPUT
+            echo "✓ This is a release week"
+          else
+            echo "run=false" >> $GITHUB_OUTPUT
+            echo "⏭ Not a release week, skipping"
+          fi
+
+      - name: Get current version before bump
+        id: current
+        if: steps.biweekly.outputs.run == 'true'
+        run: |
+          CURRENT_VERSION=$(grep -oP "Version:\s*\K[0-9]+\.[0-9]+\.[0-9]+" artificial-image-generator.php | head -1)
+          echo "version=${CURRENT_VERSION}" >> $GITHUB_OUTPUT
+          echo "Current version: ${CURRENT_VERSION}"
+
+      - name: Check if tag already exists
+        id: check_tag
+        if: steps.biweekly.outputs.run == 'true'
+        run: |
+          # Calculate what the next version would be (matches bump-version.php rollover logic)
+          CURRENT="${{ steps.current.outputs.version }}"
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT"
+
+          if [ "$PATCH" -ge 9 ]; then
+            NEXT_PATCH=0
+            NEXT_MINOR=$((MINOR + 1))
+          else
+            NEXT_PATCH=$((PATCH + 1))
+            NEXT_MINOR=$MINOR
+          fi
+
+          NEXT_VERSION="${MAJOR}.${NEXT_MINOR}.${NEXT_PATCH}"
+          echo "next_version=${NEXT_VERSION}" >> $GITHUB_OUTPUT
+
+          # Check if the next tag already exists
+          if git tag -l "v${NEXT_VERSION}" | grep -q "v${NEXT_VERSION}"; then
+            echo "tag_exists=true" >> $GITHUB_OUTPUT
+            echo "⚠ Tag v${NEXT_VERSION} already exists, skipping release"
+          else
+            echo "tag_exists=false" >> $GITHUB_OUTPUT
+            echo "✓ Tag v${NEXT_VERSION} does not exist, proceeding with release"
+          fi
+
+      - name: Check for changes since last release
+        id: check_changes
+        if: steps.biweekly.outputs.run == 'true' && steps.check_tag.outputs.tag_exists == 'false'
+        run: |
+          # Get the latest tag
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+
+          if [ -z "$LATEST_TAG" ]; then
+            echo "No previous tags found, this will be the first release"
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            # Check if there are any commits since the last tag
+            COMMIT_COUNT=$(git rev-list ${LATEST_TAG}..HEAD --count)
+            echo "Commits since ${LATEST_TAG}: ${COMMIT_COUNT}"
+
+            if [ "$COMMIT_COUNT" -gt 0 ]; then
+              echo "has_changes=true" >> $GITHUB_OUTPUT
+              echo "⚠ Found ${COMMIT_COUNT} commits since last release, skipping"
+            else
+              echo "has_changes=false" >> $GITHUB_OUTPUT
+              echo "✓ No changes since last release, proceeding with release"
+            fi
+          fi
+
+      - name: Bump plugin version
+        id: bump
+        if: steps.biweekly.outputs.run == 'true' && steps.check_tag.outputs.tag_exists == 'false' && steps.check_changes.outputs.has_changes == 'false'
+        run: |
+          php .github/scripts/bump-version.php
+
+      - name: Commit version changes
+        if: steps.biweekly.outputs.run == 'true' && steps.check_tag.outputs.tag_exists == 'false' && steps.check_changes.outputs.has_changes == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        run: |
+          # Configure git identity to match the token owner for consistency
+          # This ensures audit logs correctly reflect who made the changes
+          if [ -n "$GH_TOKEN" ]; then
+            # Get the authenticated user info from the token
+            TOKEN_USER=$(gh api user --jq '.login' 2>/dev/null || echo "")
+            TOKEN_EMAIL=$(gh api user --jq '.email // ""' 2>/dev/null || echo "")
+
+            if [ -n "$TOKEN_USER" ]; then
+              git config user.name "$TOKEN_USER"
+              git config user.email "${TOKEN_EMAIL:-${TOKEN_USER}@users.noreply.github.com}"
+              echo "✓ Git configured for user: $TOKEN_USER"
+            else
+              # Fallback to github-actions[bot] if user info unavailable
+              git config user.name "github-actions[bot]"
+              git config user.email "github-actions[bot]@users.noreply.github.com"
+              echo "ℹ Using github-actions[bot] identity"
+            fi
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+          fi
+
+          # Check if there are changes to commit
+          if git diff --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+
+          git add artificial-image-generator.php readme.txt package.json
+          git commit -m "Bump version to v${{ steps.bump.outputs.version }}"
+          git push
+
+      - name: Create Git tag
+        if: steps.biweekly.outputs.run == 'true' && steps.check_tag.outputs.tag_exists == 'false' && steps.check_changes.outputs.has_changes == 'false'
+        run: |
+          git tag "v${{ steps.bump.outputs.version }}"
+          git push origin "v${{ steps.bump.outputs.version }}"
+
+      - name: Create GitHub Release
+        if: steps.biweekly.outputs.run == 'true' && steps.check_tag.outputs.tag_exists == 'false' && steps.check_changes.outputs.has_changes == 'false'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.bump.outputs.version }}
+          name: Release v${{ steps.bump.outputs.version }}
+          body: |
+            ## Automated Biweekly Release
+
+            **Version:** v${{ steps.bump.outputs.version }}
+
+            This is an automated release created by the biweekly release workflow.
+
+            ### Changes
+            - Bug fixes and improvements
+            - Compatibility updates
+
+            ---
+            *Released on: ${{ github.event.repository.updated_at }}*
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Biweekly Release Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ steps.biweekly.outputs.run }}" == "false" ]; then
+            echo "⏭️ **Skipped:** Not a scheduled release week" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ steps.check_tag.outputs.tag_exists }}" == "true" ]; then
+            echo "⏭️ **Skipped:** Tag v${{ steps.check_tag.outputs.next_version }} already exists" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ steps.check_changes.outputs.has_changes }}" == "true" ]; then
+            echo "⏭️ **Skipped:** Changes found since last release" >> $GITHUB_STEP_SUMMARY
+          elif [ -n "${{ steps.bump.outputs.version }}" ]; then
+            echo "✅ **Released:** v${{ steps.bump.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❓ **Unknown state**" >> $GITHUB_STEP_SUMMARY
+          fi

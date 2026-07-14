@@ -49,3 +49,4 @@ codeception.yml
 
 # Build related files
 /assets
+/TODO.md
