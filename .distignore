@@ -79,5 +79,5 @@ Thumbs.db
 /blueprint.json
 
 # Plugin specific files
-/roadmap.md
+/ARCHITECTURE.md
 /CLAUDE.md

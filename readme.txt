@@ -4,7 +4,7 @@ Tags: ai, ai image, image generator, featured image, block editor
 Requires at least: 6.0
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.4.0
+Stable tag: 1.4.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -128,13 +128,12 @@ Configure templates once, set them as defaults across all client sites, and stop
 Use the REST API endpoints to trigger image generation from a Next.js, Astro, or Gatsby frontend, a CLI script, or a CI pipeline.
 
 == Image Generator vs. Manual Workflows ==
+Without Image Generator | With Image Generator
 
-| Task | Without Image Generator | With Image Generator |
-|---|---|---|
-| Add a featured image to a new post | Find stock photo, download, upload, set as featured | Publish — done. |
-| Generate a unique hero image | Open Midjourney/ChatGPT, save, upload, insert | Click ✨ in the toolbar, type a prompt, done. |
-| Keep thumbnails on-brand across the site | Manual design work, every post | Build a template once. Reused forever. |
-| Generate placeholders for 50 imported posts | Tedious manual upload | Bulk-saving triggers auto-generation. |
+* **Add a featured image to a new post** — Without: find a stock photo, download, upload, set as featured. With Image Generator: publish — done.
+* **Generate a unique hero image** — Without: open Midjourney/ChatGPT, save, upload, insert. With Image Generator: click ✨ in the toolbar, type a prompt, done.
+* **Keep thumbnails on-brand across the site** — Without: manual design work, every post. With Image Generator: build a template once, reused forever.
+* **Generate placeholders for 50 imported posts** — Without: tedious manual upload. With Image Generator: bulk-saving triggers auto-generation.
 
 == Installation ==
 
@@ -246,6 +245,9 @@ Prompt-based image generation calls a third-party API (**OpenAI** by default). Y
 6. Plugin settings — defaults and AI API key configuration.
 
 == Changelog ==
+= 1.4.1 ( 14th July 2026 ) =
+* Fix: Resolved a few minor issues.
+
 = 1.4.0 ( 14th June 2026 ) =
 * New: Added **image generation** in the Media Library via the "Generate Image" button, allowing users to create images without opening a post or page.
 * New: Added updated plugin screenshots to the WordPress.org plugin page.

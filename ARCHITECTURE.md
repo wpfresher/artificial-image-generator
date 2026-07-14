@@ -1,3 +1,5 @@
+## Image Generator Plugin Architecture:
+
 artificial-image-generator/
 │
 ├── Assets/
