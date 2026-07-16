@@ -4,7 +4,7 @@ Tags: ai, ai image, image generator, featured image, block editor
 Requires at least: 6.0
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.4.2
+Stable tag: 1.4.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -16,7 +16,7 @@ AI image generator for WordPress. Auto-create featured images, post thumbnails &
 
 Stop wasting hours on stock photo sites. Stop publishing posts with broken thumbnail spots. With **Image Generator** you can:
 
-- **Generate AI images** from a custom prompt using **OpenAI DALL·E 3** (your own API key) — right inside the block editor.
+- **Generate AI images** from a custom prompt using **OpenAI GPT Image or DALL·E** (your own API key) — right inside the block editor.
 - **Auto-generate featured images** from reusable **image templates** whenever a post, page, or custom post type is saved without one.
 - **Insert AI-generated images** straight into Image and Media & Text blocks while you write.
 - **Set a Featured Image** with a single click from the new **AI Featured Image** sidebar panel.
@@ -31,6 +31,10 @@ Whether you run a blog, news site, magazine, portfolio, affiliate site, online s
 2. **Automatic on publish (hands-off)**: when a post or page has no featured image, the plugin picks one of your saved templates and renders a custom thumbnail using the post title, your brand colors, fonts, and overlay images.
 
 Every generated image, whether AI-created or template-rendered — is saved to the **WordPress Media Library** with proper alt text, so it works with any theme, page builder, CDN, image-optimization plugin, lazy loader, or SEO plugin.
+
+= Watch video tutorial on how to use the Image Generator plugin =
+
+[youtube https://www.youtube.com/watch?v=GmFg7iXddP8]
 
 = Why Featured Images Matter for SEO and Engagement =
 
@@ -53,7 +57,7 @@ Every generated image, whether AI-created or template-rendered — is saved to t
 
 == Key Features ==
 
-✅ **AI Image Generation with DALL·E**
+✅ **AI Image Generation with OpenAI**
 Plug in your **OpenAI API key** (or define the `AIMG_API_KEY` constant in `wp-config.php`) and generate unique images from natural-language prompts *"a sunlit forest path in autumn, photorealistic, soft lighting"*, without leaving WordPress.
 
 ✅ **Block Editor (Gutenberg) Integration**
@@ -160,10 +164,10 @@ Without Image Generator | With Image Generator
 **No — only for AI prompt-based generation.** Template-based image creation, including the automatic featured image on publish, runs entirely on your own server using PHP's built-in GD library. No external services, no API calls, no recurring costs.
 
 = Which AI image generation service is supported? =
-Out of the box, the plugin calls **OpenAI's DALL·E 3** API. Developers can swap the endpoint, model, or request body via the `aimg_generate_endpoint` and `aimg_generate_request_body` filters — so you can point it at compatible services (Stability AI, self-hosted SDXL via a compatible proxy, etc.).
+Out of the box, the plugin calls **OpenAI's Images API** using **GPT Image 1** by default — you can switch to GPT Image 1 Mini, DALL·E 3, or DALL·E 2 under **Image Generator → Settings**. Developers can swap the endpoint, model, or request body via the `aimg_generate_endpoint` and `aimg_generate_request_body` filters — so you can point it at compatible services (Stability AI, self-hosted SDXL via a compatible proxy, etc.).
 
 = How much does AI image generation cost? =
-You pay OpenAI directly for usage. As of 2026, DALL·E 3 standard images cost roughly $0.04 per generation. The plugin itself is free; you only pay your AI provider for the prompts you trigger.
+You pay OpenAI directly for usage. As of 2026, a 1024×1024 image costs roughly $0.01–$0.07 per generation depending on the model and quality. The plugin itself is free; you only pay your AI provider for the prompts you trigger.
 
 = Where is my OpenAI API key stored? =
 By default, it's stored in the `aimg_settings` option in the WordPress database. **For maximum security**, define `AIMG_API_KEY` in `wp-config.php` instead — the settings UI will detect the constant and disable the input field, so the key never sits in the database.
@@ -203,6 +207,7 @@ Use the [plugin support forum on WordPress.org](https://wordpress.org/support/pl
 - **"No API key configured" notice in the editor**: add a key under **Image Generator → Settings**, or define `AIMG_API_KEY` in `wp-config.php`.
 - **Thumbnails not displaying on the frontend**: make sure your theme calls `add_theme_support( 'post-thumbnails' )` in `functions.php`.
 - **AI generation fails or times out**: check that your server can make outbound HTTPS requests, that PHP's `max_execution_time` is at least 60 seconds, and that your OpenAI API key has billing enabled.
+- **"The model 'dall-e-3' does not exist" (or similar) error**: your OpenAI account doesn't have access to the selected model — DALL·E models are legacy and unavailable to newer accounts. Switch the **Image Model** to **GPT Image 1** under **Image Generator → Settings**.
 - **"No templates available" in the editor modal**: create at least one template under **Image Generator → Image Templates**.
 - **Image looks wrong / wrong colors**: check your template's background color, text color, and overlay PNG transparency.
 - **Cache plugins showing stale images**: clear page, object, and CDN caches after generating new images.
@@ -245,6 +250,10 @@ Prompt-based image generation calls a third-party API (**OpenAI** by default). Y
 6. Plugin settings — defaults and AI API key configuration.
 
 == Changelog ==
+= 1.4.3 ( 16th July 2026 ) =
+* Fix: The model 'dall-e-3' does not exist error for new OpenAI accounts. Switched default model to GPT Image 1.
+* New: Added new settings option to select the AI image model (GPT Image 1, GPT Image 1 Mini, DALL·E 2, DALL·E 3).
+
 = 1.4.1 ( 14th July 2026 ) =
 * Fix: Resolved a few minor issues.
 

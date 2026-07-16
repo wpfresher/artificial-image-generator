@@ -139,6 +139,30 @@ class Settings {
 			'aimg-settings',
 			'aimg_ai_service_settings'
 		);
+
+		// Model selection field for AI service.
+		add_settings_field(
+			'aimg_api_model',
+			__( 'Image Model', 'artificial-image-generator' ),
+			array( $this, 'api_model_field' ),
+			'aimg-settings',
+			'aimg_ai_service_settings'
+		);
+	}
+
+	/**
+	 * Supported image generation models.
+	 *
+	 * @since 1.4.3
+	 * @return array
+	 */
+	public static function get_models() {
+		return array(
+			'gpt-image-1'      => __( 'GPT Image 1 (recommended)', 'artificial-image-generator' ),
+			'gpt-image-1-mini' => __( 'GPT Image 1 Mini (lower cost)', 'artificial-image-generator' ),
+			'dall-e-3'         => __( 'DALL·E 3 (legacy)', 'artificial-image-generator' ),
+			'dall-e-2'         => __( 'DALL·E 2 (legacy)', 'artificial-image-generator' ),
+		);
 	}
 
 	/**
@@ -180,6 +204,26 @@ class Settings {
 				esc_html_e( 'Enter your image generation API key (e.g. an OpenAI key for DALL·E). For maximum security you can instead define the AIMG_API_KEY constant in wp-config.php.', 'artificial-image-generator' );
 			}
 			?>
+		</p>
+		<?php
+	}
+
+	/**
+	 * Render model selection field.
+	 *
+	 * @since 1.4.3
+	 * @return void
+	 */
+	public function api_model_field() {
+		$model = aimg_get_settings( 'api_model', 'gpt-image-1' );
+		?>
+		<select name="aimg_settings[api_model]" id="aimg_settings_api_model">
+			<?php foreach ( self::get_models() as $value => $label ) : ?>
+				<option value="<?php echo esc_attr( $value ); ?>" <?php selected( $model, $value ); ?>><?php echo esc_html( $label ); ?></option>
+			<?php endforeach; ?>
+		</select>
+		<p class="description">
+			<?php esc_html_e( 'The OpenAI model used for prompt-based generation. GPT Image 1 is available to all current API accounts; the DALL·E models are legacy and newer accounts may not have access to them.', 'artificial-image-generator' ); ?>
 		</p>
 		<?php
 	}
@@ -285,6 +329,10 @@ class Settings {
 		} else {
 			$sanitized_settings['api_key'] = isset( $settings['api_key'] ) ? trim( sanitize_text_field( $settings['api_key'] ) ) : '';
 		}
+
+		// Sanitize the model; fall back to the default when the value is unknown.
+		$model                           = isset( $settings['api_model'] ) ? sanitize_text_field( $settings['api_model'] ) : '';
+		$sanitized_settings['api_model'] = array_key_exists( $model, self::get_models() ) ? $model : 'gpt-image-1';
 
 		return $sanitized_settings;
 	}
