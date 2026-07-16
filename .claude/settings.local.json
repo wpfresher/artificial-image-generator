@@ -17,7 +17,11 @@
       "Bash(php -l includes/Admin/MediaLibrary.php)",
       "Bash(php -l includes/functions.php)",
       "Bash(php -l includes/Plugin.php)",
-      "Bash(php -l includes/GenerateImages.php)"
+      "Bash(php -l includes/GenerateImages.php)",
+      "PowerShell(php -l includes/RestAPI.php; php -l includes/Admin/Settings.php)",
+      "PowerShell(& vendor/bin/phpcs.bat includes/Plugin.php; git diff --stat)",
+      "PowerShell(composer exec *)",
+      "PowerShell(wp *)"
     ]
   }
 }

@@ -289,27 +289,32 @@ class RestAPI {
 			);
 		}
 
+		$model = $this->get_model();
+
+		$default_body = array(
+			'model'  => $model,
+			'prompt' => $prompt,
+			'n'      => 1,
+			'size'   => '1024x1024',
+		);
+
+		// The 'standard'/'hd' quality values only exist on DALL·E 3; GPT image
+		// models default to 'auto' and reject the DALL·E values.
+		if ( 'dall-e-3' === $model ) {
+			$default_body['quality'] = 'standard';
+		}
+
 		/**
 		 * Filter the request body sent to the image generation API.
 		 *
-		 * Defaults to OpenAI DALL·E 3 parameters.
+		 * Defaults to OpenAI Images API parameters for the configured model.
 		 *
 		 * @param array  $body   Request body.
 		 * @param string $prompt User prompt.
 		 *
 		 * @since 1.0.0
 		 */
-		$body = apply_filters(
-			'aimg_generate_request_body',
-			array(
-				'model'   => 'dall-e-3',
-				'prompt'  => $prompt,
-				'n'       => 1,
-				'size'    => '1024x1024',
-				'quality' => 'standard',
-			),
-			$prompt
-		);
+		$body = apply_filters( 'aimg_generate_request_body', $default_body, $prompt );
 
 		/**
 		 * Filter the endpoint used to generate images from a prompt.
@@ -345,13 +350,23 @@ class RestAPI {
 			);
 		}
 
-		$status = (int) wp_remote_retrieve_response_code( $response );
+		$status  = (int) wp_remote_retrieve_response_code( $response );
 		$decoded = json_decode( wp_remote_retrieve_body( $response ), true );
 
 		if ( $status >= 400 ) {
 			$message = isset( $decoded['error']['message'] )
 				? (string) $decoded['error']['message']
 				: __( 'The image generation API returned an error.', 'artificial-image-generator' );
+
+			// A model-access error is almost always fixable by picking another model.
+			$error_code = isset( $decoded['error']['code'] ) ? (string) $decoded['error']['code'] : '';
+			if ( 'model_not_found' === $error_code || false !== stripos( $message, 'does not exist' ) ) {
+				$message .= ' ' . sprintf(
+					/* translators: %s: model identifier, e.g. dall-e-3. */
+					__( 'Your API account may not have access to the "%s" model. Try selecting a different model under Image Generator → Settings → AI Service.', 'artificial-image-generator' ),
+					$model
+				);
+			}
 
 			return new \WP_Error(
 				'aimg_api_error',
@@ -361,8 +376,13 @@ class RestAPI {
 		}
 
 		$image_url = isset( $decoded['data'][0]['url'] ) ? esc_url_raw( $decoded['data'][0]['url'] ) : '';
+		$image_b64 = isset( $decoded['data'][0]['b64_json'] ) ? (string) $decoded['data'][0]['b64_json'] : '';
 
-		if ( empty( $image_url ) ) {
+		if ( ! empty( $image_url ) ) {
+			$attachment_id = $this->sideload_image( $image_url, $prompt );
+		} elseif ( ! empty( $image_b64 ) ) {
+			$attachment_id = $this->sideload_base64_image( $image_b64, $prompt );
+		} else {
 			return new \WP_Error(
 				'aimg_no_image',
 				__( 'No image returned by the API.', 'artificial-image-generator' ),
@@ -370,7 +390,6 @@ class RestAPI {
 			);
 		}
 
-		$attachment_id = $this->sideload_image( $image_url, $prompt );
 		if ( is_wp_error( $attachment_id ) ) {
 			return $attachment_id;
 		}
@@ -397,6 +416,18 @@ class RestAPI {
 		}
 
 		return (string) aimg_get_settings( 'api_key', '' );
+	}
+
+	/**
+	 * Resolve the configured image generation model.
+	 *
+	 * @since 1.4.3
+	 * @return string
+	 */
+	protected function get_model() {
+		$model = (string) aimg_get_settings( 'api_model', '' );
+
+		return '' !== $model ? $model : 'gpt-image-1';
 	}
 
 	/**
@@ -462,6 +493,85 @@ class RestAPI {
 			}
 		} else {
 			$ext = $type['ext'];
+		}
+
+		$slug = sanitize_title( $title );
+		if ( '' === $slug ) {
+			$slug = 'ai-generated';
+		}
+
+		$file_array = array(
+			'name'     => $slug . '-' . wp_generate_password( 6, false, false ) . '.' . $ext,
+			'tmp_name' => $tmp,
+		);
+
+		$id = media_handle_sideload( $file_array, 0, $title );
+		if ( is_wp_error( $id ) ) {
+			if ( file_exists( $tmp ) ) {
+				wp_delete_file( $tmp );
+			}
+			return $id;
+		}
+
+		// Save the prompt as alt text for accessibility.
+		if ( $title ) {
+			update_post_meta( $id, '_wp_attachment_image_alt', sanitize_text_field( $title ) );
+		}
+
+		return $id;
+	}
+
+	/**
+	 * Decode a base64 encoded image returned by the API and add it to the Media Library.
+	 *
+	 * GPT image models (gpt-image-1 and gpt-image-1-mini) return the image as
+	 * base64 JSON instead of a temporary URL.
+	 *
+	 * @param string $b64   Base64 encoded image contents.
+	 * @param string $title Optional title for the media item.
+	 *
+	 * @since 1.4.3
+	 * @return int|\WP_Error Attachment ID on success, WP_Error on failure.
+	 */
+	public function sideload_base64_image( $b64, $title = '' ) {
+		require_once ABSPATH . 'wp-admin/includes/image.php';
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		require_once ABSPATH . 'wp-admin/includes/media.php';
+
+		$bytes = base64_decode( $b64, true ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode -- Decoding the image payload returned by the API.
+		if ( false === $bytes || '' === $bytes ) {
+			return new \WP_Error(
+				'aimg_invalid_image',
+				__( 'The image returned by the API could not be decoded.', 'artificial-image-generator' ),
+				array( 'status' => 502 )
+			);
+		}
+
+		$tmp = wp_tempnam( 'aimg' );
+		if ( ! $tmp ) {
+			return new \WP_Error(
+				'aimg_temp_file',
+				__( 'Could not create a temporary file for the generated image.', 'artificial-image-generator' ),
+				array( 'status' => 500 )
+			);
+		}
+
+		if ( false === file_put_contents( $tmp, $bytes ) ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- Writing to a wp_tempnam() file before sideloading.
+			wp_delete_file( $tmp );
+
+			return new \WP_Error(
+				'aimg_temp_file',
+				__( 'Could not write the generated image to a temporary file.', 'artificial-image-generator' ),
+				array( 'status' => 500 )
+			);
+		}
+
+		$mime = function_exists( 'mime_content_type' ) ? mime_content_type( $tmp ) : 'image/png';
+		$ext  = 'png';
+		if ( 'image/jpeg' === $mime ) {
+			$ext = 'jpg';
+		} elseif ( 'image/webp' === $mime ) {
+			$ext = 'webp';
 		}
 
 		$slug = sanitize_title( $title );

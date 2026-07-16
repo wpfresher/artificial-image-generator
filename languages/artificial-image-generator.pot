@@ -2,14 +2,14 @@
 # This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Image Generator 1.4.1\n"
+"Project-Id-Version: Image Generator 1.4.3\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/artificial-image-generator\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-14T15:25:07+00:00\n"
+"POT-Creation-Date: 2026-07-16T05:35:23+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: artificial-image-generator\n"
@@ -141,12 +141,12 @@ msgid "Default Text Color"
 msgstr ""
 
 #: includes/Admin/Settings.php:111
-#: includes/Admin/Settings.php:236
+#: includes/Admin/Settings.php:280
 msgid "Enable Post Thumbnails"
 msgstr ""
 
 #: includes/Admin/Settings.php:120
-#: includes/Admin/Settings.php:253
+#: includes/Admin/Settings.php:297
 msgid "Enable Page Thumbnails"
 msgstr ""
 
@@ -158,43 +158,67 @@ msgstr ""
 msgid "API Key"
 msgstr ""
 
-#: includes/Admin/Settings.php:151
+#: includes/Admin/Settings.php:146
+msgid "Image Model"
+msgstr ""
+
+#: includes/Admin/Settings.php:161
+msgid "GPT Image 1 (recommended)"
+msgstr ""
+
+#: includes/Admin/Settings.php:162
+msgid "GPT Image 1 Mini (lower cost)"
+msgstr ""
+
+#: includes/Admin/Settings.php:163
+msgid "DALL·E 3 (legacy)"
+msgstr ""
+
+#: includes/Admin/Settings.php:164
+msgid "DALL·E 2 (legacy)"
+msgstr ""
+
+#: includes/Admin/Settings.php:175
 msgid "Configure the AI image generation service used by the block editor. The API key is used when generating images from a custom prompt."
 msgstr ""
 
-#: includes/Admin/Settings.php:178
+#: includes/Admin/Settings.php:202
 msgid "Your API key is currently defined via the AIMG_API_KEY PHP constant and cannot be edited here."
 msgstr ""
 
-#: includes/Admin/Settings.php:180
+#: includes/Admin/Settings.php:204
 msgid "Enter your image generation API key (e.g. an OpenAI key for DALL·E). For maximum security you can instead define the AIMG_API_KEY constant in wp-config.php."
 msgstr ""
 
-#: includes/Admin/Settings.php:194
-msgid "Configure the Image Generator general settings."
-msgstr ""
-
-#: includes/Admin/Settings.php:206
-msgid "#008000"
-msgstr ""
-
-#: includes/Admin/Settings.php:207
-msgid "Enter the default background color for the thumbnails. This will be used as a fallback color if no specific color is set."
-msgstr ""
-
-#: includes/Admin/Settings.php:220
-msgid "#ffffff"
-msgstr ""
-
-#: includes/Admin/Settings.php:221
-msgid "Enter the default text color for the thumbnails. This will be used as a fallback color if no specific color is set."
+#: includes/Admin/Settings.php:226
+msgid "The OpenAI model used for prompt-based generation. GPT Image 1 is available to all current API accounts; the DALL·E models are legacy and newer accounts may not have access to them."
 msgstr ""
 
 #: includes/Admin/Settings.php:238
+msgid "Configure the Image Generator general settings."
+msgstr ""
+
+#: includes/Admin/Settings.php:250
+msgid "#008000"
+msgstr ""
+
+#: includes/Admin/Settings.php:251
+msgid "Enter the default background color for the thumbnails. This will be used as a fallback color if no specific color is set."
+msgstr ""
+
+#: includes/Admin/Settings.php:264
+msgid "#ffffff"
+msgstr ""
+
+#: includes/Admin/Settings.php:265
+msgid "Enter the default text color for the thumbnails. This will be used as a fallback color if no specific color is set."
+msgstr ""
+
+#: includes/Admin/Settings.php:282
 msgid "Check this box to enable automatic generation of post thumbnails when a post is saved. This will create a thumbnail image based on the post title, using the random background colors and overlay images if configured."
 msgstr ""
 
-#: includes/Admin/Settings.php:255
+#: includes/Admin/Settings.php:299
 msgid "Check this box to enable automatic generation of page thumbnails when a page is saved. This will create a thumbnail image based on the page title, using the random background colors and overlay images if configured."
 msgstr ""
 
@@ -486,12 +510,30 @@ msgstr ""
 msgid "No API key configured. Please add your API key on the Image Generator settings page."
 msgstr ""
 
-#: includes/RestAPI.php:354
+#: includes/RestAPI.php:359
 msgid "The image generation API returned an error."
 msgstr ""
 
-#: includes/RestAPI.php:368
+#. translators: %s: model identifier, e.g. dall-e-3.
+#: includes/RestAPI.php:366
+#, php-format
+msgid "Your API account may not have access to the \"%s\" model. Try selecting a different model under Image Generator → Settings → AI Service."
+msgstr ""
+
+#: includes/RestAPI.php:388
 msgid "No image returned by the API."
+msgstr ""
+
+#: includes/RestAPI.php:545
+msgid "The image returned by the API could not be decoded."
+msgstr ""
+
+#: includes/RestAPI.php:554
+msgid "Could not create a temporary file for the generated image."
+msgstr ""
+
+#: includes/RestAPI.php:564
+msgid "Could not write the generated image to a temporary file."
 msgstr ""
 
 #: assets/js/block-editor.js:1
