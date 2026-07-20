@@ -1,10 +1,10 @@
 === Image Generator – AI Featured Image, Thumbnail and Automatic Image Creator for WordPress ===
-Contributors: beautifulplugins, kawsarahmedr
+Contributors: beautifulplugins
 Tags: ai, ai image, image generator, featured image, block editor
 Requires at least: 6.0
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.4.3
+Stable tag: 1.4.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -250,6 +250,9 @@ Prompt-based image generation calls a third-party API (**OpenAI** by default). Y
 6. Plugin settings — defaults and AI API key configuration.
 
 == Changelog ==
+= 1.4.5 ( 20th July 2026 ) =
+* Fix: Resolved a few minor issues.
+
 = 1.4.3 ( 16th July 2026 ) =
 * Fix: The model 'dall-e-3' does not exist error for new OpenAI accounts. Switched default model to GPT Image 1.
 * New: Added new settings option to select the AI image model (GPT Image 1, GPT Image 1 Mini, DALL·E 2, DALL·E 3).
