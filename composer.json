@@ -1,7 +1,7 @@
 {
   "name": "beautifulplugins/artificial-image-generator",
   "description": "Generate AI-powered images automatically across your WordPress site. Create stunning visuals for posts, pages, and more with ease.",
-  "homepage": "https://beautifulplugins.com/image-generator/",
+  "homepage": "https://beautifulplugins.com/plugins/image-generator-pro/",
   "type": "wordpress-plugin",
   "license": "GPL-2.0-or-later",
   "prefer-stable": true,
@@ -11,7 +11,7 @@
   },
   "autoload": {
     "psr-4": {
-      "ArtificialImageGenerator\\": ["includes/"]
+      "ArtificialImageGenerator\\": "includes/"
     }
   },
   "config": {
