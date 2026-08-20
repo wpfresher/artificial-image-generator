@@ -250,6 +250,7 @@ Prompt-based image generation calls a third-party API (**OpenAI** by default). Y
 6. Plugin settings — defaults and AI API key configuration.
 
 == Changelog ==
+= 1.4.8 ( 21st August 2026 ) =
 * Compatibility: Tested up to WordPress 7.1.
 
 = 1.4.5 ( 20th July 2026 ) =
