@@ -12,7 +12,7 @@ defined( 'ABSPATH' ) || exit; // Exit if accessed directly.
  * generator and the REST endpoint go through this class so the mapping from
  * template meta to render arguments lives in exactly one place.
  *
- * @since 1.4.9
+ * @since 1.5.0
  * @package ArtificialImageGenerator
  */
 class Generator {
@@ -23,7 +23,7 @@ class Generator {
 	 * Stored as a simple '1' so it can be used in a meta query.
 	 *
 	 * @var string
-	 * @since 1.4.9
+	 * @since 1.5.0
 	 */
 	const GENERATED_META = '_aimg_generated';
 
@@ -31,7 +31,7 @@ class Generator {
 	 * Meta key holding the provenance details of a generated attachment.
 	 *
 	 * @var string
-	 * @since 1.4.9
+	 * @since 1.5.0
 	 */
 	const GENERATED_DATA_META = '_aimg_generated_data';
 
@@ -44,7 +44,7 @@ class Generator {
 	 * @param int    $template_id Template post ID.
 	 * @param string $title       Title rendered onto the image. Falls back to the template title.
 	 *
-	 * @since 1.4.9
+	 * @since 1.5.0
 	 * @return array|false Render arguments, or false when the template is invalid.
 	 */
 	public static function get_render_args( $template_id, $title = '' ) {
@@ -76,7 +76,7 @@ class Generator {
 		 * @param array $args        Render arguments.
 		 * @param int   $template_id Template post ID.
 		 *
-		 * @since 1.4.9
+		 * @since 1.5.0
 		 */
 		return apply_filters( 'aimg_template_render_args', $args, $template_id );
 	}
@@ -89,7 +89,7 @@ class Generator {
 	 *
 	 * @param int $template_id Template post ID.
 	 *
-	 * @since 1.4.9
+	 * @since 1.5.0
 	 * @return array List of absolute file paths.
 	 */
 	public static function get_overlay_paths( $template_id ) {
@@ -125,7 +125,7 @@ class Generator {
 	 * @param int    $template_id Template post ID.
 	 * @param string $title       Title rendered onto the image.
 	 *
-	 * @since 1.4.9
+	 * @since 1.5.0
 	 * @return string|false Absolute path to the rendered file, or false on failure.
 	 */
 	public static function render( $template_id, $title = '' ) {
@@ -141,7 +141,7 @@ class Generator {
 	/**
 	 * Pick a published template at random.
 	 *
-	 * @since 1.4.9
+	 * @since 1.5.0
 	 * @return int Template post ID, or 0 when no template is available.
 	 */
 	public static function get_random_template_id() {
@@ -176,7 +176,7 @@ class Generator {
 	 *     @type array  $provenance Provenance details stored on the attachment.
 	 * }
 	 *
-	 * @since 1.4.9
+	 * @since 1.5.0
 	 * @return int|\WP_Error Attachment ID on success.
 	 */
 	public static function create_attachment( $filepath, $args = array() ) {
@@ -251,7 +251,7 @@ class Generator {
 	 *     @type string $model       Model identifier.
 	 * }
 	 *
-	 * @since 1.4.9
+	 * @since 1.5.0
 	 * @return void
 	 */
 	public static function mark_generated( $attachment_id, $provenance = array() ) {
@@ -285,7 +285,7 @@ class Generator {
 		 * @param int   $attachment_id Attachment ID.
 		 * @param array $provenance    Provenance details stored on the attachment.
 		 *
-		 * @since 1.4.9
+		 * @since 1.5.0
 		 */
 		do_action( 'aimg_generated_image', $attachment_id, $provenance );
 	}

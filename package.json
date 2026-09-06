@@ -7,6 +7,16 @@
     "license": "GPL-v2.0-or-later",
     "author": "BeautifulPlugins",
     "prettier": "@wordpress/prettier-config",
+    "files": [
+        "artificial-image-generator.php",
+        "uninstall.php",
+        "readme.txt",
+        "blueprint.json",
+        "includes",
+        "assets",
+        "languages",
+        "vendor"
+    ],
     "engines": {
         "node": ">=24"
     },

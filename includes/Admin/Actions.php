@@ -75,13 +75,9 @@ class Actions {
 		$height           = isset( $_POST['height'] ) ? absint( $_POST['height'] ) : 0;
 		$title_font_size  = isset( $_POST['title_font_size'] ) ? absint( $_POST['title_font_size'] ) : 0;
 		$is_overlay_image = isset( $_POST['is_overlay_image'] ) ? 'yes' : 'no';
-
-		// The form marks these required, but nothing stops a hand-rolled POST and a
-		// zero stored here reaches GD, where it renders nothing at all. The upper
-		// bounds keep a mistyped dimension from exhausting memory on render.
-		$width           = $width > 0 ? min( $width, 5000 ) : 1200;
-		$height          = $height > 0 ? min( $height, 5000 ) : 800;
-		$title_font_size = $title_font_size > 0 ? min( $title_font_size, 500 ) : AIMG_DEFAULT_FONT_SIZE;
+		$width            = $width > 0 ? min( $width, 5000 ) : 1200;
+		$height           = $height > 0 ? min( $height, 5000 ) : 800;
+		$title_font_size  = $title_font_size > 0 ? min( $title_font_size, 500 ) : AIMG_DEFAULT_FONT_SIZE;
 		$overlay_images   = isset( $_POST['overlay_images'] ) ? sanitize_text_field( wp_unslash( $_POST['overlay_images'] ) ) : '';
 		$overlay_position = isset( $_POST['overlay_position'] ) ? sanitize_text_field( wp_unslash( $_POST['overlay_position'] ) ) : 'center-center';
 

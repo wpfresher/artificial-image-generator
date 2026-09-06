@@ -312,7 +312,7 @@ class Settings {
 	/**
 	 * Display the remove-data-on-uninstall field.
 	 *
-	 * @since 1.4.9
+	 * @since 1.5.0
 	 * @return void
 	 */
 	public function remove_data_field() {

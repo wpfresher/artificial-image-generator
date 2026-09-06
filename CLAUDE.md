@@ -19,9 +19,7 @@ npm run format         # Auto-format code via wp-scripts
 
 **Distribution:**
 ```bash
-npm run plugin-zip             # Create distribution ZIP
-bin/build-zip.sh               # Alternative ZIP build (respects .distignore)
-bin/release.sh -u USER -p PASS # Deploy to WordPress.org SVN
+npm run build && npm run plugin-zip   # Build assets, then create the distribution ZIP
 ```
 
 **PHP i18n:**

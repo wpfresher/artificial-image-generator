@@ -37,7 +37,6 @@ artificial-image-generator/
 │   └── js/                          # admin, block-editor, media-library, components/
 │
 ├── languages/                       # artificial-image-generator.pot
-├── bin/                             # build-zip.sh, release.sh
 ├── composer.json                    # PSR-4: ArtificialImageGenerator\ → includes/
 ├── package.json                     # wp-scripts build pipeline
 ├── blueprint.json                   # WordPress Playground preview

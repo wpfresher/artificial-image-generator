@@ -251,6 +251,9 @@ Prompt-based image generation calls a third-party API (**OpenAI** by default). Y
 
 == Changelog ==
 = 1.5.0 ( 6th September 2026 ) =
+* New: Added an optional **Remove Data on Uninstall** setting. When enabled, deleting the plugin also removes your image templates and settings; it is off by default, and images already in the Media Library are never touched.
+* Enhance: Unified template rendering behind a single generator service, so automatic featured images, the block editor and the REST API all produce identical results.
+* Fix: Template dimensions and title font size are now validated on save, preventing a malformed template from rendering a blank image.
 * Fix: Resolved a few minor issues.
 
 = 1.4.8 ( 21st August 2026 ) =
@@ -292,11 +295,8 @@ Prompt-based image generation calls a third-party API (**OpenAI** by default). Y
 
 == Upgrade Notice ==
 
-= 1.4.0 =
-Major release: Added image generation in the Media Library, improved template editor, and enhanced block editor integration. Please backup your site before updating.
-
-= 1.1.0 =
-Major update with new features and improvements. Please backup your site before updating.
+= 1.5.0 =
+Adds an optional Remove Data on Uninstall setting (off by default) and unifies the image generation pipeline. No action required when updating.
 
 == Support and Feedback ==
 

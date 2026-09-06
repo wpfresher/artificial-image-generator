@@ -10,7 +10,7 @@
  * attachments that posts and pages may still reference.
  *
  * @package ArtificialImageGenerator
- * @since 1.4.9
+ * @since 1.5.0
  */
 
 defined( 'WP_UNINSTALL_PLUGIN' ) || exit; // Exit if accessed directly.
@@ -18,7 +18,7 @@ defined( 'WP_UNINSTALL_PLUGIN' ) || exit; // Exit if accessed directly.
 /**
  * Remove the plugin data for a single site.
  *
- * @since 1.4.9
+ * @since 1.5.0
  * @return void
  */
 function aimg_uninstall_site() {

@@ -144,8 +144,7 @@ function aimg_generate_preview( $post_id, $colors, $width, $height, $overlays = 
 		return false;
 	}
 
-	// Get URL from filepath. Compare on normalized copies so a Windows upload
-	// path, which mixes separators, still matches.
+	// Get URL from filepath. Compare on normalized copies so a Windows upload path, which mixes separators, still matches.
 	$upload_dir = wp_upload_dir();
 	$basedir    = wp_normalize_path( trailingslashit( $upload_dir['basedir'] ) );
 	$normalized = wp_normalize_path( $filepath );
@@ -423,7 +422,7 @@ function aimg_generate_thumbnail( $args = array() ) {
  *
  * @param mixed $value Raw value.
  *
- * @since 1.4.9
+ * @since 1.5.0
  * @return string 'yes' or 'no'.
  */
 function aimg_sanitize_checkbox( $value ) {
@@ -447,7 +446,7 @@ function aimg_sanitize_checkbox( $value ) {
  *
  * @param string $path Absolute path to a file inside the uploads directory.
  *
- * @since 1.4.9
+ * @since 1.5.0
  * @return string
  */
 function aimg_uploads_path( $path ) {
@@ -481,7 +480,7 @@ function aimg_uploads_path( $path ) {
  *
  * @param string $url URL of a file inside the uploads directory.
  *
- * @since 1.4.9
+ * @since 1.5.0
  * @return bool True when a file was deleted.
  */
 function aimg_delete_upload_by_url( $url ) {
