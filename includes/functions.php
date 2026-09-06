@@ -131,12 +131,12 @@ function aimg_generate_preview( $post_id, $colors, $width, $height, $overlays = 
 	// Generate image.
 	$filepath = aimg_generate_thumbnail(
 		array(
-			'post_id'  => $post_id,
-			'title'    => get_the_title( $post_id ),
-			'colors'   => $colors,
-			'width'    => $width,
-			'height'   => $height,
-			'overlays' => $overlays_path,
+			'template_id' => $post_id,
+			'title'       => get_the_title( $post_id ),
+			'colors'      => $colors,
+			'width'       => $width,
+			'height'      => $height,
+			'overlays'    => $overlays_path,
 		)
 	);
 
@@ -144,16 +144,26 @@ function aimg_generate_preview( $post_id, $colors, $width, $height, $overlays = 
 		return false;
 	}
 
-	// Get URL from filepath.
+	// Get URL from filepath. Compare on normalized copies so a Windows upload
+	// path, which mixes separators, still matches.
 	$upload_dir = wp_upload_dir();
 	$basedir    = wp_normalize_path( trailingslashit( $upload_dir['basedir'] ) );
-	$baseurl    = wp_normalize_path( trailingslashit( $upload_dir['baseurl'] ) );
+	$normalized = wp_normalize_path( $filepath );
+	$baseurl    = trailingslashit( $upload_dir['baseurl'] );
 
-	if ( strpos( $filepath, $basedir ) === 0 ) {
-		return $baseurl . ltrim( substr( $filepath, strlen( $basedir ) ), '/' );
+	if ( strpos( $normalized, $basedir ) !== 0 ) {
+		return false;
 	}
 
-	return false;
+	$url = $baseurl . ltrim( substr( $normalized, strlen( $basedir ) ), '/' );
+
+	// Previews now get a unique file name, so drop the one this replaces.
+	$previous = get_post_meta( $post_id, '_aimg_preview_image_url', true );
+	if ( $previous && $previous !== $url ) {
+		aimg_delete_upload_by_url( $previous );
+	}
+
+	return $url;
 }
 
 /**
@@ -167,29 +177,40 @@ function aimg_generate_preview( $post_id, $colors, $width, $height, $overlays = 
  */
 function aimg_generate_thumbnail( $args = array() ) {
 	$default_args = array(
-		'post_id'  => 0,
-		'title'    => '',
-		'colors'   => array(),
-		'width'    => 1200,
-		'height'   => 600,
-		'overlays' => array(),
+		'template_id' => 0,
+		'title'       => '',
+		'colors'      => array(),
+		'width'       => 1200,
+		'height'      => 600,
+		'overlays'    => array(),
 	);
 
 	$args = wp_parse_args( $args, $default_args );
 
-	// Extract arguments for easier access.
-	$post_id  = isset( $args['post_id'] ) ? absint( $args['post_id'] ) : 0;
-	$title    = isset( $args['title'] ) ? $args['title'] : '';
-	$colors   = isset( $args['colors'] ) && is_array( $args['colors'] ) ? $args['colors'] : array();
-	$width    = isset( $args['width'] ) ? absint( $args['width'] ) : 1200;
-	$height   = isset( $args['height'] ) ? absint( $args['height'] ) : 600;
-	$overlays = isset( $args['overlays'] ) && is_array( $args['overlays'] ) ? $args['overlays'] : array();
+	// Back compat: `post_id` was the original name for what is always a template ID.
+	if ( empty( $args['template_id'] ) && ! empty( $args['post_id'] ) ) {
+		$args['template_id'] = $args['post_id'];
+	}
 
-	if ( empty( $post_id ) || empty( $title ) || empty( $width ) || empty( $height ) ) {
+	// Extract arguments for easier access.
+	$template_id = absint( $args['template_id'] );
+	$title       = isset( $args['title'] ) ? $args['title'] : '';
+	$colors      = isset( $args['colors'] ) && is_array( $args['colors'] ) ? $args['colors'] : array();
+	$width       = isset( $args['width'] ) ? absint( $args['width'] ) : 1200;
+	$height      = isset( $args['height'] ) ? absint( $args['height'] ) : 600;
+	$overlays    = isset( $args['overlays'] ) && is_array( $args['overlays'] ) ? $args['overlays'] : array();
+
+	if ( empty( $template_id ) || empty( $title ) || empty( $width ) || empty( $height ) ) {
 		return false;
 	}
 
-	$font_size = get_post_meta( $post_id, '_aimg_title_font_size', true );
+	// A template saved before the field was validated can hold an empty font size,
+	// which GD rejects, so fall back to the same default the editor offers.
+	$font_size = (float) get_post_meta( $template_id, '_aimg_title_font_size', true );
+	if ( $font_size <= 0 ) {
+		$font_size = AIMG_DEFAULT_FONT_SIZE;
+	}
+
 	$font_path = AIMG_ASSETS_PATH . 'fonts/Roboto-Bold.ttf';
 
 	if ( ! file_exists( $font_path ) ) {
@@ -223,7 +244,7 @@ function aimg_generate_thumbnail( $args = array() ) {
 				continue;
 			}
 
-			$overlay_position = get_post_meta( $post_id, '_aimg_overlay_position', true );
+			$overlay_position = get_post_meta( $template_id, '_aimg_overlay_position', true );
 			$overlay          = imagecreatefrompng( $overlay_path );
 
 			imagesavealpha( $overlay, true );
@@ -364,16 +385,136 @@ function aimg_generate_thumbnail( $args = array() ) {
 		$y += $line_height;
 	}
 
-	// Generate filename.
-	$suffix   = isset( $args['post_id'] ) ? absint( $args['post_id'] ) : wp_rand( 10000, 99999 );
-	$filename = sanitize_title( $title ) . '-' . $suffix . '.png';
-
 	// Save image to uploads directory.
 	$upload_dir = wp_upload_dir();
-	$filepath   = wp_normalize_path( trailingslashit( $upload_dir['path'] ) . $filename );
 
-	imagepng( $img, $filepath );
+	if ( ! empty( $upload_dir['error'] ) ) {
+		imagedestroy( $img );
+
+		return false;
+	}
+
+	$slug = sanitize_title( $title );
+	if ( '' === $slug ) {
+		$slug = 'aimg-image';
+	}
+
+	// Reusing a name would overwrite the file an existing attachment points at,
+	// so let WordPress suffix it until it is unique within the upload folder.
+	$filename = wp_unique_filename( $upload_dir['path'], $slug . '-' . $template_id . '.png' );
+	$filepath = aimg_uploads_path( trailingslashit( $upload_dir['path'] ) . $filename );
+
+	$saved = imagepng( $img, $filepath );
 	imagedestroy( $img );
 
+	if ( ! $saved ) {
+		return false;
+	}
+
 	return $filepath;
+}
+
+/**
+ * Normalize a checkbox setting to 'yes' or 'no'.
+ *
+ * Checkbox settings are stored as 'yes'/'no' but arrive from the settings form
+ * as '1'/absent. Testing presence alone would turn a stored 'no' into 'yes' the
+ * moment the option is saved back programmatically, so the value itself decides.
+ *
+ * @param mixed $value Raw value.
+ *
+ * @since 1.4.9
+ * @return string 'yes' or 'no'.
+ */
+function aimg_sanitize_checkbox( $value ) {
+	if ( is_string( $value ) && in_array( strtolower( trim( $value ) ), array( 'no', 'false', 'off', '0', '' ), true ) ) {
+		return 'no';
+	}
+
+	return empty( $value ) ? 'no' : 'yes';
+}
+
+/**
+ * Rewrite a path inside the uploads directory to match the separator style
+ * WordPress itself uses.
+ *
+ * `wp_upload_dir()` derives its paths from ABSPATH, which on Windows mixes
+ * separators (`C:\Sites\site/wp-content/uploads`). `_wp_relative_upload_path()`
+ * detects a file as living inside uploads with a plain `strpos()` against that
+ * value, so handing it a `wp_normalize_path()`ed path makes the check fail and
+ * WordPress stores an absolute path in `_wp_attached_file`, which then never
+ * resolves. Paths outside the uploads directory are returned untouched.
+ *
+ * @param string $path Absolute path to a file inside the uploads directory.
+ *
+ * @since 1.4.9
+ * @return string
+ */
+function aimg_uploads_path( $path ) {
+	if ( empty( $path ) || ! is_string( $path ) ) {
+		return $path;
+	}
+
+	$upload_dir = wp_upload_dir();
+
+	if ( ! empty( $upload_dir['error'] ) ) {
+		return $path;
+	}
+
+	$basedir  = trailingslashit( $upload_dir['basedir'] );
+	$compare  = wp_normalize_path( $basedir );
+	$normal   = wp_normalize_path( $path );
+
+	if ( 0 !== strpos( $normal, $compare ) ) {
+		return $path;
+	}
+
+	return $basedir . ltrim( substr( $normal, strlen( $compare ) ), '/' );
+}
+
+/**
+ * Delete a file inside the uploads directory given its URL.
+ *
+ * Used to clear the previous template preview when a new one is rendered, so
+ * repeated template saves do not litter the uploads folder. Paths outside the
+ * uploads directory are ignored.
+ *
+ * @param string $url URL of a file inside the uploads directory.
+ *
+ * @since 1.4.9
+ * @return bool True when a file was deleted.
+ */
+function aimg_delete_upload_by_url( $url ) {
+	if ( empty( $url ) || ! is_string( $url ) ) {
+		return false;
+	}
+
+	$upload_dir = wp_upload_dir();
+
+	if ( ! empty( $upload_dir['error'] ) ) {
+		return false;
+	}
+
+	$basedir = wp_normalize_path( trailingslashit( $upload_dir['basedir'] ) );
+	$baseurl = trailingslashit( $upload_dir['baseurl'] );
+
+	if ( 0 !== strpos( $url, $baseurl ) ) {
+		return false;
+	}
+
+	$relative = ltrim( substr( $url, strlen( $baseurl ) ), '/' );
+	$path     = wp_normalize_path( $basedir . $relative );
+
+	// Refuse anything that climbed back out of the uploads directory.
+	if ( 0 !== strpos( $path, $basedir ) || false !== strpos( $relative, '..' ) ) {
+		return false;
+	}
+
+	if ( ! file_exists( $path ) ) {
+		return false;
+	}
+
+	wp_delete_file( $path );
+
+	return true;
 }
