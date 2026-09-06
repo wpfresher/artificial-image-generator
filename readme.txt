@@ -4,7 +4,7 @@ Tags: ai, ai image, image generator, featured image, block editor
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.4.9
+Stable tag: 1.5.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -17,7 +17,7 @@ AI image generator for WordPress. Auto-create featured images, post thumbnails &
 Stop wasting hours on stock photo sites. Stop publishing posts with broken thumbnail spots. With **Image Generator** you can:
 
 - **Generate AI images** from a custom prompt using **OpenAI GPT Image or DALL·E** (your own API key) — right inside the block editor.
-- **Auto-generate featured images** from reusable **image templates** whenever a post, page, or custom post type is saved without one.
+- **Auto-generate featured images** from reusable **image templates** whenever a post or page is saved without one.
 - **Insert AI-generated images** straight into Image and Media & Text blocks while you write.
 - **Set a Featured Image** with a single click from the new **AI Featured Image** sidebar panel.
 
@@ -28,7 +28,7 @@ Whether you run a blog, news site, magazine, portfolio, affiliate site, online s
 = Two Powerful Ways to Create Images =
 
 1. **Inside the block editor (on demand)**: generate an image while you're writing and drop it straight into an Image block, a Media & Text block, or set it as the post's Featured Image.
-2. **Automatic on publish (hands-off)**: when a post or page has no featured image, the plugin picks one of your saved templates and renders a custom thumbnail using the post title, your brand colors, fonts, and overlay images.
+2. **Automatic on publish (hands-off)**: when a post or page has no featured image, the plugin picks one of your saved templates and renders a custom thumbnail using the post title, your brand colors, and overlay images.
 
 Every generated image, whether AI-created or template-rendered — is saved to the **WordPress Media Library** with proper alt text, so it works with any theme, page builder, CDN, image-optimization plugin, lazy loader, or SEO plugin.
 
@@ -67,13 +67,13 @@ Adds an **"AI Generate" sparkle button** to the toolbar of core Image and Media 
 A single, unified modal lets editors switch between **Templates** (fast, on-brand, free) and **Custom Prompt** (AI-generated, unique). Pick the right tool for each post.
 
 ✅ **Unlimited Reusable Image Templates**
-Build as many image templates as you want with custom **background colors, text colors, dimensions, fonts, and PNG overlays**. Each template is rendered server-side using PHP's GD library, no external dependency.
+Build as many image templates as you want with custom **background colors, dimensions, title size, and PNG overlays**. The title text color is set once for the whole site under Settings. Each template is rendered server-side using PHP's GD library, no external dependency.
 
 ✅ **Automatic Featured Image on Save**
-When a post, page, or custom post type is saved without a featured image, the plugin renders one from a random template using the post title. Hands-off, instant, every time.
+When a post or page is saved without a featured image, the plugin renders one from a random template using the post title. Hands-off, instant, every time.
 
-✅ **Custom Post Type & WooCommerce Support**
-Works with **posts, pages, WooCommerce products**, and any public custom post type that supports featured images, including LearnDash lessons, BuddyBoss content, Easy Digital Downloads products, and more.
+✅ **Works Anywhere You Edit**
+Automatic generation currently covers **posts and pages**. On-demand generation is not limited that way: the block editor panel and the Media Library modal let you generate an image and set it as the featured image on **any post type that supports featured images**, including WooCommerce products and custom post types.
 
 ✅ **Native WordPress Media Library**
 Every image, AI or template — is **sideloaded into the Media Library** with attachment ID and alt text. So image optimization plugins (Smush, ShortPixel, Imagify, EWWW), CDNs (Cloudflare, BunnyCDN, KeyCDN), and SEO plugins (Yoast, Rank Math, AIOSEO) all see it as a regular attachment.
@@ -152,7 +152,7 @@ Without Image Generator | With Image Generator
 3. Activate **Image Generator** through the **Plugins** menu in WordPress.
 
 = Setup =
-1. Go to **Image Generator → Image Templates** and create at least one template (background color, text color, dimensions, optional overlay).
+1. Go to **Image Generator → Image Templates** and create at least one template (background colors, dimensions, title size, optional overlay).
 2. (Optional) Open **Image Generator → Settings** and add your **OpenAI API key** to enable AI prompt-based generation.
 3. (Optional, more secure) Define the API key in `wp-config.php` instead:
    `define( 'AIMG_API_KEY', 'sk-your-key-here' );`
@@ -182,7 +182,7 @@ Automatic generation only fires when a post is saved without a featured image. *
 The on-demand generation modal is built for Gutenberg. **Automatic featured image generation works with every editor**, because it hooks into the WordPress `save_post` action — so Classic Editor, Elementor, Divi, Beaver Builder, Bricks, and any other builder all benefit from auto-generated thumbnails.
 
 = Does it work with WooCommerce products? =
-**Yes.** Both the automatic generation and the editor integration apply to any public post type that supports featured images, including WooCommerce products, downloads, courses, and custom post types from third-party plugins.
+**On demand, yes.** Open a product, download, course, or any custom post type that supports featured images, and use the AI Featured Image panel or the Media Library modal to generate and assign an image. Automatic generation on save currently covers posts and pages only; extending it to every public post type is next on the roadmap.
 
 = Does it work with SEO plugins like Yoast SEO, Rank Math, and All in One SEO? =
 **Yes.** Generated images are stored as standard Media Library attachments with proper alt text, so SEO plugins can read them, expose them in Open Graph and Twitter Card tags, and include them in sitemaps.
@@ -209,7 +209,7 @@ Use the [plugin support forum on WordPress.org](https://wordpress.org/support/pl
 - **AI generation fails or times out**: check that your server can make outbound HTTPS requests, that PHP's `max_execution_time` is at least 60 seconds, and that your OpenAI API key has billing enabled.
 - **"The model 'dall-e-3' does not exist" (or similar) error**: your OpenAI account doesn't have access to the selected model — DALL·E models are legacy and unavailable to newer accounts. Switch the **Image Model** to **GPT Image 1** under **Image Generator → Settings**.
 - **"No templates available" in the editor modal**: create at least one template under **Image Generator → Image Templates**.
-- **Image looks wrong / wrong colors**: check your template's background color, text color, and overlay PNG transparency.
+- **Image looks wrong / wrong colors**: check your template's background colors, the default text color under Settings, and your overlay PNG transparency.
 - **Cache plugins showing stale images**: clear page, object, and CDN caches after generating new images.
 - **Compatibility issues**: temporarily disable other plugins to identify conflicts and let us know via the support forum.
 
@@ -220,7 +220,7 @@ Use the [plugin support forum on WordPress.org](https://wordpress.org/support/pl
 ✅ Keep prompts **specific** — *"a sunlit forest path in autumn, photorealistic, soft lighting"* beats *"forest"*.
 ✅ Define `AIMG_API_KEY` in `wp-config.php` rather than storing it in the database.
 ✅ Pair this plugin with an image optimization plugin (Smush, ShortPixel, Imagify) so generated images load fast.
-✅ Set a recognizable brand color and font in your templates so visitors associate the look with your site.
+✅ Set a recognizable brand color in your templates so visitors associate the look with your site.
 
 == Third-Party Assets and Licenses ==
 
@@ -250,6 +250,12 @@ Prompt-based image generation calls a third-party API (**OpenAI** by default). Y
 6. Plugin settings — defaults and AI API key configuration.
 
 == Changelog ==
+= 1.5.0 ( 6th September 2026 ) =
+* New: Added an optional **Remove Data on Uninstall** setting. When enabled, deleting the plugin also removes your image templates and settings; it is off by default, and images already in the Media Library are never touched.
+* Enhance: Unified template rendering behind a single generator service, so automatic featured images, the block editor and the REST API all produce identical results.
+* Fix: Template dimensions and title font size are now validated on save, preventing a malformed template from rendering a blank image.
+* Fix: Resolved a few minor issues.
+
 = 1.4.8 ( 21st August 2026 ) =
 * Compatibility: Tested up to WordPress 7.1.
 
@@ -276,7 +282,6 @@ Prompt-based image generation calls a third-party API (**OpenAI** by default). Y
 * New: **AI image generation via OpenAI DALL·E 3** (configurable API key, swappable endpoint and model via filters).
 * New: REST API endpoints (`aimg/v1/generate`, `aimg/v1/templates`) with capability and nonce checks for headless and automation use.
 * New: `AIMG_API_KEY` PHP constant for storing the API key outside the database.
-* New: Featured-image generation now supports **every public post type**, including WooCommerce products and custom post types.
 * Fix: Resolved minor bugs in the template image generation pipeline.
 * Compatibility: Tested up to WordPress 6.9.
 
@@ -290,11 +295,8 @@ Prompt-based image generation calls a third-party API (**OpenAI** by default). Y
 
 == Upgrade Notice ==
 
-= 1.4.0 =
-Major release: Added image generation in the Media Library, improved template editor, and enhanced block editor integration. Please backup your site before updating.
-
-= 1.1.0 =
-Major update with new features and improvements. Please backup your site before updating.
+= 1.5.0 =
+Adds an optional Remove Data on Uninstall setting (off by default) and unifies the image generation pipeline. No action required when updating.
 
 == Support and Feedback ==
 

@@ -106,6 +106,11 @@ class Plugin {
 		if ( ! defined( 'AIMG_ASSETS_URL' ) ) {
 			define( 'AIMG_ASSETS_URL', AIMG_URL . 'assets/' );
 		}
+
+		// Fallback title font size, in points, for templates saved without one.
+		if ( ! defined( 'AIMG_DEFAULT_FONT_SIZE' ) ) {
+			define( 'AIMG_DEFAULT_FONT_SIZE', 40 );
+		}
 	}
 
 	/**

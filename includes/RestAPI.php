@@ -200,8 +200,9 @@ class RestAPI {
 	 * @return \WP_REST_Response|\WP_Error
 	 */
 	protected function generate_from_template( $template_id, $title = '' ) {
-		$template = aimg_get_template( $template_id );
-		if ( ! $template ) {
+		$args = Generator::get_render_args( $template_id, $title );
+
+		if ( ! $args ) {
 			return new \WP_Error(
 				'aimg_invalid_template',
 				__( 'Invalid template ID.', 'artificial-image-generator' ),
@@ -209,43 +210,8 @@ class RestAPI {
 			);
 		}
 
-		$colors = get_post_meta( $template_id, '_aimg_bg_colors', true );
-		if ( is_string( $colors ) ) {
-			$colors = array_filter( array_map( 'trim', explode( ',', $colors ) ) );
-		}
-
-		// Resolve overlay images to absolute paths.
-		$overlays = array();
-		if ( 'yes' === get_post_meta( $template_id, '_aimg_is_overlay_image', true ) ) {
-			$overlay_images = json_decode( (string) get_post_meta( $template_id, '_aimg_overlay_images', true ) );
-
-			if ( is_array( $overlay_images ) ) {
-				foreach ( $overlay_images as $id ) {
-					$path = get_attached_file( (int) $id );
-					if ( $path && file_exists( $path ) ) {
-						$overlays[] = $path;
-					}
-				}
-			}
-
-			if ( count( $overlays ) > 1 ) {
-				$overlays = array( $overlays[ array_rand( $overlays ) ] );
-			}
-		}
-
-		// Use the supplied title, fall back to the template title.
-		$render_title = '' !== $title ? $title : $template->post_title;
-
-		$image_path = aimg_generate_thumbnail(
-			array(
-				'post_id'  => $template_id,
-				'title'    => $render_title,
-				'colors'   => $colors,
-				'width'    => (int) get_post_meta( $template_id, '_aimg_width', true ),
-				'height'   => (int) get_post_meta( $template_id, '_aimg_height', true ),
-				'overlays' => $overlays,
-			)
-		);
+		$render_title = $args['title'];
+		$image_path   = aimg_generate_thumbnail( $args );
 
 		if ( ! $image_path || ! file_exists( $image_path ) ) {
 			return new \WP_Error(
@@ -255,7 +221,18 @@ class RestAPI {
 			);
 		}
 
-		$attachment_id = $this->import_local_file( $image_path, $render_title );
+		$attachment_id = Generator::create_attachment(
+			$image_path,
+			array(
+				'title'      => $render_title,
+				'alt'        => $render_title,
+				'provenance' => array(
+					'source'      => 'template',
+					'template_id' => $template_id,
+				),
+			)
+		);
+
 		if ( is_wp_error( $attachment_id ) ) {
 			return $attachment_id;
 		}
@@ -394,6 +371,16 @@ class RestAPI {
 			return $attachment_id;
 		}
 
+		Generator::mark_generated(
+			$attachment_id,
+			array(
+				'source'   => 'prompt',
+				'prompt'   => $prompt,
+				'provider' => 'openai',
+				'model'    => $model,
+			)
+		);
+
 		return rest_ensure_response(
 			array(
 				'url'    => wp_get_attachment_url( $attachment_id ),
@@ -428,38 +415,6 @@ class RestAPI {
 		$model = (string) aimg_get_settings( 'api_model', '' );
 
 		return '' !== $model ? $model : 'gpt-image-1';
-	}
-
-	/**
-	 * Import a locally generated PNG into the Media Library.
-	 *
-	 * @param string $filepath Absolute path to a PNG file inside wp-content/uploads.
-	 * @param string $title    Title used for the attachment.
-	 *
-	 * @since 1.0.0
-	 * @return int|\WP_Error Attachment ID on success.
-	 */
-	protected function import_local_file( $filepath, $title = '' ) {
-		require_once ABSPATH . 'wp-admin/includes/image.php';
-
-		$mime = function_exists( 'mime_content_type' ) ? mime_content_type( $filepath ) : 'image/png';
-
-		$attachment = array(
-			'post_mime_type' => $mime ? $mime : 'image/png',
-			'post_title'     => $title ? $title : basename( $filepath ),
-			'post_content'   => '',
-			'post_status'    => 'inherit',
-		);
-
-		$attachment_id = wp_insert_attachment( $attachment, $filepath, 0, true );
-		if ( is_wp_error( $attachment_id ) ) {
-			return $attachment_id;
-		}
-
-		$metadata = wp_generate_attachment_metadata( $attachment_id, $filepath );
-		wp_update_attachment_metadata( $attachment_id, $metadata );
-
-		return $attachment_id;
 	}
 
 	/**

@@ -123,6 +123,15 @@ class Settings {
 			'aimg_general_settings'
 		);
 
+		// Remove plugin data when the plugin is deleted.
+		add_settings_field(
+			'aimg_remove_data',
+			__( 'Remove Data on Uninstall', 'artificial-image-generator' ),
+			array( $this, 'remove_data_field' ),
+			'aimg-settings',
+			'aimg_general_settings'
+		);
+
 		// AI service section.
 		add_settings_section(
 			'aimg_ai_service_settings',
@@ -301,6 +310,23 @@ class Settings {
 	}
 
 	/**
+	 * Display the remove-data-on-uninstall field.
+	 *
+	 * @since 1.5.0
+	 * @return void
+	 */
+	public function remove_data_field() {
+		$remove_data = aimg_get_settings( 'remove_data', 'no' );
+		?>
+		<label for="aimg_settings[remove_data]">
+			<input type="checkbox" name="aimg_settings[remove_data]" id="aimg_settings[remove_data]" value="1" <?php checked( $remove_data, 'yes' ); ?> />
+			<?php esc_html_e( 'Delete templates and settings when the plugin is deleted', 'artificial-image-generator' ); ?>
+		</label>
+		<p class="description"><?php esc_html_e( 'Leave this unchecked to keep your image templates if you delete and later reinstall the plugin. Images already added to the Media Library are never removed.', 'artificial-image-generator' ); ?></p>
+		<?php
+	}
+
+	/**
 	 * Sanitize settings.
 	 *
 	 * @param array $settings Settings to sanitize.
@@ -317,11 +343,11 @@ class Settings {
 		// Sanitize the default text color.
 		$sanitized_settings['default_text_color'] = isset( $settings['default_text_color'] ) ? sanitize_text_field( $settings['default_text_color'] ) : '';
 
-		// Sanitize the is post thumbnail setting.
-		$sanitized_settings['is_post_thumbnail'] = isset( $settings['is_post_thumbnail'] ) ? 'yes' : 'no';
-
-		// Sanitize the is page thumbnail setting.
-		$sanitized_settings['is_page_thumbnail'] = isset( $settings['is_page_thumbnail'] ) ? 'yes' : 'no';
+		// Sanitize the checkbox settings. The value decides, not merely its presence,
+		// so saving the option back programmatically cannot flip a 'no' to 'yes'.
+		$sanitized_settings['is_post_thumbnail'] = aimg_sanitize_checkbox( isset( $settings['is_post_thumbnail'] ) ? $settings['is_post_thumbnail'] : '' );
+		$sanitized_settings['is_page_thumbnail'] = aimg_sanitize_checkbox( isset( $settings['is_page_thumbnail'] ) ? $settings['is_page_thumbnail'] : '' );
+		$sanitized_settings['remove_data']       = aimg_sanitize_checkbox( isset( $settings['remove_data'] ) ? $settings['remove_data'] : '' );
 
 		// Sanitize the API key. If the constant is defined, never persist a value here.
 		if ( defined( 'AIMG_API_KEY' ) && AIMG_API_KEY ) {
