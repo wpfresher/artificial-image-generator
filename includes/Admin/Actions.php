@@ -41,6 +41,14 @@ class Actions {
 		$title       = isset( $_POST['title'] ) ? sanitize_text_field( wp_unslash( $_POST['title'] ) ) : '';
 		$status      = isset( $_POST['status'] ) ? sanitize_text_field( wp_unslash( $_POST['status'] ) ) : 'publish';
 
+		// Only ever update an existing template; any other post ID would be
+		// converted into a template and lose its content.
+		if ( $template_id && ! aimg_get_template( $template_id ) ) {
+			artificial_image_generator()->flash_notice( __( 'The image template you are trying to update does not exist.', 'artificial-image-generator' ), 'error' );
+			wp_safe_redirect( $referer );
+			exit;
+		}
+
 		if ( empty( $title ) ) {
 			artificial_image_generator()->flash_notice( __( 'The title field is required.', 'artificial-image-generator' ), 'error' );
 			wp_safe_redirect( $referer );
