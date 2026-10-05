@@ -32,17 +32,25 @@ import { AIMGModal, useGenerator } from './components/aimg-modal';
 	function MediaLibraryApp( { onReady } ) {
 		const [ successUrl, setSuccessUrl ] = useState( '' );
 
-		const { isModalOpen, isLoading, errorMsg, open, close, confirm } =
-			useGenerator( {
-				onSuccess: async ( data ) => {
-					// The image is now in the Media Library. Remember where to go so
-					// the redirect happens after the modal has closed.
-					const base =
-						( window.aimgData && window.aimgData.uploadUrl ) ||
-						'upload.php';
-					setSuccessUrl( data.id ? base + '?item=' + data.id : base );
-				},
-			} );
+		const {
+			isModalOpen,
+			isLoading,
+			errorMsg,
+			open,
+			close,
+			confirm,
+			choices,
+			pick,
+		} = useGenerator( {
+			onSuccess: async ( data ) => {
+				// The image is now in the Media Library. Remember where to go so
+				// the redirect happens after the modal has closed.
+				const base =
+					( window.aimgData && window.aimgData.uploadUrl ) ||
+					'upload.php';
+				setSuccessUrl( data.id ? base + '?item=' + data.id : base );
+			},
+		} );
 
 		// Expose the opener to the external button once mounted.
 		useEffect( () => {
@@ -66,6 +74,8 @@ import { AIMGModal, useGenerator } from './components/aimg-modal';
 		return el( AIMGModal, {
 			onClose: close,
 			onConfirm: confirm,
+			choices,
+			onPick: pick,
 			isLoading,
 			error: errorMsg,
 			modalTitle: __(

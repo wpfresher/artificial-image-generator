@@ -119,44 +119,55 @@ class GenerateImages {
 			return;
 		}
 
-		$title = aimg_get_plain_title( $post_id );
-
-		// Check if the title is empty.
-		if ( empty( $title ) ) {
+		if ( '' === aimg_get_plain_title( $post_id ) ) {
 			return;
 		}
 
-		// Get a random image template ID.
-		$template_id = Generator::get_random_template_id();
+		$method = Generator::get_method();
 
-		if ( ! $template_id ) {
+		if ( Generator::method_starts_with_ai( $method ) ) {
+			if ( self::can_use_ai( $post_id ) ) {
+				Queue::enqueue( $post_id, $method );
+			}
+
 			return;
 		}
 
-		$image_path = Generator::render( $template_id, $title );
-
-		if ( ! $image_path ) {
-			return;
-		}
-
-		$attachment_id = Generator::create_attachment(
-			$image_path,
-			array(
-				'title'      => $title,
-				'alt'        => $title,
-				'parent'     => $post_id,
-				'provenance' => array(
-					'source'      => 'template',
-					'template_id' => $template_id,
-				),
-			)
-		);
+		$attachment_id = Generator::generate_template_for_post( $post_id );
 
 		if ( is_wp_error( $attachment_id ) ) {
+			if ( Generator::METHOD_TEMPLATE_AI === $method && self::can_use_ai( $post_id ) ) {
+				Queue::enqueue( $post_id, Generator::METHOD_AI );
+			}
+
 			return;
 		}
 
-		// Set the post thumbnail.
 		set_post_thumbnail( $post_id, $attachment_id );
+	}
+
+	/**
+	 * Whether a post may get an AI featured image automatically.
+	 *
+	 * AI images cost money, so drafts don't get one until they are published or
+	 * scheduled; authors can still generate one from the editor.
+	 *
+	 * @param int $post_id Post ID.
+	 *
+	 * @since 1.6.0
+	 * @return bool
+	 */
+	public static function can_use_ai( $post_id ) {
+		/**
+		 * Filter the post statuses that get an AI featured image automatically.
+		 *
+		 * @param string[] $statuses Post statuses.
+		 * @param int      $post_id  Post ID.
+		 *
+		 * @since 1.6.0
+		 */
+		$statuses = (array) apply_filters( 'aimg_auto_generate_statuses', array( 'publish', 'future', 'private' ), $post_id );
+
+		return in_array( get_post_status( $post_id ), $statuses, true );
 	}
 }

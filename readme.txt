@@ -4,7 +4,7 @@ Tags: ai, ai image, image generator, featured image, block editor
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.5.4
+Stable tag: 1.6.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -28,7 +28,7 @@ Whether you run a blog, news site, magazine, portfolio, affiliate site, online s
 = Two Powerful Ways to Create Images =
 
 1. **Inside the block editor (on demand)**: generate an image while you're writing and drop it straight into an Image block, a Media & Text block, or set it as the post's Featured Image.
-2. **Automatic on publish (hands-off)**: when a post or page has no featured image, the plugin picks one of your saved templates and renders a custom thumbnail using the post title, your brand colors, and overlay images.
+2. **Automatic on publish (hands-off)**: when a post or page has no featured image, the plugin creates one for you — **either from your own image template** (free, instant, on-brand) **or with AI** (a unique image written from the post's title and excerpt). You choose the method in Settings, and either one can fall back to the other.
 
 Every generated image, whether AI-created or template-rendered — is saved to the **WordPress Media Library** with proper alt text, so it works with any theme, page builder, CDN, image-optimization plugin, lazy loader, or SEO plugin.
 
@@ -69,8 +69,17 @@ A single, unified modal lets editors switch between **Templates** (fast, on-bran
 ✅ **Unlimited Reusable Image Templates**
 Build as many image templates as you want with custom **background colors, dimensions, title size, and PNG overlays**. The title text color is set once for the whole site under Settings. Each template is rendered server-side using PHP's GD library, no external dependency.
 
-✅ **Automatic Featured Image on Save**
-When a post or page is saved without a featured image, the plugin renders one from a random template using the post title. Hands-off, instant, every time.
+✅ **Automatic Featured Image on Save — Template or AI**
+When a post or page is saved without a featured image, the plugin creates one: from a template (a random one, or the one you pick) using the post title, or with AI from a prompt built from the post. AI images are created in the background, so saving never waits on the AI service, and the editor shows the progress.
+
+✅ **Smart AI Prompts**
+Write your prompt template once with tags like `{title}`, `{excerpt}`, `{category}`, `{tags}` and `{custom_field:key}`, choose a style (Photorealistic, Flat illustration, 3D render, Watercolor, Cinematic and more), and every post gets a fitting prompt. A built-in instruction keeps garbled text and watermarks out of the image.
+
+✅ **Image Shape, Quality and Variations**
+Choose square, landscape or portrait images and the quality level (and so the cost). In the editor, generate up to 4 variations and keep the one you like — the others are removed from the Media Library.
+
+✅ **Cost Control**
+Decide which roles can use AI and set an hourly limit per user. Automatic AI images wait until a post is published, so drafts don't spend credit.
 
 ✅ **Works Anywhere You Edit**
 Automatic generation currently covers **posts and pages**. On-demand generation is not limited that way: the block editor panel and the Media Library modal let you generate an image and set it as the featured image on **any post type that supports featured images**, including WooCommerce products and custom post types.
@@ -79,10 +88,10 @@ Automatic generation currently covers **posts and pages**. On-demand generation 
 Every image, AI or template — is **sideloaded into the Media Library** with attachment ID and alt text. So image optimization plugins (Smush, ShortPixel, Imagify, EWWW), CDNs (Cloudflare, BunnyCDN, KeyCDN), and SEO plugins (Yoast, Rank Math, AIOSEO) all see it as a regular attachment.
 
 ✅ **REST API for Headless & Custom Workflows**
-Public endpoints (`/wp-json/aimg/v1/generate`, `/wp-json/aimg/v1/templates`) with capability checks (`edit_posts`, `upload_files`) and nonce protection, perfect for **headless WordPress, decoupled frontends, and bulk automation scripts**.
+Endpoints (`/wp-json/aimg/v1/generate`, `/templates`, `/featured/{post}`, `/status/{post}`, `/prompt`) with capability checks and nonce protection, perfect for **headless WordPress, decoupled frontends, and automation scripts**.
 
 ✅ **Developer-Friendly Filters**
-Swap the AI endpoint, change the model, customize the request body, and hook into the generation pipeline with `aimg_generate_endpoint` and `aimg_generate_request_body` filters.
+Add your own AI provider (`aimg_providers`), generation method (`aimg_generation_methods`, `aimg_pre_generate_for_post`) or style preset (`aimg_style_presets`), adjust prompts (`aimg_post_prompt`), and keep using `aimg_generate_endpoint` and `aimg_generate_request_body` to customize the OpenAI request.
 
 ✅ **Translation Ready (i18n)**
 Fully translatable via the bundled `.pot` file, both PHP and editor JavaScript strings are registered with `wp_set_script_translations`. Compatible with WPML, Polylang, Loco Translate, and TranslatePress.
@@ -100,16 +109,18 @@ Simple admin UI under **Image Generator** in the WordPress dashboard. Build a te
 1. Open any post or page in the **Gutenberg editor**.
 2. Click the ✨ sparkle icon in the toolbar of an **Image** or **Media & Text** block or open the **AI Featured Image** panel in the document sidebar.
 3. Choose a tab in the modal:
-   - **Templates**: pick a saved image template. The title text defaults to the current post title.
-   - **Custom Prompt**: describe the image you want and press *Generate* (or Ctrl + Enter / ⌘ + Enter).
-4. The image is generated, added to the Media Library, and **inserted into the block** or **assigned as the featured image** automatically.
+   - **Templates**: pick a saved image template and see a preview with your post title. The title text defaults to the current post title.
+   - **Custom Prompt**: describe the image you want — or click *Write a prompt from this post* — pick the shape, style, quality and number of variations, and press *Generate* (or Ctrl + Enter / ⌘ + Enter).
+4. The image is generated, added to the Media Library, and **inserted into the block** or **assigned as the featured image** automatically. With several variations, you pick one first.
+
+The **AI Featured Image** panel can also (re)generate the featured image in one click using your automatic method.
 
 = Auto-Generate Featured Images on Publish =
 
-1. Write your post or page as normal.
-2. Hit **Publish** or **Update**.
+1. Under **Image Generator → Settings → Automatic Featured Images**, choose **Image template** or **AI image** (or one with the other as a fallback).
+2. Write your post or page as normal and hit **Publish** or **Update**.
 3. If you already set a featured image, nothing happens.
-4. If you didn't, the plugin picks a random image template and renders a custom thumbnail from the post title — saved to the Media Library and attached as the post thumbnail.
+4. If you didn't, a template image is rendered right away from the post title — or an AI image is created in the background from your prompt template — saved to the Media Library and attached as the post thumbnail.
 
 == Use Cases ==
 
@@ -167,7 +178,7 @@ Without Image Generator | With Image Generator
 Out of the box, the plugin calls **OpenAI's Images API** using **GPT Image 1** by default — you can switch to GPT Image 1 Mini, DALL·E 3, or DALL·E 2 under **Image Generator → Settings**. Developers can swap the endpoint, model, or request body via the `aimg_generate_endpoint` and `aimg_generate_request_body` filters — so you can point it at compatible services (Stability AI, self-hosted SDXL via a compatible proxy, etc.).
 
 = How much does AI image generation cost? =
-You pay OpenAI directly for usage. As of 2026, a 1024×1024 image costs roughly $0.01–$0.07 per generation depending on the model and quality. The plugin itself is free; you only pay your AI provider for the prompts you trigger.
+You pay OpenAI directly for usage. As of 2026, a 1024×1024 image costs roughly $0.01–$0.07 per generation depending on the model and quality; larger shapes, higher quality and more variations cost more. The plugin itself is free; you only pay your AI provider for the images it creates. To keep costs predictable, limit AI to certain roles, set an hourly limit per user, and use templates for everyday posts. Automatic AI images are only created when a post is published or scheduled, not for drafts.
 
 = Where is my OpenAI API key stored? =
 By default, it's stored in the `aimg_settings` option in the WordPress database. **For maximum security**, define `AIMG_API_KEY` in `wp-config.php` instead — the settings UI will detect the constant and disable the input field, so the key never sits in the database.
@@ -188,13 +199,13 @@ The on-demand generation modal is built for Gutenberg. **Automatic featured imag
 **Yes.** Generated images are stored as standard Media Library attachments with proper alt text, so SEO plugins can read them, expose them in Open Graph and Twitter Card tags, and include them in sitemaps.
 
 = Will it slow down my site? =
-**No.** Image rendering uses PHP's GD library (already loaded) and only runs when a post is saved without a featured image — or when you explicitly trigger it from the editor. There's no background polling, no cron jobs, and no frontend overhead.
+**No.** Template rendering uses PHP's GD library (already loaded) and only runs when a post is saved without a featured image — or when you explicitly trigger it from the editor. Automatic AI images are created in a single background task per post (Action Scheduler when available, otherwise WP-Cron), so saving a post never waits for the AI service. There's no frontend overhead.
 
 = Is it compatible with multisite? =
 Yes. Each site on the network can configure its own templates and API key.
 
 = Is the plugin GDPR-friendly? =
-Template-based generation runs entirely on your server, nothing leaves your site. AI prompt-based generation sends only the prompt you type to OpenAI; no visitor data, post content, or personal information is transmitted unless you put it in the prompt.
+Template-based generation runs entirely on your server, nothing leaves your site. AI generation sends only a prompt to OpenAI: the text you type, or — for automatic AI images and the *Write a prompt from this post* button — a prompt built from your prompt template, which by default contains the post's title and excerpt. No visitor data is ever sent. If your posts contain personal information, edit the prompt template so it doesn't include it.
 
 = Can I translate the plugin? =
 **Yes.** The plugin is fully translation-ready with a bundled `.pot` file. Both PHP and JavaScript strings are translatable.
@@ -233,12 +244,12 @@ Source: https://fonts.google.com/specimen/Roboto
 The Roboto font is bundled under the Apache License 2.0. Full license text available at the URI above.
 
 = AI Image Generation =
-Prompt-based image generation calls a third-party API (**OpenAI** by default). You are responsible for the API key, usage costs, and compliance with the provider's terms of service. **No prompts or images are sent to any external service unless you explicitly trigger generation from a custom prompt.** Template-based generation never leaves your server.
+AI image generation calls a third-party API (**OpenAI** by default, `https://api.openai.com/v1/images/generations`). You are responsible for the API key, usage costs, and compliance with the provider's [terms of use](https://openai.com/policies/terms-of-use) and [privacy policy](https://openai.com/policies/privacy-policy). **Nothing is sent to an external service unless you add an API key and either generate from a prompt, click *Write a prompt from this post*, or choose an AI method for automatic featured images.** Template-based generation never leaves your server.
 
 == Privacy ==
 
 - **Template-based generation** runs entirely on your server. No data is sent to third parties.
-- **AI prompt-based generation** sends the prompt you type to OpenAI (or your configured endpoint). The plugin does not transmit post content, user data, or visitor information.
+- **AI generation** sends a prompt to OpenAI (or your configured endpoint): the prompt you type, or — for automatic AI images — one built from your prompt template, which by default includes the post's title and excerpt. No user or visitor data is transmitted.
 - The plugin does not set cookies, track users, or load any external scripts on the frontend.
 
 == Screenshots ==
@@ -250,6 +261,17 @@ Prompt-based image generation calls a third-party API (**OpenAI** by default). Y
 6. Plugin settings — defaults and AI API key configuration.
 
 == Changelog ==
+= 1.6.0 ( 06th October 2026 ) =
+* New: **Template or AI for automatic featured images.** Choose under Settings → Automatic Featured Images: an image template (default, as before), an AI image, or either one with the other as a fallback.
+* New: Pick which template automatic images use, instead of a random one.
+* New: AI prompt template with tags (`{title}`, `{excerpt}`, `{category}`, `{tags}`, `{site_name}`, `{custom_field:key}`), style presets, and instructions that keep text and watermarks out of AI images.
+* New: Automatic AI images are created in the background (Action Scheduler or WP-Cron), only once a post is published or scheduled, and count against the post author's hourly limit.
+* New: The AI Featured Image panel shows background progress and can generate or regenerate the featured image in one click.
+* New: In the Custom Prompt tab, choose the image shape (square, landscape, portrait), quality, style and up to 4 variations, or write the prompt from the post.
+* New: The Templates tab previews the selected template with your title.
+* New: Default AI image shape and quality settings.
+* New: Developer hooks `aimg_providers`, `aimg_generation_methods`, `aimg_pre_generate_for_post`, `aimg_template_for_post`, `aimg_style_presets`, `aimg_post_prompt`, `aimg_auto_generate_statuses`, `aimg_use_action_scheduler`, `aimg_kick_queue`, and REST endpoints `/featured`, `/status`, `/prompt` and `/templates/{id}/preview`.
+* Enhance: The template list is loaded once per modal instead of on every tab switch, and the prompt box is disabled until an API key is set.
 = 1.5.4 ( 06th October 2026 ) =
 * New: **Who Can Generate AI Images** setting — allow AI images for Authors and above (default), Editors and above, or Administrators only. Template images stay available to everyone who can upload files.
 * New: **Hourly Limit per User** setting for AI images (default 20, 0 for no limit) to keep API costs under control.
@@ -311,6 +333,9 @@ Prompt-based image generation calls a third-party API (**OpenAI** by default). Y
 * Initial release.
 
 == Upgrade Notice ==
+
+= 1.6.0 =
+Automatic featured images can now be made with AI as well as templates, plus prompt templates, styles and image variations. Nothing changes until you choose a new method under Settings → Automatic Featured Images.
 
 = 1.5.4 =
 Adds settings to control who can generate AI images and how many per hour. Your API key is kept but no longer shown in the settings field. No action required when updating.

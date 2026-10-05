@@ -87,6 +87,59 @@ abstract class AIMG_TestCase extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Request bodies sent to OpenAI by `stub_openai()`.
+	 *
+	 * @var array
+	 */
+	protected $openai_bodies = array();
+
+	/**
+	 * Answer OpenAI requests with tiny images, or with an error status.
+	 *
+	 * @param int $status HTTP status to answer with.
+	 */
+	protected function stub_openai( $status = 200 ) {
+		$this->openai_bodies = array();
+
+		add_filter(
+			'pre_http_request',
+			function ( $pre, $args, $url ) use ( $status ) {
+				if ( false === strpos( $url, 'api.openai.com' ) ) {
+					return $pre;
+				}
+
+				$body                  = json_decode( $args['body'], true );
+				$this->openai_bodies[] = $body;
+				$data                  = 200 === $status
+					? array( 'data' => array_fill( 0, (int) $body['n'], array( 'b64_json' => self::PNG ) ) )
+					: array( 'error' => array( 'message' => 'Service unavailable' ) );
+
+				return array(
+					'headers'  => array(),
+					'body'     => wp_json_encode( $data ),
+					'response' => array(
+						'code'    => $status,
+						'message' => '',
+					),
+					'cookies'  => array(),
+					'filename' => null,
+				);
+			},
+			10,
+			3
+		);
+	}
+
+	/**
+	 * Merge values into the plugin settings.
+	 *
+	 * @param array $settings Settings.
+	 */
+	protected function set_settings( $settings ) {
+		update_option( 'aimg_settings', array_merge( (array) get_option( 'aimg_settings', array() ), $settings ) );
+	}
+
+	/**
 	 * Run a request through the REST server.
 	 *
 	 * @param string $method HTTP method.

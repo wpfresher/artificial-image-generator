@@ -76,20 +76,37 @@ function aimg_get_settings( $option, $default_value = null ) {
  * @return array
  */
 function aimg_get_js_data() {
-	$has_api_key = ( defined( 'AIMG_API_KEY' ) && AIMG_API_KEY )
-		|| ! empty( aimg_get_settings( 'api_key', '' ) );
+	$provider = \ArtificialImageGenerator\Providers\Registry::get();
+	$model    = (string) aimg_get_settings( 'api_model', '' );
+	$method   = \ArtificialImageGenerator\Generator::get_method();
+	$methods  = \ArtificialImageGenerator\Generator::get_methods();
 
 	return array(
 		'endpoints' => array(
 			'generate'  => rest_url( 'aimg/v1/generate' ),
 			'templates' => rest_url( 'aimg/v1/templates' ),
+			'prompt'    => rest_url( 'aimg/v1/prompt' ),
+			'status'    => rest_url( 'aimg/v1/status/' ),
+			'featured'  => rest_url( 'aimg/v1/featured/' ),
+			'media'     => rest_url( 'wp/v2/media/' ),
 		),
 		'nonce'     => wp_create_nonce( 'wp_rest' ),
 		'uploadUrl' => admin_url( 'upload.php' ),
 		'settings'  => array(
-			'hasApiKey'   => (bool) $has_api_key,
+			'hasApiKey'   => $provider && $provider->is_configured(),
 			'canUseAi'    => aimg_user_can_use_ai(),
 			'settingsUrl' => admin_url( 'admin.php?page=aimg-settings' ),
+			'size'        => (string) aimg_get_settings( 'ai_size', 'square' ),
+			'quality'     => (string) aimg_get_settings( 'ai_quality', 'auto' ),
+			'maxImages'   => $provider ? min( 4, $provider->get_max_images( $model ) ) : 1,
+			'method'      => $method,
+			'methodLabel' => isset( $methods[ $method ] ) ? $methods[ $method ] : '',
+			'methodIsAi'  => \ArtificialImageGenerator\Generator::method_starts_with_ai( $method ),
+		),
+		'options'   => array(
+			'sizes'     => \ArtificialImageGenerator\Admin\Settings::get_sizes(),
+			'qualities' => \ArtificialImageGenerator\Admin\Settings::get_qualities(),
+			'styles'    => wp_list_pluck( \ArtificialImageGenerator\PromptBuilder::get_styles(), 0 ),
 		),
 	);
 }
@@ -466,15 +483,18 @@ function aimg_user_can_use_ai( $user_id = 0 ) {
 }
 
 /**
- * Count one AI generation against the user's hourly limit.
+ * Count AI images against the user's hourly limit.
  *
  * @param int $user_id User ID. Defaults to the current user.
+ * @param int $count   Number of images. Default 1.
  *
  * @since 1.5.4
+ * @since 1.6.0 Added `$count`.
  * @return true|WP_Error True when allowed, an error once the limit is reached.
  */
-function aimg_consume_ai_quota( $user_id = 0 ) {
+function aimg_consume_ai_quota( $user_id = 0, $count = 1 ) {
 	$user_id = $user_id ? $user_id : get_current_user_id();
+	$count   = max( 1, (int) $count );
 
 	/**
 	 * Filter how many AI images a user may generate per hour. 0 means no limit.
@@ -501,8 +521,26 @@ function aimg_consume_ai_quota( $user_id = 0 ) {
 		);
 	}
 
-	if ( (int) $usage['count'] >= $limit ) {
-		$minutes = max( 1, (int) ceil( ( (int) $usage['start'] + HOUR_IN_SECONDS - $now ) / MINUTE_IN_SECONDS ) );
+	if ( (int) $usage['count'] + $count > $limit ) {
+		$minutes   = max( 1, (int) ceil( ( (int) $usage['start'] + HOUR_IN_SECONDS - $now ) / MINUTE_IN_SECONDS ) );
+		$remaining = $limit - (int) $usage['count'];
+
+		if ( $remaining > 0 ) {
+			return new WP_Error(
+				'aimg_rate_limited',
+				sprintf(
+					/* translators: %d: number of AI images the user can still generate this hour */
+					_n(
+						'You can generate %d more AI image this hour. Request fewer images.',
+						'You can generate %d more AI images this hour. Request fewer images.',
+						$remaining,
+						'artificial-image-generator'
+					),
+					$remaining
+				),
+				array( 'status' => 429 )
+			);
+		}
 
 		return new WP_Error(
 			'aimg_rate_limited',
@@ -521,7 +559,7 @@ function aimg_consume_ai_quota( $user_id = 0 ) {
 		);
 	}
 
-	++$usage['count'];
+	$usage['count'] += $count;
 	set_transient( $key, $usage, HOUR_IN_SECONDS );
 
 	return true;
