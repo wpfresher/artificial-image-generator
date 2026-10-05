@@ -1,4 +1,4 @@
-@use 'aimg-modal' as *;
+@use "aimg-modal" as *;
 
 /* Toolbar button: subtle highlight so it stands out from native controls */
 .aimg-toolbar-button {
@@ -13,9 +13,9 @@
 
 /* ── Featured Image sidebar panel ────────────────────────────────────────── */
 .aimg-featured__wrap {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
 
 	.aimg-featured__preview {
 		width: 100%;

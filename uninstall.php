@@ -22,8 +22,11 @@ defined( 'WP_UNINSTALL_PLUGIN' ) || exit; // Exit if accessed directly.
  * @return void
  */
 function aimg_uninstall_site() {
-	// Queued admin notices are never worth keeping.
+	global $wpdb;
+
+	// Queued admin notices and AI usage counters are never worth keeping.
 	delete_option( 'aimg_flash_notices' );
+	$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '\_transient\_aimg\_flash\_notices\_%' OR option_name LIKE '\_transient\_timeout\_aimg\_flash\_notices\_%' OR option_name LIKE '\_transient\_aimg\_ai\_usage\_%' OR option_name LIKE '\_transient\_timeout\_aimg\_ai\_usage\_%'" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 
 	$settings    = get_option( 'aimg_settings', array() );
 	$remove_data = is_array( $settings ) && isset( $settings['remove_data'] ) ? $settings['remove_data'] : 'no';
@@ -42,7 +45,20 @@ function aimg_uninstall_site() {
 		)
 	);
 
+	// The plugin isn't loaded during uninstall, so its delete hooks don't run.
+	$upload_dir = wp_upload_dir();
+
 	foreach ( $templates as $template_id ) {
+		$preview = (string) get_post_meta( $template_id, '_aimg_preview_image_url', true );
+
+		if ( empty( $upload_dir['error'] ) && 0 === strpos( $preview, trailingslashit( $upload_dir['baseurl'] ) ) ) {
+			$relative = substr( $preview, strlen( trailingslashit( $upload_dir['baseurl'] ) ) );
+
+			if ( false === strpos( $relative, '..' ) ) {
+				wp_delete_file( trailingslashit( $upload_dir['basedir'] ) . $relative );
+			}
+		}
+
 		wp_delete_post( $template_id, true );
 	}
 

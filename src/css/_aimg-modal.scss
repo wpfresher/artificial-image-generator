@@ -1,15 +1,15 @@
 /* Global color variables */
 $aimg-accent:        #7c3aed;
 $aimg-accent-hover:  #5b21b6;
-$aimg-accent-soft:   rgba( 124, 58, 237, 0.08 );
-$aimg-accent-ring:   rgba( 124, 58, 237, 0.25 );
+$aimg-accent-soft:   rgba(124, 58, 237, 0.08);
+$aimg-accent-ring:   rgba(124, 58, 237, 0.25);
 $aimg-border:        #e5e7eb;
 $aimg-muted:         #6b7280;
 
 /* ── Modal frame ─────────────────────────────────────────────────────────── */
 .aimg-modal.components-modal__frame {
-    width: min( 992px, 94vw );
-    max-height: min( 88vh, 760px );
+	width: min(992px, 94vw);
+	max-height: min(88vh, 760px);
 
 	.components-modal__header {
 		border-bottom: 1px solid $aimg-border;
@@ -23,6 +23,7 @@ $aimg-muted:         #6b7280;
 
 /* ── Tab panel ───────────────────────────────────────────────────────────── */
 .aimg-modal__tabs {
+
 	.components-tab-panel__tabs {
 		border-bottom: 1px solid $aimg-border;
 		margin-bottom: 16px;
@@ -36,12 +37,12 @@ $aimg-muted:         #6b7280;
 
 /* ── Templates grid ──────────────────────────────────────────────────────── */
 .aimg-templates__grid {
-    display: grid;
-    grid-template-columns: repeat( auto-fill, minmax( 160px, 1fr ) );
-    gap: 12px;
-    margin-top: 12px;
-    max-height: 420px;
-    overflow-y: auto;
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+	gap: 12px;
+	margin-top: 12px;
+	max-height: 420px;
+	overflow-y: auto;
 
 	.aimg-template-card {
 		appearance: none;
@@ -55,11 +56,6 @@ $aimg-muted:         #6b7280;
 		transition: border-color 0.15s, box-shadow 0.15s, transform 0.05s;
 		display: flex;
 		flex-direction: column;
-
-		&:hover:not(:disabled) {
-			border-color: $aimg-accent;
-			box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.06 );
-		}
 
 		&:focus-visible {
 			outline: none;
@@ -75,6 +71,11 @@ $aimg-muted:         #6b7280;
 		&:disabled {
 			opacity: 0.55;
 			cursor: not-allowed;
+		}
+
+		&:hover:not(:disabled) {
+			border-color: $aimg-accent;
+			box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
 		}
 
 		&__preview {
@@ -122,6 +123,7 @@ $aimg-muted:         #6b7280;
 
 /* ── Custom prompt textarea ──────────────────────────────────────────────── */
 .aimg-modal .components-textarea-control {
+
 	&__input {
 		font-size: 14px;
 		resize: vertical;
@@ -144,21 +146,21 @@ $aimg-muted:         #6b7280;
 
 /* ── Inline loading row inside tabs ──────────────────────────────────────── */
 .aimg-modal__loading {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 24px;
-    color: $aimg-muted;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 24px;
+	color: $aimg-muted;
 }
 
 /* ── Action row ──────────────────────────────────────────────────────────── */
 .aimg-modal__actions {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 20px;
-    padding-top: 16px;
-    border-top: 1px solid $aimg-border;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-top: 20px;
+	padding-top: 16px;
+	border-top: 1px solid $aimg-border;
 
 	.aimg-modal__generate-btn {
 		background: $aimg-accent !important;
@@ -167,14 +169,14 @@ $aimg-muted:         #6b7280;
 		justify-content: center;
 		transition: background 0.15s, border-color 0.15s;
 
-		&:hover:not(:disabled) {
-			background: $aimg-accent-hover !important;
-			border-color: $aimg-accent-hover !important;
-		}
-
 		&:disabled {
 			opacity: 0.55;
 			cursor: not-allowed;
+		}
+
+		&:hover:not(:disabled) {
+			background: $aimg-accent-hover !important;
+			border-color: $aimg-accent-hover !important;
 		}
 
 		.components-spinner {
@@ -189,21 +191,21 @@ $aimg-muted:         #6b7280;
 
 /* ── Loading overlay ─────────────────────────────────────────────────────── */
 .aimg-modal__overlay {
-    position: absolute;
-    inset: 0;
-    background: rgba( 255, 255, 255, 0.8 );
-    backdrop-filter: blur( 2px );
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    z-index: 10;
-    border-radius: 4px;
+	position: absolute;
+	inset: 0;
+	background: rgba(255, 255, 255, 0.8);
+	backdrop-filter: blur(2px);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 12px;
+	z-index: 10;
+	border-radius: 4px;
 }
 
 .aimg-modal__overlay-text {
-    color: #374151;
-    font-size: 14px;
-    margin: 0;
+	color: #374151;
+	font-size: 14px;
+	margin: 0;
 }

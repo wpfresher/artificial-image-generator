@@ -4,7 +4,7 @@ Tags: ai, ai image, image generator, featured image, block editor
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.5.3
+Stable tag: 1.5.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -250,6 +250,20 @@ Prompt-based image generation calls a third-party API (**OpenAI** by default). Y
 6. Plugin settings — defaults and AI API key configuration.
 
 == Changelog ==
+= 1.5.4 ( 06th October 2026 ) =
+* New: **Who Can Generate AI Images** setting — allow AI images for Authors and above (default), Editors and above, or Administrators only. Template images stay available to everyone who can upload files.
+* New: **Hourly Limit per User** setting for AI images (default 20, 0 for no limit) to keep API costs under control.
+* New: Developer filters `aimg_can_generate_from_prompt`, `aimg_ai_hourly_limit` and `aimg_generate_timeout`.
+* Enhance: The API key is no longer included in the settings page. The field now shows only the last 4 characters; leave it empty to keep your key, or use the new **Remove the saved API key** option.
+* Enhance: AI image requests now wait up to 120 seconds, so slower GPT Image generations no longer time out.
+* Enhance: Admin notices are now shown only to the user who triggered them.
+* Fix: Long words in a title (such as URLs or product codes) no longer run off the edges of the image; the text shrinks or wraps to fit.
+* Fix: Titles containing characters like `&`, quotes or apostrophes are now drawn correctly instead of as HTML codes, and used correctly as alt text.
+* Fix: A missing GD/FreeType library or a damaged overlay image no longer causes a fatal error when saving a post.
+* Fix: Deleting a template now also deletes its preview image.
+* Fix: Template settings are now checked against the allowed values when saving.
+* Fix: The template font size is now correctly labelled in points.
+
 = 1.5.3 ( 05th October 2026 ) =
 * Fix: Resolved a few minor issues.
 
@@ -297,6 +311,9 @@ Prompt-based image generation calls a third-party API (**OpenAI** by default). Y
 * Initial release.
 
 == Upgrade Notice ==
+
+= 1.5.4 =
+Adds settings to control who can generate AI images and how many per hour. Your API key is kept but no longer shown in the settings field. No action required when updating.
 
 = 1.5.0 =
 Adds an optional Remove Data on Uninstall setting (off by default) and unifies the image generation pipeline. No action required when updating.

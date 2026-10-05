@@ -39,7 +39,8 @@ class Actions {
 
 		$template_id = isset( $_POST['template_id'] ) ? absint( wp_unslash( $_POST['template_id'] ) ) : 0;
 		$title       = isset( $_POST['title'] ) ? sanitize_text_field( wp_unslash( $_POST['title'] ) ) : '';
-		$status      = isset( $_POST['status'] ) ? sanitize_text_field( wp_unslash( $_POST['status'] ) ) : 'publish';
+		$status      = isset( $_POST['status'] ) ? sanitize_key( wp_unslash( $_POST['status'] ) ) : 'publish';
+		$status      = in_array( $status, array( 'publish', 'draft' ), true ) ? $status : 'publish';
 
 		// Only ever update an existing template; any other post ID would be
 		// converted into a template and lose its content.
@@ -86,8 +87,9 @@ class Actions {
 		$width            = $width > 0 ? min( $width, 5000 ) : 1200;
 		$height           = $height > 0 ? min( $height, 5000 ) : 800;
 		$title_font_size  = $title_font_size > 0 ? min( $title_font_size, 500 ) : AIMG_DEFAULT_FONT_SIZE;
-		$overlay_images   = isset( $_POST['overlay_images'] ) ? sanitize_text_field( wp_unslash( $_POST['overlay_images'] ) ) : '';
-		$overlay_position = isset( $_POST['overlay_position'] ) ? sanitize_text_field( wp_unslash( $_POST['overlay_position'] ) ) : 'center-center';
+		$overlay_images   = isset( $_POST['overlay_images'] ) ? self::sanitize_overlay_images( sanitize_text_field( wp_unslash( $_POST['overlay_images'] ) ) ) : '[]';
+		$overlay_position = isset( $_POST['overlay_position'] ) ? sanitize_key( wp_unslash( $_POST['overlay_position'] ) ) : '';
+		$overlay_position = in_array( $overlay_position, aimg_get_overlay_positions(), true ) ? $overlay_position : 'center-center';
 
 		update_post_meta( $post, '_aimg_bg_colors', $bg_colors );
 		update_post_meta( $post, '_aimg_width', $width );
@@ -121,5 +123,21 @@ class Actions {
 
 		wp_safe_redirect( $referer );
 		exit;
+	}
+
+	/**
+	 * Reduce the submitted overlay list to a JSON array of image attachment IDs.
+	 *
+	 * @param string $raw JSON array of attachment IDs from the form.
+	 *
+	 * @since 1.5.4
+	 * @return string JSON encoded array of attachment IDs.
+	 */
+	protected static function sanitize_overlay_images( $raw ) {
+		$ids = json_decode( $raw, true );
+		$ids = is_array( $ids ) ? array_unique( array_filter( array_map( 'absint', $ids ) ) ) : array();
+		$ids = array_filter( $ids, 'wp_attachment_is_image' );
+
+		return wp_json_encode( array_values( $ids ) );
 	}
 }

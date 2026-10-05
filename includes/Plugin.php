@@ -172,7 +172,9 @@ class Plugin {
 	 * @return void
 	 */
 	public function flash_notice( $notice = '', $type = 'success', $dismissible = true ) {
-		$notices          = get_option( 'aimg_flash_notices', array() );
+		$key              = $this->flash_notices_key();
+		$notices          = get_transient( $key );
+		$notices          = is_array( $notices ) ? $notices : array();
 		$dismissible_text = ( $dismissible ) ? 'is-dismissible' : '';
 
 		// Add new notice.
@@ -182,18 +184,38 @@ class Plugin {
 			'dismissible' => $dismissible_text,
 		);
 
-		// Update the notices array.
-		update_option( 'aimg_flash_notices', $notices );
+		set_transient( $key, $notices, HOUR_IN_SECONDS );
 	}
 
 	/**
-	 * Display flash notices after that, remove the option to prevent notices being displayed forever.
+	 * Transient key holding the current user's flash notices.
+	 *
+	 * @since 1.5.4
+	 * @return string
+	 */
+	protected function flash_notices_key() {
+		return 'aimg_flash_notices_' . get_current_user_id();
+	}
+
+	/**
+	 * Display and clear the current user's flash notices.
 	 *
 	 * @since 1.0.0
 	 * @return void
 	 */
 	public function display_flash_notices() {
-		$notices = get_option( 'aimg_flash_notices', array() );
+		// Before 1.5.4 notices were stored site-wide for every user.
+		if ( false !== get_option( 'aimg_flash_notices' ) ) {
+			delete_option( 'aimg_flash_notices' );
+		}
+
+		$notices = get_transient( $this->flash_notices_key() );
+
+		if ( ! is_array( $notices ) || empty( $notices ) ) {
+			return;
+		}
+
+		delete_transient( $this->flash_notices_key() );
 
 		foreach ( $notices as $notice ) {
 			echo wp_kses_post(
@@ -204,11 +226,6 @@ class Plugin {
 					esc_html( $notice['notice'] ),
 				)
 			);
-		}
-
-		// Reset options to prevent notices being displayed forever.
-		if ( ! empty( $notices ) ) {
-			delete_option( 'aimg_flash_notices', array() );
 		}
 	}
 

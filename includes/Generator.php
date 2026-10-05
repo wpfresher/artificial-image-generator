@@ -50,7 +50,7 @@ class Generator {
 	public static function get_render_args( $template_id, $title = '' ) {
 		$template = aimg_get_template( $template_id );
 
-		if ( ! $template ) {
+		if ( ! $template || 'publish' !== $template->post_status ) {
 			return false;
 		}
 
@@ -63,7 +63,7 @@ class Generator {
 
 		$args = array(
 			'template_id' => $template_id,
-			'title'       => '' !== trim( (string) $title ) ? $title : $template->post_title,
+			'title'       => '' !== trim( (string) $title ) ? $title : aimg_get_plain_title( $template_id ),
 			'colors'      => is_array( $colors ) ? $colors : array(),
 			'width'       => (int) get_post_meta( $template_id, '_aimg_width', true ),
 			'height'      => (int) get_post_meta( $template_id, '_aimg_height', true ),

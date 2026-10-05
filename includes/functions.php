@@ -84,10 +84,11 @@ function aimg_get_js_data() {
 			'generate'  => rest_url( 'aimg/v1/generate' ),
 			'templates' => rest_url( 'aimg/v1/templates' ),
 		),
-		'nonce'      => wp_create_nonce( 'wp_rest' ),
-		'uploadUrl'  => admin_url( 'upload.php' ),
-		'settings'   => array(
+		'nonce'     => wp_create_nonce( 'wp_rest' ),
+		'uploadUrl' => admin_url( 'upload.php' ),
+		'settings'  => array(
 			'hasApiKey'   => (bool) $has_api_key,
+			'canUseAi'    => aimg_user_can_use_ai(),
 			'settingsUrl' => admin_url( 'admin.php?page=aimg-settings' ),
 		),
 	);
@@ -132,7 +133,7 @@ function aimg_generate_preview( $post_id, $colors, $width, $height, $overlays = 
 	$filepath = aimg_generate_thumbnail(
 		array(
 			'template_id' => $post_id,
-			'title'       => get_the_title( $post_id ),
+			'title'       => aimg_get_plain_title( $post_id ),
 			'colors'      => $colors,
 			'width'       => $width,
 			'height'      => $height,
@@ -212,12 +213,19 @@ function aimg_generate_thumbnail( $args = array() ) {
 
 	$font_path = AIMG_ASSETS_PATH . 'fonts/Roboto-Bold.ttf';
 
-	if ( ! file_exists( $font_path ) ) {
+	// Missing GD or FreeType would be a fatal error, breaking the post save.
+	if ( ! file_exists( $font_path ) || ! aimg_can_render() ) {
 		return false;
 	}
 
+	wp_raise_memory_limit( 'image' );
+
 	// Create base image.
 	$img = imagecreatetruecolor( $width, $height );
+
+	if ( ! $img ) {
+		return false;
+	}
 	imagealphablending( $img, true );
 	imagesavealpha( $img, true );
 
@@ -243,8 +251,18 @@ function aimg_generate_thumbnail( $args = array() ) {
 				continue;
 			}
 
+			// A corrupt PNG makes imagecreatefrompng() return false and the next GD call throw.
+			$info = @getimagesize( $overlay_path ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+			if ( ! $info || IMAGETYPE_PNG !== $info[2] ) {
+				continue;
+			}
+
 			$overlay_position = get_post_meta( $template_id, '_aimg_overlay_position', true );
-			$overlay          = imagecreatefrompng( $overlay_path );
+			$overlay          = @imagecreatefrompng( $overlay_path ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+
+			if ( ! $overlay ) {
+				continue;
+			}
 
 			imagesavealpha( $overlay, true );
 
@@ -332,7 +350,7 @@ function aimg_generate_thumbnail( $args = array() ) {
 		}
 	}
 
-	// Add semi-transparent overlay (0.7 alpha).
+	// Tint with the background colour at ~70% opacity (GD alpha 38 of 127).
 	$overlay_color = imagecolorallocatealpha( $img, $r, $g, $b, absint( 127 * 0.3 ) );
 	imagefilledrectangle( $img, 0, 0, $width, $height, $overlay_color );
 
@@ -346,28 +364,9 @@ function aimg_generate_thumbnail( $args = array() ) {
 	$text_color                 = imagecolorallocate( $img, $red, $green, $blue );
 
 	// Auto-wrap long title.
-	$wrapped_lines = array();
-	$words         = explode( ' ', $title );
-	$line          = '';
-
-	foreach ( $words as $word ) {
-		$new_line   = $line ? $line . ' ' . $word : $word;
-		$bbox       = imagettfbbox( $font_size, 0, $font_path, $new_line );
-		$text_width = $bbox[2] - $bbox[0];
-
-		if ( $text_width > ( $width - 80 ) ) {
-			if ( $line ) {
-				$wrapped_lines[] = $line;
-			}
-			$line = $word;
-		} else {
-			$line = $new_line;
-		}
-	}
-
-	if ( $line ) {
-		$wrapped_lines[] = $line;
-	}
+	$wrapped       = aimg_wrap_title( $title, $font_size, $font_path, $width - 80 );
+	$font_size     = $wrapped['font_size'];
+	$wrapped_lines = $wrapped['lines'];
 
 	// Calculate total text height.
 	$line_height  = $font_size * 1.4;
@@ -411,6 +410,213 @@ function aimg_generate_thumbnail( $args = array() ) {
 	}
 
 	return $filepath;
+}
+
+/**
+ * A post title as plain text, for drawing onto an image and for alt text.
+ *
+ * @param int $post_id Post ID.
+ *
+ * @since 1.5.4
+ * @return string
+ */
+function aimg_get_plain_title( $post_id ) {
+	$title = html_entity_decode( (string) get_post_field( 'post_title', $post_id ), ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+
+	return trim( wp_strip_all_tags( $title ) );
+}
+
+/**
+ * Roles allowed to generate AI images, mapped to the capability that gates them.
+ *
+ * @since 1.5.4
+ * @return array
+ */
+function aimg_get_ai_access_levels() {
+	return array(
+		'authors' => 'upload_files',
+		'editors' => 'edit_others_posts',
+		'admins'  => 'manage_options',
+	);
+}
+
+/**
+ * Whether a user may generate images from an AI prompt (which spends the site's API credit).
+ *
+ * @param int $user_id User ID. Defaults to the current user.
+ *
+ * @since 1.5.4
+ * @return bool
+ */
+function aimg_user_can_use_ai( $user_id = 0 ) {
+	$user_id = $user_id ? $user_id : get_current_user_id();
+	$levels  = aimg_get_ai_access_levels();
+	$access  = aimg_get_settings( 'ai_access', 'authors' );
+	$cap     = isset( $levels[ $access ] ) ? $levels[ $access ] : $levels['authors'];
+
+	/**
+	 * Filter whether a user may generate images from an AI prompt.
+	 *
+	 * @param bool $allowed Whether the user may generate.
+	 * @param int  $user_id User ID.
+	 *
+	 * @since 1.5.4
+	 */
+	return (bool) apply_filters( 'aimg_can_generate_from_prompt', user_can( $user_id, $cap ), $user_id );
+}
+
+/**
+ * Count one AI generation against the user's hourly limit.
+ *
+ * @param int $user_id User ID. Defaults to the current user.
+ *
+ * @since 1.5.4
+ * @return true|WP_Error True when allowed, an error once the limit is reached.
+ */
+function aimg_consume_ai_quota( $user_id = 0 ) {
+	$user_id = $user_id ? $user_id : get_current_user_id();
+
+	/**
+	 * Filter how many AI images a user may generate per hour. 0 means no limit.
+	 *
+	 * @param int $limit   Hourly limit from the settings.
+	 * @param int $user_id User ID.
+	 *
+	 * @since 1.5.4
+	 */
+	$limit = (int) apply_filters( 'aimg_ai_hourly_limit', absint( aimg_get_settings( 'ai_hourly_limit', 20 ) ), $user_id );
+
+	if ( $limit <= 0 ) {
+		return true;
+	}
+
+	$key   = 'aimg_ai_usage_' . $user_id;
+	$usage = get_transient( $key );
+	$now   = time();
+
+	if ( ! is_array( $usage ) || empty( $usage['start'] ) || $now - (int) $usage['start'] >= HOUR_IN_SECONDS ) {
+		$usage = array(
+			'start' => $now,
+			'count' => 0,
+		);
+	}
+
+	if ( (int) $usage['count'] >= $limit ) {
+		$minutes = max( 1, (int) ceil( ( (int) $usage['start'] + HOUR_IN_SECONDS - $now ) / MINUTE_IN_SECONDS ) );
+
+		return new WP_Error(
+			'aimg_rate_limited',
+			sprintf(
+				/* translators: 1: hourly limit, 2: minutes until the limit resets */
+				_n(
+					'You have reached the limit of %1$d AI image per hour. Try again in %2$d minutes.',
+					'You have reached the limit of %1$d AI images per hour. Try again in %2$d minutes.',
+					$limit,
+					'artificial-image-generator'
+				),
+				$limit,
+				$minutes
+			),
+			array( 'status' => 429 )
+		);
+	}
+
+	++$usage['count'];
+	set_transient( $key, $usage, HOUR_IN_SECONDS );
+
+	return true;
+}
+
+/**
+ * Overlay positions a template can use.
+ *
+ * @since 1.5.4
+ * @return string[]
+ */
+function aimg_get_overlay_positions() {
+	return array( 'top-left', 'top-center', 'top-right', 'left-center', 'center-center', 'right-center', 'bottom-left', 'bottom-center', 'bottom-right' );
+}
+
+/**
+ * Whether the server can render template images: GD with FreeType support.
+ *
+ * @since 1.5.4
+ * @return bool
+ */
+function aimg_can_render() {
+	return function_exists( 'imagecreatetruecolor' ) && function_exists( 'imagettfbbox' ) && function_exists( 'imagepng' );
+}
+
+/**
+ * Split a title into lines that fit a width, shrinking the font when a single
+ * word is wider than the line.
+ *
+ * @param string $title     Title text.
+ * @param float  $font_size Requested font size.
+ * @param string $font_path TrueType font path.
+ * @param int    $max_width Maximum line width in pixels.
+ *
+ * @since 1.5.4
+ * @return array { @type float $font_size, @type string[] $lines }
+ */
+function aimg_wrap_title( $title, $font_size, $font_path, $max_width ) {
+	$measure = function ( $text, $size ) use ( $font_path ) {
+		$bbox = imagettfbbox( $size, 0, $font_path, $text );
+
+		return $bbox ? $bbox[2] - $bbox[0] : 0;
+	};
+
+	$words    = preg_split( '/\s+/u', trim( $title ) );
+	$min_size = min( $font_size, 12 );
+
+	$widest = 0;
+	foreach ( $words as $word ) {
+		$widest = max( $widest, $measure( $word, $font_size ) );
+	}
+
+	if ( $widest > $max_width ) {
+		$font_size = max( $min_size, floor( $font_size * $max_width / $widest ) );
+	}
+
+	$pieces = array();
+	foreach ( $words as $word ) {
+		if ( $measure( $word, $font_size ) <= $max_width ) {
+			$pieces[] = $word;
+			continue;
+		}
+
+		$chunk = '';
+		foreach ( preg_split( '//u', $word, -1, PREG_SPLIT_NO_EMPTY ) as $char ) {
+			if ( '' !== $chunk && $measure( $chunk . $char, $font_size ) > $max_width ) {
+				$pieces[] = $chunk;
+				$chunk    = '';
+			}
+			$chunk .= $char;
+		}
+		$pieces[] = $chunk;
+	}
+
+	$lines = array();
+	$line  = '';
+	foreach ( $pieces as $piece ) {
+		$new_line = '' !== $line ? $line . ' ' . $piece : $piece;
+
+		if ( '' !== $line && $measure( $new_line, $font_size ) > $max_width ) {
+			$lines[] = $line;
+			$line    = $piece;
+		} else {
+			$line = $new_line;
+		}
+	}
+
+	if ( '' !== $line ) {
+		$lines[] = $line;
+	}
+
+	return array(
+		'font_size' => $font_size,
+		'lines'     => $lines,
+	);
 }
 
 /**
@@ -460,9 +666,9 @@ function aimg_uploads_path( $path ) {
 		return $path;
 	}
 
-	$basedir  = trailingslashit( $upload_dir['basedir'] );
-	$compare  = wp_normalize_path( $basedir );
-	$normal   = wp_normalize_path( $path );
+	$basedir = trailingslashit( $upload_dir['basedir'] );
+	$compare = wp_normalize_path( $basedir );
+	$normal  = wp_normalize_path( $path );
 
 	if ( 0 !== strpos( $normal, $compare ) ) {
 		return $path;

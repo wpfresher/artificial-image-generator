@@ -161,7 +161,6 @@ class Admin {
 		}
 
 		$list_table = new TemplatesTable();
-		$list_table->process_bulk_action();
 
 		if ( 'delete' === $list_table->current_action() ) {
 			check_admin_referer( 'bulk-templates' );
@@ -210,15 +209,5 @@ class Admin {
 		// Enqueue media uploader scripts.
 		wp_enqueue_media();
 		wp_enqueue_script( 'aimg-admin', AIMG_URL . 'assets/js/admin.js', array( 'jquery' ), AIMG_VERSION, true );
-
-		// Localization for admin scripts.
-		wp_localize_script(
-			'aimg-admin',
-			'aimg_object',
-			array(
-				'ajax_url' => admin_url( 'admin-ajax.php' ),
-				'nonce'    => wp_create_nonce( 'aimg_nonce' ),
-			)
-		);
 	}
 }

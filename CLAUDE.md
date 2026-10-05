@@ -29,6 +29,16 @@ composer run makepot   # Regenerate languages/artificial-image-generator.pot
 
 **PHP code standards:** `phpcs.xml` enforces the "WpFresher" ruleset with text domain `artificial-image-generator`.
 
+**Tests:**
+```bash
+bin/install-wp-tests.sh <db-name> <db-user> <db-pass> [db-host] [wp-version]   # once; use a dedicated DB, it gets emptied
+composer test                                                                 # PHPUnit (tests/test-*.php)
+```
+
+**CI** (`.github/workflows/ci.yml`) runs phpcs, `wp-scripts lint-js src/js`, `wp-scripts lint-style`,
+the asset build and PHPUnit (PHP 7.4 + 8.3) on every PR. `npm run build` also regenerates the `.pot`;
+for asset-only rebuilds during development use `npx wp-scripts build --webpack-src-dir=src`.
+
 ## Architecture
 
 ### Entry Point & Bootstrap
@@ -73,11 +83,13 @@ Generated attachments are stamped with `_aimg_generated` (`'1'`, queryable) and
    featured image after `save_post`) for posts/pages (per settings) that have no featured image and
    no `_aimg_disable_auto` opt-out. Removing a generated featured image sets that opt-out.
 2. `Generator::get_random_template_id()` picks a published template; `Generator::get_render_args()`
-   maps its meta to render arguments (this mapping lives only here — the REST endpoint uses it too).
+   maps its meta to render arguments (this mapping lives only here — the REST endpoint uses it too);
+   it returns `false` for templates that are not published.
 3. `aimg_generate_thumbnail()` in `includes/functions.php` uses PHP's **GD library** to:
    - Fill background with one of the template's colors, chosen at random
    - Composite an optional PNG overlay at the chosen position
-   - Lay a 30% scrim over it
+   - Tint the whole canvas with the same background colour at ~70% opacity (GD alpha 38), so
+     overlays show through at ~30%. Keep this value: changing it changes every existing image
    - Render the post title using the bundled Roboto Bold font (`assets/fonts/`)
 4. `Generator::create_attachment()` imports the file, sets alt text, stamps provenance meta, and
    fires `aimg_generated_image`. `GenerateImages` then sets it as the post thumbnail.
@@ -117,3 +129,9 @@ Form submissions use the `admin_post_aimg_update_template` action with nonce ver
 - `aimg_generate_preview()` — template editor preview (same pipeline, immediate output)
 - `aimg_uploads_path($path)` — rewrite an uploads path into the separator style WordPress expects
 - `aimg_delete_upload_by_url($url)` — delete a file inside uploads, given its URL
+- `aimg_get_plain_title($post_id)` — post title without entities; use it for anything drawn or used as alt text
+- `aimg_wrap_title(...)` — title line wrapping; shrinks the font only when a single word is too wide
+- `aimg_can_render()` — GD + FreeType available; the renderer returns `false` without them
+- `aimg_user_can_use_ai()` / `aimg_consume_ai_quota()` — AI access setting (`ai_access`) and per-user
+  hourly limit (`ai_hourly_limit`, default 20); filters `aimg_can_generate_from_prompt`,
+  `aimg_ai_hourly_limit`, `aimg_generate_timeout`

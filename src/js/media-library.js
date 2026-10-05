@@ -14,24 +14,35 @@
 import { AIMGModal, useGenerator } from './components/aimg-modal';
 
 ( function () {
-	const { createElement: el, useEffect, useState, render, createRoot } = wp.element;
+	const {
+		createElement: el,
+		useEffect,
+		useState,
+		render,
+		createRoot,
+	} = wp.element;
 	const { __ } = wp.i18n;
 
 	/**
 	 * React app: owns the modal state and exposes an `open()` handle so the
 	 * plain DOM button (rendered next to the page title) can trigger it.
+	 * @param {Object}   props
+	 * @param {Function} props.onReady Receives the `open()` handle.
 	 */
 	function MediaLibraryApp( { onReady } ) {
 		const [ successUrl, setSuccessUrl ] = useState( '' );
 
-		const { isModalOpen, isLoading, errorMsg, open, close, confirm } = useGenerator( {
-			onSuccess: async ( data ) => {
-				// The image is now in the Media Library. Remember where to go so
-				// the redirect happens after the modal has closed.
-				const base = ( window.aimgData && window.aimgData.uploadUrl ) || 'upload.php';
-				setSuccessUrl( data.id ? base + '?item=' + data.id : base );
-			},
-		} );
+		const { isModalOpen, isLoading, errorMsg, open, close, confirm } =
+			useGenerator( {
+				onSuccess: async ( data ) => {
+					// The image is now in the Media Library. Remember where to go so
+					// the redirect happens after the modal has closed.
+					const base =
+						( window.aimgData && window.aimgData.uploadUrl ) ||
+						'upload.php';
+					setSuccessUrl( data.id ? base + '?item=' + data.id : base );
+				},
+			} );
 
 		// Expose the opener to the external button once mounted.
 		useEffect( () => {
@@ -53,11 +64,14 @@ import { AIMGModal, useGenerator } from './components/aimg-modal';
 		}
 
 		return el( AIMGModal, {
-			onClose:    close,
-			onConfirm:  confirm,
+			onClose: close,
+			onConfirm: confirm,
 			isLoading,
-			error:      errorMsg,
-			modalTitle: __( 'Generate Image with Image Generator & AI', 'artificial-image-generator' ),
+			error: errorMsg,
+			modalTitle: __(
+				'Generate Image with Image Generator & AI',
+				'artificial-image-generator'
+			),
 		} );
 	}
 
@@ -73,7 +87,7 @@ import { AIMGModal, useGenerator } from './components/aimg-modal';
 		}
 
 		const headerEnd = document.querySelector( '.wp-header-end' );
-		const heading   = document.querySelector( '.wp-heading-inline' );
+		const heading = document.querySelector( '.wp-heading-inline' );
 		if ( ! headerEnd && ! heading ) {
 			return;
 		}
@@ -81,7 +95,10 @@ import { AIMGModal, useGenerator } from './components/aimg-modal';
 		const button = document.createElement( 'button' );
 		button.type = 'button';
 		button.className = 'page-title-action aimg-generate-action';
-		button.textContent = __( 'Generate Image', 'artificial-image-generator' );
+		button.textContent = __(
+			'Generate Image',
+			'artificial-image-generator'
+		);
 		button.addEventListener( 'click', function ( evt ) {
 			evt.preventDefault();
 			onClick();

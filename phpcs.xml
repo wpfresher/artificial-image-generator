@@ -8,6 +8,7 @@
     <exclude-pattern>assets/</exclude-pattern>
     <exclude-pattern>dist/</exclude-pattern>
     <exclude-pattern>bin/</exclude-pattern>
+    <exclude-pattern>.github/</exclude-pattern>
     <exclude-pattern>*/node_modules/*</exclude-pattern>
     <exclude-pattern>*/vendor/*</exclude-pattern>
     <exclude-pattern>*\.(css|js|xml)</exclude-pattern>
@@ -16,6 +17,14 @@
 
     <!-- Rules -->
     <rule ref="WpFresher-Default"/>
+
+    <!-- Test method names describe the test; docblocks would only repeat them. -->
+    <rule ref="Squiz.Commenting.FunctionComment.Missing">
+        <exclude-pattern>tests/</exclude-pattern>
+    </rule>
+    <rule ref="Generic.Commenting.DocComment.MissingShort">
+        <exclude-pattern>tests/</exclude-pattern>
+    </rule>
 
     <!-- Check that the proper text domain(s) is used everywhere. -->
     <rule ref="WordPress.WP.I18n">
