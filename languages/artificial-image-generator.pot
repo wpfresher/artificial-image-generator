@@ -2,14 +2,14 @@
 # This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Image Generator 1.5.0\n"
+"Project-Id-Version: Image Generator 1.5.3\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/artificial-image-generator\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-06T17:43:56+00:00\n"
+"POT-Creation-Date: 2026-10-05T14:00:10+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: artificial-image-generator\n"
@@ -48,15 +48,19 @@ msgstr ""
 msgid "You do not have permission to process this action"
 msgstr ""
 
-#: includes/Admin/Actions.php:45
+#: includes/Admin/Actions.php:47
+msgid "The image template you are trying to update does not exist."
+msgstr ""
+
+#: includes/Admin/Actions.php:53
 msgid "The title field is required."
 msgstr ""
 
-#: includes/Admin/Actions.php:104
+#: includes/Admin/Actions.php:112
 msgid "Image template updated successfully."
 msgstr ""
 
-#: includes/Admin/Actions.php:106
+#: includes/Admin/Actions.php:114
 msgid "Image template added successfully."
 msgstr ""
 

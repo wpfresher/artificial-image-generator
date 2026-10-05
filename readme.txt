@@ -4,7 +4,7 @@ Tags: ai, ai image, image generator, featured image, block editor
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.5.2
+Stable tag: 1.5.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -179,7 +179,7 @@ Automatic generation only fires when a post is saved without a featured image. *
 **Yes.** The block editor integration is the plugin's flagship feature. You'll find the ✨ button on Image and Media & Text block toolbars and a dedicated **AI Featured Image** panel in the document sidebar.
 
 = Does it work with the Classic Editor, Elementor, Divi, Beaver Builder, or Bricks? =
-The on-demand generation modal is built for Gutenberg. **Automatic featured image generation works with every editor**, because it hooks into the WordPress `save_post` action — so Classic Editor, Elementor, Divi, Beaver Builder, Bricks, and any other builder all benefit from auto-generated thumbnails.
+The on-demand generation modal is built for Gutenberg. **Automatic featured image generation works with every editor**, because it runs whenever WordPress saves a post — so Classic Editor, Elementor, Divi, Beaver Builder, Bricks, and any other builder all benefit from auto-generated thumbnails.
 
 = Does it work with WooCommerce products? =
 **On demand, yes.** Open a product, download, course, or any custom post type that supports featured images, and use the AI Featured Image panel or the Media Library modal to generate and assign an image. Automatic generation on save currently covers posts and pages only; extending it to every public post type is next on the roadmap.
@@ -250,6 +250,9 @@ Prompt-based image generation calls a third-party API (**OpenAI** by default). Y
 6. Plugin settings — defaults and AI API key configuration.
 
 == Changelog ==
+= 1.5.3 ( 05th October 2026 ) =
+* Fix: Resolved a few minor issues.
+
 = 1.5.0 ( 6th September 2026 ) =
 * New: Added an optional **Remove Data on Uninstall** setting. When enabled, deleting the plugin also removes your image templates and settings; it is off by default, and images already in the Media Library are never touched.
 * Enhance: Unified template rendering behind a single generator service, so automatic featured images, the block editor and the REST API all produce identical results.

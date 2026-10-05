@@ -15,16 +15,65 @@ defined( 'ABSPATH' ) || exit; // Exit if accessed directly.
 class GenerateImages {
 
 	/**
+	 * Post IDs currently being deleted.
+	 *
+	 * @since 1.6.0
+	 * @var array
+	 */
+	protected $deleting = array();
+
+	/**
 	 * GenerateImages constructor.
 	 *
 	 * @since 1.0.0
 	 */
 	public function __construct() {
-		add_action( 'save_post', array( $this, 'generate_thumbnails' ) );
+		// Runs after the post's meta (including a featured image chosen in the
+		// block editor) has been saved. On save_post the REST controller has not
+		// set the featured image yet, so has_post_thumbnail() would be false.
+		add_action( 'wp_after_insert_post', array( $this, 'generate_thumbnails' ) );
+		add_action( 'before_delete_post', array( $this, 'mark_deleting' ) );
+		add_action( 'delete_post_meta', array( $this, 'maybe_disable_auto_generation' ), 10, 3 );
 	}
 
 	/**
-	 * Generate a thumbnail image using GD library while saving a post.
+	 * Remember that a post is being deleted, so removing its meta isn't read as
+	 * the author removing the featured image.
+	 *
+	 * @param int $post_id Post ID.
+	 *
+	 * @since 1.6.0
+	 * @return void
+	 */
+	public function mark_deleting( $post_id ) {
+		$this->deleting[ $post_id ] = true;
+	}
+
+	/**
+	 * Turn off automatic generation for a post when its author removes a
+	 * generated featured image; otherwise the next save would create a new one.
+	 *
+	 * @param array  $meta_ids  Meta IDs being deleted.
+	 * @param int    $object_id Post ID.
+	 * @param string $meta_key  Meta key.
+	 *
+	 * @since 1.6.0
+	 * @return void
+	 */
+	public function maybe_disable_auto_generation( $meta_ids, $object_id, $meta_key ) {
+		if ( '_thumbnail_id' !== $meta_key || isset( $this->deleting[ $object_id ] ) ) {
+			return;
+		}
+
+		$thumbnail_id = (int) get_post_meta( $object_id, '_thumbnail_id', true );
+
+		if ( $thumbnail_id && '1' === get_post_meta( $thumbnail_id, '_aimg_generated', true ) ) {
+			update_post_meta( $object_id, '_aimg_disable_auto', '1' );
+		}
+	}
+
+	/**
+	 * Generate a thumbnail image using GD library after a post is saved.
 	 *
 	 * @param int $post_id The ID of the post being saved.
 	 *
@@ -62,6 +111,11 @@ class GenerateImages {
 
 		// Check if the post already has a thumbnail or not.
 		if ( has_post_thumbnail( $post_id ) ) {
+			return;
+		}
+
+		// The author removed a generated image from this post; respect that.
+		if ( '1' === get_post_meta( $post_id, '_aimg_disable_auto', true ) ) {
 			return;
 		}
 

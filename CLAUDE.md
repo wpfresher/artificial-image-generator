@@ -44,7 +44,7 @@ composer run makepot   # Regenerate languages/artificial-image-generator.pot
 | `Plugin` | `includes/Plugin.php` | Singleton bootstrap; defines `AIMG_*` constants; manages flash notice queue |
 | `PostTypes` | `includes/PostTypes.php` | Registers the hidden `aimg_template` custom post type |
 | `Generator` | `includes/Generator.php` | Template → render args → file → attachment; stamps provenance meta |
-| `GenerateImages` | `includes/GenerateImages.php` | Hooks `save_post`; auto-generates featured images when none exists |
+| `GenerateImages` | `includes/GenerateImages.php` | Hooks `wp_after_insert_post`; auto-generates featured images when none exists (per-post opt-out `_aimg_disable_auto`) |
 | `RestAPI` | `includes/RestAPI.php` | `aimg/v1/generate` and `aimg/v1/templates` endpoints; OpenAI Images calls |
 | `Admin\Admin` | `includes/Admin/Admin.php` | Admin menu, page routing (list / add / edit), script enqueuing |
 | `Admin\Settings` | `includes/Admin/Settings.php` | Settings page UI and option validation |
@@ -69,7 +69,9 @@ Generated attachments are stamped with `_aimg_generated` (`'1'`, queryable) and
 
 ### Image Generation Pipeline
 
-1. `GenerateImages` catches `save_post` for posts/pages (per settings) that have no featured image.
+1. `GenerateImages` catches `wp_after_insert_post` (not `save_post`: the block editor sets the chosen
+   featured image after `save_post`) for posts/pages (per settings) that have no featured image and
+   no `_aimg_disable_auto` opt-out. Removing a generated featured image sets that opt-out.
 2. `Generator::get_random_template_id()` picks a published template; `Generator::get_render_args()`
    maps its meta to render arguments (this mapping lives only here — the REST endpoint uses it too).
 3. `aimg_generate_thumbnail()` in `includes/functions.php` uses PHP's **GD library** to:

@@ -65,9 +65,9 @@ jQuery(function ($) {
 				// Loop through overlayImages and append only new ones.
 				$.each(overlayImages, function (index, image) {
 					if (existingImageIds.indexOf(image.id) === -1) {
-						var container = $('<div class="aimg-overlay-images__item" data-id="' + image.id + '"></div>');
-						container.append('<img src="' + image.url + '" alt="' + image.title + '" style="width:60px;height:60px;" />');
-						container.append('<input type="hidden" name="aimg_overlay_image_ids[]" value="' + image.id + '">');
+						// Build with attr() so attachment titles/URLs are never parsed as HTML.
+						var container = $('<div class="aimg-overlay-images__item"></div>').attr('data-id', image.id);
+						container.append($('<img style="width:60px;height:60px;" />').attr({ src: image.url, alt: image.title }));
 						container.append('<button type="button" class="remove-overlay button button-secondary">X</button>');
 
 						$('#overlay-image-list').append(container);

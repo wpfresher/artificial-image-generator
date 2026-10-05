@@ -16,7 +16,7 @@ artificial-image-generator/
 │   ├── Plugin.php                   # Singleton, AIMG_* constants, flash notices
 │   ├── PostTypes.php                # Registers the hidden aimg_template CPT
 │   ├── Generator.php                # Template → file → attachment service
-│   ├── GenerateImages.php           # save_post hook for automatic featured images
+│   ├── GenerateImages.php           # wp_after_insert_post hook for automatic featured images
 │   ├── RestAPI.php                  # aimg/v1 endpoints (generate, templates)
 │   └── Admin/
 │       ├── Admin.php                # Menu, page routing, script enqueuing
@@ -46,11 +46,11 @@ artificial-image-generator/
 ### Generation flow
 
 ```
-save_post ──► GenerateImages ──┐
-                               ├──► Generator::render()  ──► aimg_generate_thumbnail()  ──► PNG in uploads/
-REST /generate ──► RestAPI ────┘                                    (GD: background → overlay → scrim → title)
-                               │
-                               └──► Generator::create_attachment() ──► Media Library + _aimg_generated meta
+wp_after_insert_post ──► GenerateImages ──┐
+                                          ├──► Generator::render()  ──► aimg_generate_thumbnail()  ──► PNG in uploads/
+REST /generate ──► RestAPI ───────────────┘                                    (GD: background → overlay → scrim → title)
+                                          │
+                                          └──► Generator::create_attachment() ──► Media Library + _aimg_generated meta
 ```
 
 Prompt-based requests skip the renderer: `RestAPI::generate_from_prompt()` calls the OpenAI Images
