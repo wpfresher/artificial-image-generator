@@ -12,13 +12,7 @@
  * Media Library and returns an attachment id, so the modal is context-agnostic.
  */
 
-const {
-	Fragment,
-	createElement: el,
-	useState,
-	useEffect,
-	useRef,
-} = wp.element;
+const { Fragment, createElement: el, useState, useEffect, useRef } = wp.element;
 const {
 	Modal,
 	TabPanel,
@@ -38,21 +32,28 @@ const { useSelect } = wp.data;
 export const AIG_ICON = el(
 	'svg',
 	{
-		xmlns:   'http://www.w3.org/2000/svg',
+		xmlns: 'http://www.w3.org/2000/svg',
 		viewBox: '0 0 24 24',
-		width:   '20',
-		height:  '20',
-		fill:    'currentColor',
+		width: '20',
+		height: '20',
+		fill: 'currentColor',
 		'aria-hidden': 'true',
 	},
-	el( 'path', { d: 'M12 2l2.09 6.26L20 10l-5.91 1.74L12 18l-2.09-6.26L4 10l5.91-1.74L12 2z' } ),
-	el( 'path', { d: 'M19 15l1.5 4.5L22 21l-1.5-1.5L19 15zm-14 0l-1.5 4.5L2 21l1.5-1.5L5 15z' } )
+	el( 'path', {
+		d: 'M12 2l2.09 6.26L20 10l-5.91 1.74L12 18l-2.09-6.26L4 10l5.91-1.74L12 2z',
+	} ),
+	el( 'path', {
+		d: 'M19 15l1.5 4.5L22 21l-1.5-1.5L19 15zm-14 0l-1.5 4.5L2 21l1.5-1.5L5 15z',
+	} )
 );
 
 // ── Shared API calls ──────────────────────────────────────────────────────────
 function apiRequest( path, options ) {
 	const opts = Object.assign(
-		{ url: path, headers: { 'X-WP-Nonce': window.aimgData && window.aimgData.nonce } },
+		{
+			url: path,
+			headers: { 'X-WP-Nonce': window.aimgData && window.aimgData.nonce },
+		},
 		options || {}
 	);
 	return apiFetch( opts );
@@ -65,7 +66,7 @@ function fetchTemplates() {
 export function generateImage( payload ) {
 	return apiRequest( window.aimgData.endpoints.generate, {
 		method: 'POST',
-		data:   payload,
+		data: payload,
 	} );
 }
 
@@ -77,25 +78,34 @@ function TemplatesPanel( {
 	onTitleChange,
 	isLoading,
 } ) {
-	const [ templates,  setTemplates ]  = useState( null );
+	const [ templates, setTemplates ] = useState( null );
 	const [ fetchError, setFetchError ] = useState( '' );
 
 	useEffect( () => {
 		let cancelled = false;
 		fetchTemplates()
 			.then( ( data ) => {
-				if ( cancelled ) return;
+				if ( cancelled ) {
+					return;
+				}
 				setTemplates( Array.isArray( data ) ? data : [] );
 			} )
 			.catch( ( err ) => {
-				if ( cancelled ) return;
+				if ( cancelled ) {
+					return;
+				}
 				setFetchError(
 					err?.message ||
-						__( 'Failed to load image templates.', 'artificial-image-generator' )
+						__(
+							'Failed to load image templates.',
+							'artificial-image-generator'
+						)
 				);
 				setTemplates( [] );
 			} );
-		return () => { cancelled = true; };
+		return () => {
+			cancelled = true;
+		};
 	}, [] );
 
 	if ( templates === null ) {
@@ -103,38 +113,43 @@ function TemplatesPanel( {
 			'div',
 			{ className: 'aimg-modal__loading' },
 			el( Spinner ),
-			el( 'span', null, __( 'Loading templates…', 'artificial-image-generator' ) )
+			el(
+				'span',
+				null,
+				__( 'Loading templates…', 'artificial-image-generator' )
+			)
 		);
 	}
 
 	if ( fetchError ) {
-		return el( Notice, { status: 'error', isDismissible: false }, fetchError );
+		return el(
+			Notice,
+			{ status: 'error', isDismissible: false },
+			fetchError
+		);
 	}
 
 	if ( templates.length === 0 ) {
-		return el(
-			Placeholder,
-			{
-				icon:  AIG_ICON,
-				label: __( 'No templates available', 'artificial-image-generator' ),
-				instructions: __(
-					'Create at least one image template under Image Generator → Image Templates to use this option.',
-					'artificial-image-generator'
-				),
-			}
-		);
+		return el( Placeholder, {
+			icon: AIG_ICON,
+			label: __( 'No templates available', 'artificial-image-generator' ),
+			instructions: __(
+				'Create at least one image template under Image Generator → Image Templates to use this option.',
+				'artificial-image-generator'
+			),
+		} );
 	}
 
 	return el(
 		Fragment,
 		null,
 		el( TextControl, {
-			label:    __( 'Title text (optional)', 'artificial-image-generator' ),
-			help:     __(
+			label: __( 'Title text (optional)', 'artificial-image-generator' ),
+			help: __(
 				'This text is rendered onto the generated image. Leave blank to use the default.',
 				'artificial-image-generator'
 			),
-			value:    titleText,
+			value: titleText,
 			onChange: onTitleChange,
 			disabled: isLoading,
 		} ),
@@ -143,43 +158,59 @@ function TemplatesPanel( {
 			'div',
 			{
 				className: 'aimg-templates__grid',
-				role:      'radiogroup',
-				'aria-label': __( 'Image templates', 'artificial-image-generator' ),
+				role: 'radiogroup',
+				'aria-label': __(
+					'Image templates',
+					'artificial-image-generator'
+				),
 			},
 			templates.map( ( tpl ) => {
 				const isSelected = selectedId === tpl.id;
 				return el(
 					'button',
 					{
-						key:        tpl.id,
-						type:       'button',
-						role:       'radio',
+						key: tpl.id,
+						type: 'button',
+						role: 'radio',
 						'aria-checked': isSelected,
-						className:  'aimg-template-card' + ( isSelected ? ' is-selected' : '' ),
-						onClick:    () => onSelect( tpl.id ),
-						disabled:   isLoading,
+						className:
+							'aimg-template-card' +
+							( isSelected ? ' is-selected' : '' ),
+						onClick: () => onSelect( tpl.id ),
+						disabled: isLoading,
 					},
 					el(
 						'div',
 						{ className: 'aimg-template-card__preview' },
 						tpl.preview
 							? el( 'img', {
-								src: tpl.preview,
-								alt: tpl.title,
-								loading: 'lazy',
-							} )
-							: el( 'span', { className: 'aimg-template-card__placeholder' }, AIG_ICON )
+									src: tpl.preview,
+									alt: tpl.title,
+									loading: 'lazy',
+							  } )
+							: el(
+									'span',
+									{
+										className:
+											'aimg-template-card__placeholder',
+									},
+									AIG_ICON
+							  )
 					),
 					el(
 						'div',
 						{ className: 'aimg-template-card__meta' },
-						el( 'span', { className: 'aimg-template-card__title' }, tpl.title ),
+						el(
+							'span',
+							{ className: 'aimg-template-card__title' },
+							tpl.title
+						),
 						tpl.width && tpl.height
 							? el(
-								'span',
-								{ className: 'aimg-template-card__size' },
-								tpl.width + ' × ' + tpl.height
-							)
+									'span',
+									{ className: 'aimg-template-card__size' },
+									tpl.width + ' × ' + tpl.height
+							  )
 							: null
 					)
 				);
@@ -198,59 +229,85 @@ function PromptPanel( { value, onChange, onSubmit, isLoading } ) {
 	};
 
 	const hasApiKey = !! window.aimgData?.settings?.hasApiKey;
+	const canUseAi = window.aimgData?.settings?.canUseAi !== false;
 
 	return el(
 		Fragment,
 		null,
-		! hasApiKey && el(
-			Notice,
-			{ status: 'warning', isDismissible: false },
+		! canUseAi &&
 			el(
-				'span',
-				null,
+				Notice,
+				{ status: 'warning', isDismissible: false },
 				__(
-					'No AI API key is configured yet. Add one to enable prompt-based generation.',
+					'Your site administrator has limited AI image generation to other roles. You can still generate images from templates.',
 					'artificial-image-generator'
-				),
-				' ',
-				el(
-					ExternalLink,
-					{ href: window.aimgData.settings.settingsUrl },
-					__( 'Open settings', 'artificial-image-generator' )
 				)
-			)
-		),
+			),
+		canUseAi &&
+			! hasApiKey &&
+			el(
+				Notice,
+				{ status: 'warning', isDismissible: false },
+				el(
+					'span',
+					null,
+					__(
+						'No AI API key is configured yet. Add one to enable prompt-based generation.',
+						'artificial-image-generator'
+					),
+					' ',
+					el(
+						ExternalLink,
+						{ href: window.aimgData.settings.settingsUrl },
+						__( 'Open settings', 'artificial-image-generator' )
+					)
+				)
+			),
 
 		el( TextareaControl, {
-			label:       __( 'Describe the image you want', 'artificial-image-generator' ),
-			help:        __( 'Tip: press Ctrl + Enter (⌘ + Enter on Mac) to generate.', 'artificial-image-generator' ),
+			label: __(
+				'Describe the image you want',
+				'artificial-image-generator'
+			),
+			help: __(
+				'Tip: press Ctrl + Enter (⌘ + Enter on Mac) to generate.',
+				'artificial-image-generator'
+			),
 			value,
 			onChange,
-			onKeyDown:   handleKeyDown,
-			rows:        5,
+			onKeyDown: handleKeyDown,
+			rows: 5,
 			placeholder: __(
 				'e.g. A sunlit forest path in autumn, photorealistic, soft lighting',
 				'artificial-image-generator'
 			),
-			disabled:    isLoading,
-			autoFocus:   true,
+			disabled: isLoading || ! canUseAi,
+			autoFocus: true,
 		} )
 	);
 }
 
 // ── Shared modal ──────────────────────────────────────────────────────────────
-export function AIMGModal( { onClose, onConfirm, isLoading, error, modalTitle } ) {
-	const [ activeTab,    setActiveTab    ] = useState( 'templates' );
-	const [ selectedId,   setSelectedId   ] = useState( 0 );
-	const [ titleText,    setTitleText    ] = useState( '' );
-	const [ prompt,       setPrompt       ] = useState( '' );
+export function AIMGModal( {
+	onClose,
+	onConfirm,
+	isLoading,
+	error,
+	modalTitle,
+} ) {
+	const [ activeTab, setActiveTab ] = useState( 'templates' );
+	const [ selectedId, setSelectedId ] = useState( 0 );
+	const [ titleText, setTitleText ] = useState( '' );
+	const [ prompt, setPrompt ] = useState( '' );
 
 	// Pre-fill the title text with the current post title (if available). On
 	// screens with no editor store (e.g. the Media Library) this stays empty.
 	const postTitle = useSelect( ( select ) => {
 		try {
-			return select( 'core/editor' )?.getEditedPostAttribute( 'title' ) || '';
-		} catch ( e ) {
+			return (
+				select( 'core/editor' )?.getEditedPostAttribute( 'title' ) || ''
+			);
+		} catch {
 			return '';
 		}
 	}, [] );
@@ -265,15 +322,19 @@ export function AIMGModal( { onClose, onConfirm, isLoading, error, modalTitle } 
 
 	const handleConfirm = () => {
 		if ( activeTab === 'templates' ) {
-			if ( ! selectedId ) return;
+			if ( ! selectedId ) {
+				return;
+			}
 			onConfirm( {
-				mode:        'template',
+				mode: 'template',
 				template_id: selectedId,
-				title:       ( titleText || postTitle || '' ).trim(),
+				title: ( titleText || postTitle || '' ).trim(),
 			} );
 		} else {
 			const trimmed = prompt.trim();
-			if ( ! trimmed ) return;
+			if ( ! trimmed ) {
+				return;
+			}
 			onConfirm( { mode: 'prompt', prompt: trimmed } );
 		}
 	};
@@ -284,13 +345,13 @@ export function AIMGModal( { onClose, onConfirm, isLoading, error, modalTitle } 
 
 	const tabs = [
 		{
-			name:      'templates',
-			title:     __( 'Templates', 'artificial-image-generator' ),
+			name: 'templates',
+			title: __( 'Templates', 'artificial-image-generator' ),
 			className: 'aimg-tab aimg-tab--templates',
 		},
 		{
-			name:      'prompt',
-			title:     __( 'Custom Prompt', 'artificial-image-generator' ),
+			name: 'prompt',
+			title: __( 'Custom Prompt', 'artificial-image-generator' ),
 			className: 'aimg-tab aimg-tab--prompt',
 		},
 	];
@@ -298,40 +359,54 @@ export function AIMGModal( { onClose, onConfirm, isLoading, error, modalTitle } 
 	return el(
 		Modal,
 		{
-			title:                     modalTitle || __( 'Generate Image with Image Generator & AI', 'artificial-image-generator' ),
-			onRequestClose:            () => { if ( ! isLoading ) onClose(); },
-			className:                 'aimg-modal',
-			shouldCloseOnEsc:          ! isLoading,
+			title:
+				modalTitle ||
+				__(
+					'Generate Image with Image Generator & AI',
+					'artificial-image-generator'
+				),
+			onRequestClose: () => {
+				if ( ! isLoading ) {
+					onClose();
+				}
+			},
+			className: 'aimg-modal',
+			shouldCloseOnEsc: ! isLoading,
 			shouldCloseOnClickOutside: ! isLoading,
 		},
 
-		error && el(
-			Notice,
-			{ status: 'error', isDismissible: false, className: 'aimg-modal__notice' },
-			error
-		),
+		error &&
+			el(
+				Notice,
+				{
+					status: 'error',
+					isDismissible: false,
+					className: 'aimg-modal__notice',
+				},
+				error
+			),
 
 		el(
 			TabPanel,
 			{
-				className:    'aimg-modal__tabs',
-				activeClass:  'is-active',
+				className: 'aimg-modal__tabs',
+				activeClass: 'is-active',
 				tabs,
 				initialTabName: 'templates',
-				onSelect:     ( tabName ) => setActiveTab( tabName ),
+				onSelect: ( tabName ) => setActiveTab( tabName ),
 			},
 			( tab ) => {
 				if ( tab.name === 'templates' ) {
 					return el( TemplatesPanel, {
 						selectedId,
-						onSelect:      setSelectedId,
+						onSelect: setSelectedId,
 						titleText,
 						onTitleChange: setTitleText,
 						isLoading,
 					} );
 				}
 				return el( PromptPanel, {
-					value:    prompt,
+					value: prompt,
 					onChange: setPrompt,
 					onSubmit: handleConfirm,
 					isLoading,
@@ -345,58 +420,81 @@ export function AIMGModal( { onClose, onConfirm, isLoading, error, modalTitle } 
 			el(
 				Button,
 				{
-					variant:   'primary',
-					onClick:   handleConfirm,
-					disabled:  isConfirmDisabled,
+					variant: 'primary',
+					onClick: handleConfirm,
+					disabled: isConfirmDisabled,
 					className: 'aimg-modal__generate-btn',
 				},
 				isLoading
 					? el(
-						Fragment,
-						null,
-						el( Spinner ),
-						el( 'span', null, __( 'Generating…', 'artificial-image-generator' ) )
-					)
+							Fragment,
+							null,
+							el( Spinner ),
+							el(
+								'span',
+								null,
+								__(
+									'Generating…',
+									'artificial-image-generator'
+								)
+							)
+					  )
 					: __( 'Generate Image', 'artificial-image-generator' )
 			),
 			el(
 				Button,
 				{
-					variant:  'tertiary',
-					onClick:  () => { if ( ! isLoading ) onClose(); },
+					variant: 'tertiary',
+					onClick: () => {
+						if ( ! isLoading ) {
+							onClose();
+						}
+					},
 					disabled: isLoading,
 				},
 				__( 'Cancel', 'artificial-image-generator' )
 			)
 		),
 
-		isLoading && el(
-			'div',
-			{ className: 'aimg-modal__overlay', 'aria-hidden': 'true' },
-			el( Spinner ),
+		isLoading &&
 			el(
-				'p',
-				{ className: 'aimg-modal__overlay-text' },
-				__( 'Generating image — this can take up to a minute…', 'artificial-image-generator' )
+				'div',
+				{ className: 'aimg-modal__overlay', 'aria-hidden': 'true' },
+				el( Spinner ),
+				el(
+					'p',
+					{ className: 'aimg-modal__overlay-text' },
+					__(
+						'Generating image — this can take up to a minute…',
+						'artificial-image-generator'
+					)
+				)
 			)
-		)
 	);
 }
 
 // ── Hook used by every entry point ──────────────────────────────────────────────
 export function useGenerator( { onSuccess } ) {
 	const [ isModalOpen, setModalOpen ] = useState( false );
-	const [ isLoading,   setLoading   ] = useState( false );
-	const [ errorMsg,    setError     ] = useState( '' );
+	const [ isLoading, setLoading ] = useState( false );
+	const [ errorMsg, setError ] = useState( '' );
 	const isMounted = useRef( true );
 
 	useEffect( () => {
 		isMounted.current = true;
-		return () => { isMounted.current = false; };
+		return () => {
+			isMounted.current = false;
+		};
 	}, [] );
 
-	const open  = () => { setError( '' ); setModalOpen( true ); };
-	const close = () => { setError( '' ); setModalOpen( false ); };
+	const open = () => {
+		setError( '' );
+		setModalOpen( true );
+	};
+	const close = () => {
+		setError( '' );
+		setModalOpen( false );
+	};
 
 	const confirm = async ( payload ) => {
 		setLoading( true );
@@ -407,7 +505,10 @@ export function useGenerator( { onSuccess } ) {
 
 			if ( ! data?.url ) {
 				throw new Error(
-					__( 'No image URL returned by the API.', 'artificial-image-generator' )
+					__(
+						'No image URL returned by the API.',
+						'artificial-image-generator'
+					)
 				);
 			}
 
@@ -419,7 +520,10 @@ export function useGenerator( { onSuccess } ) {
 			if ( isMounted.current ) {
 				setError(
 					err?.message ||
-						__( 'Something went wrong. Please try again.', 'artificial-image-generator' )
+						__(
+							'Something went wrong. Please try again.',
+							'artificial-image-generator'
+						)
 				);
 			}
 		} finally {

@@ -1,0 +1,99 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint and build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+          tools: composer
+
+      - name: Install the WpFresher coding standard
+        run: |
+          composer global config --no-interaction allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
+          composer global config --no-interaction repositories.wpfresher-sniffs vcs https://github.com/wpfresher/wpfresher-sniffs
+          composer global require --no-interaction wpfresher/wpfresher-sniffs:dev-master
+          echo "$(composer global config bin-dir --absolute 2>/dev/null)" >> "$GITHUB_PATH"
+
+      - name: PHP coding standards
+        run: phpcs
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install npm packages
+        run: npm ci
+
+      - name: JavaScript lint
+        run: npx wp-scripts lint-js src/js
+
+      - name: SCSS lint
+        run: npx wp-scripts lint-style "src/css/**/*.scss"
+
+      - name: Build assets
+        run: npx wp-scripts build --webpack-src-dir=src
+
+  phpunit:
+    name: PHPUnit (PHP ${{ matrix.php }}, WP ${{ matrix.wp }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php: [ '7.4', '8.3' ]
+        wp: [ 'latest' ]
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+          extensions: gd, mysqli
+          tools: composer
+
+      - name: Install Composer packages
+        run: composer install --no-interaction --no-progress
+
+      # The renderer reads the font from assets/, which the asset build normally fills.
+      - name: Provide the bundled font
+        run: mkdir -p assets/fonts && cp src/fonts/*.ttf assets/fonts/
+
+      - name: Install the WordPress test suite
+        run: bash bin/install-wp-tests.sh wordpress_test root root 127.0.0.1 ${{ matrix.wp }}
+
+      - name: Run PHPUnit
+        run: vendor/bin/phpunit

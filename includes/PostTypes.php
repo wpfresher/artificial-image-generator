@@ -21,6 +21,24 @@ class PostTypes {
 	 */
 	public function __construct() {
 		add_action( 'init', array( __CLASS__, 'register_cpt' ) );
+		add_action( 'before_delete_post', array( __CLASS__, 'delete_template_preview' ), 10, 2 );
+	}
+
+	/**
+	 * Delete a template's preview image along with the template.
+	 *
+	 * @param int      $post_id Post ID.
+	 * @param \WP_Post $post    Post object.
+	 *
+	 * @since 1.5.4
+	 * @return void
+	 */
+	public static function delete_template_preview( $post_id, $post ) {
+		if ( ! $post || 'aimg_template' !== $post->post_type ) {
+			return;
+		}
+
+		aimg_delete_upload_by_url( get_post_meta( $post_id, '_aimg_preview_image_url', true ) );
 	}
 
 	/**

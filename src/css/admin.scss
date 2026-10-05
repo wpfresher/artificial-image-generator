@@ -1,4 +1,5 @@
-.aimg-wrap{
+.aimg-wrap {
+
 	.columns {
 		display: flex;
 		gap: 20px;
@@ -17,39 +18,52 @@
 	}
 
 	@media (max-width: 768px) {
+
 		.columns {
 			flex-direction: column;
 
-			.column-left, .column-right {
+			.column-left,
+			.column-right {
 				width: 100%;
 			}
 		}
 	}
 }
 // Card style.
-.aicw-card{
-	background: #FFFFFF;
-	border: 1px solid #DDDDDD;
+.aicw-card {
+	background: #fff;
+	border: 1px solid #ddd;
 	margin-bottom: 1.25rem;
-	&__title{
+
+	&__title {
 		margin: 0;
 	}
-	&__header{
+
+	&__header {
 		padding: 10px 20px;
-		border-bottom: 1px solid #DDDDDD;
+		border-bottom: 1px solid #ddd;
 	}
-	&__body{
+
+	&__body {
 		padding: 10px 20px;
 	}
-	&__footer{
+
+	&__footer {
 		padding: 10px 20px;
 	}
 }
 
 // Form styles.
-#aimg-form{
+#aimg-form {
+
 	@media (max-width: 768px) {
-		.form-table, .form-table thead, .form-table tbody, .form-table th, .form-table td, .form-table tr {
+
+		.form-table,
+		.form-table thead,
+		.form-table tbody,
+		.form-table th,
+		.form-table td,
+		.form-table tr {
 			display: block;
 			width: 100%;
 		}
@@ -62,43 +76,46 @@
 }
 
 // Preview image styles.
-.preview-image{
-	border: 1px solid #cccccc;
+.preview-image {
+	border: 1px solid #ccc;
 	padding: 5px;
-	background: #ffffff;
+	background: #fff;
 
-	img{
+	img {
 		width: 100%;
 		height: auto;
 	}
 }
 
 // Overlay images styles.
-.aimg-overlay-images{
-	h4{
+.aimg-overlay-images {
+
+	h4 {
 		margin: 0 0 10px;
 	}
-	&__items{
+
+	&__items {
 		display: flex;
 		gap: 10px;
 		flex-wrap: wrap;
 	}
 
-	&__item{
+	&__item {
 		position: relative;
-		img{
+
+		img {
 			width: 60px;
 			height: 60px;
 		}
 	}
 
 	// Overly item styles.
-	.remove-overlay{
+	.remove-overlay {
 		position: absolute;
 		top: 2px;
 		right: 2px;
 		background-color: #f00000;
-		color: #ffffff;
+		color: #fff;
 		padding: 0 4px;
 		min-height: inherit;
 		line-height: inherit;

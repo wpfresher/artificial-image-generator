@@ -64,7 +64,7 @@ defined( 'ABSPATH' ) || exit; // Exit if accessed directly.
 						</th>
 						<td>
 							<input type="number" id="title_font_size" name="title_font_size" class="regular-text" placeholder="<?php esc_attr_e( '40', 'artificial-image-generator' ); ?>" value="<?php echo esc_attr( get_post_meta( $template->ID, '_aimg_title_font_size', true ) ); ?>" min="1" required />
-							<p class="description"><?php esc_html_e( 'Enter the font size for the title in pixels.', 'artificial-image-generator' ); ?></p>
+							<p class="description"><?php esc_html_e( 'Enter the font size for the title in points.', 'artificial-image-generator' ); ?></p>
 						</td>
 					</tr>
 					<tr>

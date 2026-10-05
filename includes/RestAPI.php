@@ -121,6 +121,14 @@ class RestAPI {
 			);
 		}
 
+		if ( 0 === $template_id && ! aimg_user_can_use_ai() ) {
+			return new \WP_Error(
+				'rest_forbidden',
+				__( 'You do not have permission to generate AI images.', 'artificial-image-generator' ),
+				array( 'status' => rest_authorization_required_code() )
+			);
+		}
+
 		return true;
 	}
 
@@ -266,6 +274,12 @@ class RestAPI {
 			);
 		}
 
+		$quota = aimg_consume_ai_quota();
+
+		if ( is_wp_error( $quota ) ) {
+			return $quota;
+		}
+
 		$model = $this->get_model();
 
 		$default_body = array(
@@ -310,7 +324,14 @@ class RestAPI {
 		$response = wp_remote_post(
 			$endpoint,
 			array(
-				'timeout' => 60,
+				/**
+				 * Filter the timeout, in seconds, for the image generation request.
+				 *
+				 * @param int $timeout Timeout in seconds.
+				 *
+				 * @since 1.5.4
+				 */
+				'timeout' => (int) apply_filters( 'aimg_generate_timeout', 120 ),
 				'headers' => array(
 					'Authorization' => 'Bearer ' . $api_key,
 					'Content-Type'  => 'application/json',

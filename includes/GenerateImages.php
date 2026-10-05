@@ -119,7 +119,7 @@ class GenerateImages {
 			return;
 		}
 
-		$title = get_the_title( $post_id );
+		$title = aimg_get_plain_title( $post_id );
 
 		// Check if the title is empty.
 		if ( empty( $title ) ) {

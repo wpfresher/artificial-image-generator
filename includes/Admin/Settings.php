@@ -2,6 +2,8 @@
 
 namespace ArtificialImageGenerator\Admin;
 
+defined( 'ABSPATH' ) || exit; // Exit if accessed directly.
+
 /**
  * Class Settings
  *
@@ -157,6 +159,59 @@ class Settings {
 			'aimg-settings',
 			'aimg_ai_service_settings'
 		);
+
+		add_settings_field(
+			'aimg_ai_access',
+			__( 'Who Can Generate AI Images', 'artificial-image-generator' ),
+			array( $this, 'ai_access_field' ),
+			'aimg-settings',
+			'aimg_ai_service_settings'
+		);
+
+		add_settings_field(
+			'aimg_ai_hourly_limit',
+			__( 'Hourly Limit per User', 'artificial-image-generator' ),
+			array( $this, 'ai_hourly_limit_field' ),
+			'aimg-settings',
+			'aimg_ai_service_settings'
+		);
+	}
+
+	/**
+	 * Render the AI access field.
+	 *
+	 * @since 1.5.4
+	 * @return void
+	 */
+	public function ai_access_field() {
+		$access  = aimg_get_settings( 'ai_access', 'authors' );
+		$options = array(
+			'authors' => __( 'Authors and above', 'artificial-image-generator' ),
+			'editors' => __( 'Editors and above', 'artificial-image-generator' ),
+			'admins'  => __( 'Administrators only', 'artificial-image-generator' ),
+		);
+		?>
+		<select name="aimg_settings[ai_access]" id="aimg_settings_ai_access">
+			<?php foreach ( $options as $value => $label ) : ?>
+				<option value="<?php echo esc_attr( $value ); ?>" <?php selected( $access, $value ); ?>><?php echo esc_html( $label ); ?></option>
+			<?php endforeach; ?>
+		</select>
+		<p class="description"><?php esc_html_e( 'AI images are paid for with your API key. Templates stay available to everyone who can upload files.', 'artificial-image-generator' ); ?></p>
+		<?php
+	}
+
+	/**
+	 * Render the AI hourly limit field.
+	 *
+	 * @since 1.5.4
+	 * @return void
+	 */
+	public function ai_hourly_limit_field() {
+		$limit = absint( aimg_get_settings( 'ai_hourly_limit', 20 ) );
+		?>
+		<input type="number" min="0" step="1" class="small-text" name="aimg_settings[ai_hourly_limit]" id="aimg_settings_ai_hourly_limit" value="<?php echo esc_attr( $limit ); ?>" />
+		<p class="description"><?php esc_html_e( 'Maximum AI images each user can generate per hour. Set to 0 for no limit.', 'artificial-image-generator' ); ?></p>
+		<?php
 	}
 
 	/**
@@ -193,22 +248,33 @@ class Settings {
 	public function api_key_field() {
 		$is_constant = defined( 'AIMG_API_KEY' ) && AIMG_API_KEY;
 		$api_key     = $is_constant ? AIMG_API_KEY : aimg_get_settings( 'api_key', '' );
-		$masked      = $api_key ? str_repeat( '•', max( 0, strlen( $api_key ) - 4 ) ) . substr( $api_key, -4 ) : '';
+		$masked      = $api_key ? str_repeat( '•', 8 ) . substr( $api_key, -4 ) : '';
 		?>
+		<input type="hidden" name="aimg_settings[api_key_form]" value="1" />
 		<input
 			type="password"
 			name="aimg_settings[api_key]"
 			id="aimg_settings_api_key"
-			value="<?php echo esc_attr( $is_constant ? '' : $api_key ); ?>"
+			value=""
 			class="regular-text"
-			autocomplete="off"
-			placeholder="<?php echo $is_constant ? esc_attr( $masked ) : 'sk-...'; ?>"
+			autocomplete="new-password"
+			placeholder="<?php echo $masked ? esc_attr( $masked ) : 'sk-...'; ?>"
 			<?php disabled( $is_constant ); ?>
 		/>
+		<?php if ( ! $is_constant && $api_key ) : ?>
+			<p>
+				<label for="aimg_settings_remove_api_key">
+					<input type="checkbox" name="aimg_settings[remove_api_key]" id="aimg_settings_remove_api_key" value="1" />
+					<?php esc_html_e( 'Remove the saved API key', 'artificial-image-generator' ); ?>
+				</label>
+			</p>
+		<?php endif; ?>
 		<p class="description">
 			<?php
 			if ( $is_constant ) {
 				esc_html_e( 'Your API key is currently defined via the AIMG_API_KEY PHP constant and cannot be edited here.', 'artificial-image-generator' );
+			} elseif ( $api_key ) {
+				esc_html_e( 'An API key is saved. Leave the field empty to keep it, or enter a new key to replace it.', 'artificial-image-generator' );
 			} else {
 				esc_html_e( 'Enter your image generation API key (e.g. an OpenAI key for DALL·E). For maximum security you can instead define the AIMG_API_KEY constant in wp-config.php.', 'artificial-image-generator' );
 			}
@@ -354,11 +420,23 @@ class Settings {
 			$sanitized_settings['api_key'] = '';
 		} else {
 			$sanitized_settings['api_key'] = isset( $settings['api_key'] ) ? trim( sanitize_text_field( $settings['api_key'] ) ) : '';
+
+			// The form never prints the saved key, so an empty field there means "keep it".
+			if ( ! empty( $settings['remove_api_key'] ) ) {
+				$sanitized_settings['api_key'] = '';
+			} elseif ( ! empty( $settings['api_key_form'] ) && '' === $sanitized_settings['api_key'] ) {
+				$sanitized_settings['api_key'] = (string) aimg_get_settings( 'api_key', '' );
+			}
 		}
 
 		// Sanitize the model; fall back to the default when the value is unknown.
 		$model                           = isset( $settings['api_model'] ) ? sanitize_text_field( $settings['api_model'] ) : '';
 		$sanitized_settings['api_model'] = array_key_exists( $model, self::get_models() ) ? $model : 'gpt-image-1';
+
+		$access                          = isset( $settings['ai_access'] ) ? sanitize_key( $settings['ai_access'] ) : '';
+		$sanitized_settings['ai_access'] = array_key_exists( $access, aimg_get_ai_access_levels() ) ? $access : 'authors';
+
+		$sanitized_settings['ai_hourly_limit'] = isset( $settings['ai_hourly_limit'] ) && '' !== $settings['ai_hourly_limit'] ? absint( $settings['ai_hourly_limit'] ) : 20;
 
 		return $sanitized_settings;
 	}

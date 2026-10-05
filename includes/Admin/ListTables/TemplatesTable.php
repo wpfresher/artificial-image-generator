@@ -158,11 +158,11 @@ class TemplatesTable extends \WP_List_Table {
 			),
 			admin_url( 'admin.php?page=image-generator' )
 		);
-		$item_title = sprintf( '<a href="%1$s">%2$s</a>', $edit_url, esc_html( $item->post_title ) );
-		// translators: %d: key id.
-		$actions['ids']    = sprintf( __( 'ID: %d', 'artificial-image-generator' ), esc_html( $item->ID ) );
-		$actions['edit']   = sprintf( '<a href="%1$s">%2$s</a>', $edit_url, __( 'Edit', 'artificial-image-generator' ) );
-		$actions['delete'] = sprintf( '<a href="%1$s">%2$s</a>', wp_nonce_url( $delete_url, 'bulk-' . $this->_args['plural'] ), __( 'Delete', 'artificial-image-generator' ) );
+		$item_title = sprintf( '<a href="%1$s">%2$s</a>', esc_url( $edit_url ), esc_html( $item->post_title ) );
+		// translators: %d: template ID.
+		$actions['ids']    = esc_html( sprintf( __( 'ID: %d', 'artificial-image-generator' ), $item->ID ) );
+		$actions['edit']   = sprintf( '<a href="%1$s">%2$s</a>', esc_url( $edit_url ), esc_html__( 'Edit', 'artificial-image-generator' ) );
+		$actions['delete'] = sprintf( '<a href="%1$s">%2$s</a>', esc_url( wp_nonce_url( $delete_url, 'bulk-' . $this->_args['plural'] ) ), esc_html__( 'Delete', 'artificial-image-generator' ) );
 
 		return sprintf( '%1$s %2$s', $item_title, $this->row_actions( $actions ) );
 	}
