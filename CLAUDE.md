@@ -53,9 +53,12 @@ for asset-only rebuilds during development use `npx wp-scripts build --webpack-s
 |---|---|---|
 | `Plugin` | `includes/Plugin.php` | Singleton bootstrap; defines `AIMG_*` constants; manages flash notice queue |
 | `PostTypes` | `includes/PostTypes.php` | Registers the hidden `aimg_template` custom post type |
-| `Generator` | `includes/Generator.php` | Template → render args → file → attachment; stamps provenance meta |
+| `Generator` | `includes/Generator.php` | `generate_for_post()` (all methods), template rendering, `generate_ai()`, Media Library import; stamps provenance meta |
+| `PromptBuilder` | `includes/PromptBuilder.php` | Builds AI prompts from a post: prompt template + merge tags, style presets, negative instructions |
+| `Queue` | `includes/Queue.php` | Background jobs for AI featured images: started at once by a non-blocking loopback (`aimg_run_job`, single-use token), with Action Scheduler or WP-Cron as backup; atomic queued→running claim; status in post meta |
+| `Providers\*` | `includes/Providers/` | `ProviderInterface`, `Result`, `OpenAI`, `Registry` (`aimg_providers` filter) |
 | `GenerateImages` | `includes/GenerateImages.php` | Hooks `wp_after_insert_post`; auto-generates featured images when none exists (per-post opt-out `_aimg_disable_auto`) |
-| `RestAPI` | `includes/RestAPI.php` | `aimg/v1/generate` and `aimg/v1/templates` endpoints; OpenAI Images calls |
+| `RestAPI` | `includes/RestAPI.php` | `aimg/v1/generate`, `/templates`, `/templates/{id}/preview`, `/prompt`, `/status/{post}`, `/featured/{post}` |
 | `Admin\Admin` | `includes/Admin/Admin.php` | Admin menu, page routing (list / add / edit), script enqueuing |
 | `Admin\Settings` | `includes/Admin/Settings.php` | Settings page UI and option validation |
 | `Admin\Actions` | `includes/Admin/Actions.php` | Processes template CRUD via `admin_post_aimg_update_template` |
@@ -82,7 +85,12 @@ Generated attachments are stamped with `_aimg_generated` (`'1'`, queryable) and
 1. `GenerateImages` catches `wp_after_insert_post` (not `save_post`: the block editor sets the chosen
    featured image after `save_post`) for posts/pages (per settings) that have no featured image and
    no `_aimg_disable_auto` opt-out. Removing a generated featured image sets that opt-out.
-2. `Generator::get_random_template_id()` picks a published template; `Generator::get_render_args()`
+   The `generation_method` setting decides what happens: `template` (default) renders inline, as
+   before; `ai` / `ai_template` queue a background job via `Queue` (only for published/scheduled
+   posts); `template_ai` renders inline and queues AI when no template exists. Jobs run
+   `Generator::generate_for_post()`, which also backs the editor's Generate button.
+2. `Generator::get_template_id_for_post()` uses the `default_template_id` setting or a random
+   published template; `Generator::get_render_args()`
    maps its meta to render arguments (this mapping lives only here — the REST endpoint uses it too);
    it returns `false` for templates that are not published.
 3. `aimg_generate_thumbnail()` in `includes/functions.php` uses PHP's **GD library** to:
@@ -93,6 +101,13 @@ Generated attachments are stamped with `_aimg_generated` (`'1'`, queryable) and
    - Render the post title using the bundled Roboto Bold font (`assets/fonts/`)
 4. `Generator::create_attachment()` imports the file, sets alt text, stamps provenance meta, and
    fires `aimg_generated_image`. `GenerateImages` then sets it as the post thumbnail.
+
+AI images: `PromptBuilder::build()` → `Providers\Registry::get()->generate()` (size and quality keys
+are provider-neutral: square/landscape/portrait, auto/low/medium/high) → `Generator::sideload_*()` →
+provenance. With default settings the OpenAI request body keeps the 1.5.x shape (`model`, `prompt`, `n`, `size`);
+only the model changed. Models in `Providers\OpenAI::get_models()` must be current per OpenAI's
+deprecations page (https://developers.openai.com/api/docs/deprecations); saved models that are no longer
+listed fall back to `get_default_model()` at runtime.
 
 `aimg_generate_preview()` runs the same pipeline on-demand for the template editor preview, and
 deletes the preview file it replaces.
@@ -130,6 +145,7 @@ Form submissions use the `admin_post_aimg_update_template` action with nonce ver
 - `aimg_uploads_path($path)` — rewrite an uploads path into the separator style WordPress expects
 - `aimg_delete_upload_by_url($url)` — delete a file inside uploads, given its URL
 - `aimg_get_plain_title($post_id)` — post title without entities; use it for anything drawn or used as alt text
+- `aimg_plain_text($text)` — the same for any text (REST `title` params use it as their sanitizer)
 - `aimg_wrap_title(...)` — title line wrapping; shrinks the font only when a single word is too wide
 - `aimg_can_render()` — GD + FreeType available; the renderer returns `false` without them
 - `aimg_user_can_use_ai()` / `aimg_consume_ai_quota()` — AI access setting (`ai_access`) and per-user

@@ -52,6 +52,7 @@ class Editor {
 				'wp-plugins',
 				'wp-edit-post',
 				'wp-data',
+				'wp-html-entities',
 			),
 			AIMG_VERSION,
 			true

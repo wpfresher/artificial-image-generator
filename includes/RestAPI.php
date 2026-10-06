@@ -56,7 +56,34 @@ class RestAPI {
 					'title'       => array(
 						'type'              => 'string',
 						'required'          => false,
-						'sanitize_callback' => 'sanitize_text_field',
+						'sanitize_callback' => 'aimg_plain_text',
+					),
+					'size'        => array(
+						'type'     => 'string',
+						'required' => false,
+						'enum'     => array( 'square', 'landscape', 'portrait' ),
+					),
+					'quality'     => array(
+						'type'     => 'string',
+						'required' => false,
+						'enum'     => array( 'auto', 'low', 'medium', 'high' ),
+					),
+					'n'           => array(
+						'type'     => 'integer',
+						'required' => false,
+						'default'  => 1,
+						'minimum'  => 1,
+						'maximum'  => 4,
+					),
+					'style'       => array(
+						'type'              => 'string',
+						'required'          => false,
+						'sanitize_callback' => 'sanitize_key',
+					),
+					'post_id'     => array(
+						'type'              => 'integer',
+						'required'          => false,
+						'sanitize_callback' => 'absint',
 					),
 				),
 			)
@@ -70,6 +97,248 @@ class RestAPI {
 				'callback'            => array( $this, 'handle_list_templates' ),
 				'permission_callback' => array( $this, 'check_read_permission' ),
 			)
+		);
+
+		register_rest_route(
+			self::REST_NAMESPACE,
+			'/templates/(?P<id>\d+)/preview',
+			array(
+				'methods'             => \WP_REST_Server::CREATABLE,
+				'callback'            => array( $this, 'handle_template_preview' ),
+				'permission_callback' => array( $this, 'check_read_permission' ),
+				'args'                => array(
+					'title' => array(
+						'type'              => 'string',
+						'required'          => false,
+						'sanitize_callback' => 'aimg_plain_text',
+					),
+				),
+			)
+		);
+
+		register_rest_route(
+			self::REST_NAMESPACE,
+			'/prompt',
+			array(
+				'methods'             => \WP_REST_Server::CREATABLE,
+				'callback'            => array( $this, 'handle_build_prompt' ),
+				'permission_callback' => array( $this, 'check_post_permission' ),
+				'args'                => array(
+					'post_id' => array(
+						'type'              => 'integer',
+						'required'          => false,
+						'sanitize_callback' => 'absint',
+					),
+					'title'   => array(
+						'type'              => 'string',
+						'required'          => false,
+						'sanitize_callback' => 'aimg_plain_text',
+					),
+					'excerpt' => array(
+						'type'              => 'string',
+						'required'          => false,
+						'sanitize_callback' => 'sanitize_textarea_field',
+					),
+				),
+			)
+		);
+
+		register_rest_route(
+			self::REST_NAMESPACE,
+			'/status/(?P<post_id>\d+)',
+			array(
+				'methods'             => \WP_REST_Server::READABLE,
+				'callback'            => array( $this, 'handle_status' ),
+				'permission_callback' => array( $this, 'check_post_permission' ),
+			)
+		);
+
+		register_rest_route(
+			self::REST_NAMESPACE,
+			'/featured/(?P<post_id>\d+)',
+			array(
+				'methods'             => \WP_REST_Server::CREATABLE,
+				'callback'            => array( $this, 'handle_featured' ),
+				'permission_callback' => array( $this, 'check_featured_permission' ),
+			)
+		);
+	}
+
+	/**
+	 * Permission callback for endpoints about one post.
+	 *
+	 * @param \WP_REST_Request $request Request.
+	 *
+	 * @since 1.6.0
+	 * @return bool|\WP_Error
+	 */
+	public function check_post_permission( \WP_REST_Request $request ) {
+		$post_id = absint( $request->get_param( 'post_id' ) );
+		$allowed = $post_id ? current_user_can( 'edit_post', $post_id ) : current_user_can( 'edit_posts' );
+
+		if ( ! $allowed ) {
+			return new \WP_Error(
+				'rest_forbidden',
+				__( 'You do not have permission to edit this post.', 'artificial-image-generator' ),
+				array( 'status' => rest_authorization_required_code() )
+			);
+		}
+
+		return true;
+	}
+
+	/**
+	 * Permission callback for generating a post's featured image.
+	 *
+	 * @param \WP_REST_Request $request Request.
+	 *
+	 * @since 1.6.0
+	 * @return bool|\WP_Error
+	 */
+	public function check_featured_permission( \WP_REST_Request $request ) {
+		$allowed = $this->check_post_permission( $request );
+
+		if ( true !== $allowed ) {
+			return $allowed;
+		}
+
+		if ( ! current_user_can( 'upload_files' ) ) {
+			return new \WP_Error(
+				'rest_forbidden',
+				__( 'You do not have permission to generate images.', 'artificial-image-generator' ),
+				array( 'status' => rest_authorization_required_code() )
+			);
+		}
+
+		if ( Generator::method_starts_with_ai( Generator::get_runnable_method() ) && ! aimg_user_can_use_ai() ) {
+			return new \WP_Error(
+				'rest_forbidden',
+				__( 'You do not have permission to generate AI images.', 'artificial-image-generator' ),
+				array( 'status' => rest_authorization_required_code() )
+			);
+		}
+
+		return true;
+	}
+
+	/**
+	 * Render a template with a title, without adding it to the Media Library.
+	 *
+	 * @param \WP_REST_Request $request Request.
+	 *
+	 * @since 1.6.0
+	 * @return \WP_REST_Response|\WP_Error
+	 */
+	public function handle_template_preview( \WP_REST_Request $request ) {
+		$path = Generator::render( absint( $request['id'] ), trim( (string) $request->get_param( 'title' ) ) );
+
+		if ( ! $path ) {
+			return new \WP_Error( 'aimg_invalid_template', __( 'Invalid template ID.', 'artificial-image-generator' ), array( 'status' => 400 ) );
+		}
+
+		$bytes = file_get_contents( $path ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file we just rendered.
+		wp_delete_file( $path );
+
+		return rest_ensure_response(
+			array(
+				'image' => 'data:image/png;base64,' . base64_encode( (string) $bytes ), // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- Inline preview image.
+			)
+		);
+	}
+
+	/**
+	 * Build the AI prompt for a post.
+	 *
+	 * @param \WP_REST_Request $request Request.
+	 *
+	 * @since 1.6.0
+	 * @return \WP_REST_Response
+	 */
+	public function handle_build_prompt( \WP_REST_Request $request ) {
+		$prompt = PromptBuilder::build(
+			absint( $request->get_param( 'post_id' ) ),
+			array(
+				'style'  => 'none',
+				'values' => array(
+					'title'   => (string) $request->get_param( 'title' ),
+					'excerpt' => (string) $request->get_param( 'excerpt' ),
+				),
+			)
+		);
+
+		return rest_ensure_response( array( 'prompt' => $prompt ) );
+	}
+
+	/**
+	 * A post's background generation status.
+	 *
+	 * @param \WP_REST_Request $request Request.
+	 *
+	 * @since 1.6.0
+	 * @return \WP_REST_Response
+	 */
+	public function handle_status( \WP_REST_Request $request ) {
+		$post_id = absint( $request['post_id'] );
+
+		return rest_ensure_response( $this->status_response( $post_id ) );
+	}
+
+	/**
+	 * Generate a post's featured image with the configured method, replacing the current one.
+	 *
+	 * Template images are created right away; AI images are queued.
+	 *
+	 * @param \WP_REST_Request $request Request.
+	 *
+	 * @since 1.6.0
+	 * @return \WP_REST_Response|\WP_Error
+	 */
+	public function handle_featured( \WP_REST_Request $request ) {
+		$post_id = absint( $request['post_id'] );
+		$method  = Generator::get_runnable_method();
+
+		if ( '' === $method ) {
+			return new \WP_Error( 'aimg_no_api_key', __( 'No API key configured. Please add your API key on the Image Generator settings page.', 'artificial-image-generator' ), array( 'status' => 400 ) );
+		}
+
+		if ( '' === aimg_get_plain_title( $post_id ) ) {
+			return new \WP_Error( 'aimg_no_title', __( 'Add a title to the post first; it is used to generate the image.', 'artificial-image-generator' ), array( 'status' => 400 ) );
+		}
+
+		if ( Generator::method_starts_with_ai( $method ) ) {
+			Queue::enqueue( $post_id, $method, true );
+
+			return rest_ensure_response( $this->status_response( $post_id ) );
+		}
+
+		$attachment_id = Generator::generate_for_post( $post_id, $method );
+
+		if ( is_wp_error( $attachment_id ) ) {
+			return $attachment_id;
+		}
+
+		set_post_thumbnail( $post_id, $attachment_id );
+		Queue::set_status( $post_id, 'done' );
+
+		return rest_ensure_response( $this->status_response( $post_id ) );
+	}
+
+	/**
+	 * Status payload for a post.
+	 *
+	 * @param int $post_id Post ID.
+	 *
+	 * @return array
+	 */
+	private function status_response( $post_id ) {
+		$status       = Queue::get_status( $post_id );
+		$thumbnail_id = (int) get_post_thumbnail_id( $post_id );
+
+		return array(
+			'status'        => $status['status'],
+			'error'         => $status['error'],
+			'attachment_id' => $thumbnail_id,
+			'url'           => $thumbnail_id ? (string) wp_get_attachment_url( $thumbnail_id ) : '',
 		);
 	}
 
@@ -129,6 +398,16 @@ class RestAPI {
 			);
 		}
 
+		$post_id = absint( $request->get_param( 'post_id' ) );
+
+		if ( $post_id && ! current_user_can( 'edit_post', $post_id ) ) {
+			return new \WP_Error(
+				'rest_forbidden',
+				__( 'You do not have permission to edit this post.', 'artificial-image-generator' ),
+				array( 'status' => rest_authorization_required_code() )
+			);
+		}
+
 		return true;
 	}
 
@@ -160,7 +439,7 @@ class RestAPI {
 
 			$data[] = array(
 				'id'      => (int) $template->ID,
-				'title'   => $template->post_title,
+				'title'   => aimg_plain_text( $template->post_title ),
 				'preview' => $preview ? esc_url_raw( $preview ) : '',
 				'width'   => $width,
 				'height'  => $height,
@@ -188,7 +467,7 @@ class RestAPI {
 		}
 
 		if ( '' !== $prompt ) {
-			return $this->generate_from_prompt( $prompt );
+			return $this->generate_from_prompt( $prompt, $request );
 		}
 
 		return new \WP_Error(
@@ -256,17 +535,18 @@ class RestAPI {
 	}
 
 	/**
-	 * Generate an image by calling an external AI service with a prompt and import the result.
+	 * Generate images from a prompt with the configured AI provider and import them.
 	 *
-	 * @param string $prompt User prompt.
+	 * @param string                $prompt  User prompt.
+	 * @param \WP_REST_Request|null $request Request, for size, quality, number of images and style.
 	 *
 	 * @since 1.0.0
 	 * @return \WP_REST_Response|\WP_Error
 	 */
-	protected function generate_from_prompt( $prompt ) {
-		$api_key = $this->get_api_key();
+	protected function generate_from_prompt( $prompt, $request = null ) {
+		$provider = Providers\Registry::get();
 
-		if ( empty( $api_key ) ) {
+		if ( ! $provider || ! $provider->is_configured() ) {
 			return new \WP_Error(
 				'aimg_no_api_key',
 				__( 'No API key configured. Please add your API key on the Image Generator settings page.', 'artificial-image-generator' ),
@@ -274,140 +554,55 @@ class RestAPI {
 			);
 		}
 
-		$quota = aimg_consume_ai_quota();
+		$n     = $request ? max( 1, min( 4, (int) $request->get_param( 'n' ) ) ) : 1;
+		$quota = aimg_consume_ai_quota( 0, $n );
 
 		if ( is_wp_error( $quota ) ) {
 			return $quota;
 		}
 
-		$model = $this->get_model();
-
-		$default_body = array(
-			'model'  => $model,
-			'prompt' => $prompt,
-			'n'      => 1,
-			'size'   => '1024x1024',
+		$args = array(
+			'n'      => $n,
+			'parent' => $request ? absint( $request->get_param( 'post_id' ) ) : 0,
 		);
 
-		// The 'standard'/'hd' quality values only exist on DALL·E 3; GPT image
-		// models default to 'auto' and reject the DALL·E values.
-		if ( 'dall-e-3' === $model ) {
-			$default_body['quality'] = 'standard';
-		}
-
-		/**
-		 * Filter the request body sent to the image generation API.
-		 *
-		 * Defaults to OpenAI Images API parameters for the configured model.
-		 *
-		 * @param array  $body   Request body.
-		 * @param string $prompt User prompt.
-		 *
-		 * @since 1.0.0
-		 */
-		$body = apply_filters( 'aimg_generate_request_body', $default_body, $prompt );
-
-		/**
-		 * Filter the endpoint used to generate images from a prompt.
-		 *
-		 * @param string $endpoint API endpoint URL.
-		 * @param string $prompt   User prompt.
-		 *
-		 * @since 1.0.0
-		 */
-		$endpoint = apply_filters(
-			'aimg_generate_endpoint',
-			'https://api.openai.com/v1/images/generations',
-			$prompt
-		);
-
-		$response = wp_remote_post(
-			$endpoint,
-			array(
-				/**
-				 * Filter the timeout, in seconds, for the image generation request.
-				 *
-				 * @param int $timeout Timeout in seconds.
-				 *
-				 * @since 1.5.4
-				 */
-				'timeout' => (int) apply_filters( 'aimg_generate_timeout', 120 ),
-				'headers' => array(
-					'Authorization' => 'Bearer ' . $api_key,
-					'Content-Type'  => 'application/json',
-				),
-				'body'    => wp_json_encode( $body ),
-			)
-		);
-
-		if ( is_wp_error( $response ) ) {
-			return new \WP_Error(
-				'aimg_api_error',
-				$response->get_error_message(),
-				array( 'status' => 502 )
-			);
-		}
-
-		$status  = (int) wp_remote_retrieve_response_code( $response );
-		$decoded = json_decode( wp_remote_retrieve_body( $response ), true );
-
-		if ( $status >= 400 ) {
-			$message = isset( $decoded['error']['message'] )
-				? (string) $decoded['error']['message']
-				: __( 'The image generation API returned an error.', 'artificial-image-generator' );
-
-			// A model-access error is almost always fixable by picking another model.
-			$error_code = isset( $decoded['error']['code'] ) ? (string) $decoded['error']['code'] : '';
-			if ( 'model_not_found' === $error_code || false !== stripos( $message, 'does not exist' ) ) {
-				$message .= ' ' . sprintf(
-					/* translators: %s: model identifier, e.g. dall-e-3. */
-					__( 'Your API account may not have access to the "%s" model. Try selecting a different model under Image Generator → Settings → AI Service.', 'artificial-image-generator' ),
-					$model
-				);
+		foreach ( array( 'size', 'quality' ) as $key ) {
+			if ( $request && $request->get_param( $key ) ) {
+				$args[ $key ] = (string) $request->get_param( $key );
 			}
+		}
 
-			return new \WP_Error(
-				'aimg_api_error',
-				$message,
-				array( 'status' => 502 )
+		$full_prompt = $prompt;
+		$styles      = PromptBuilder::get_styles();
+		$style       = $request ? (string) $request->get_param( 'style' ) : '';
+
+		if ( isset( $styles[ $style ][1] ) && '' !== $styles[ $style ][1] ) {
+			$full_prompt .= ' ' . $styles[ $style ][1];
+		}
+
+		$args['title'] = $prompt;
+		$ids           = Generator::generate_ai( $full_prompt, $args );
+
+		if ( is_wp_error( $ids ) ) {
+			return $ids;
+		}
+
+		$images = array();
+		foreach ( $ids as $id ) {
+			$images[] = array(
+				'id'  => (int) $id,
+				'url' => (string) wp_get_attachment_url( $id ),
+				'alt' => $prompt,
 			);
 		}
-
-		$image_url = isset( $decoded['data'][0]['url'] ) ? esc_url_raw( $decoded['data'][0]['url'] ) : '';
-		$image_b64 = isset( $decoded['data'][0]['b64_json'] ) ? (string) $decoded['data'][0]['b64_json'] : '';
-
-		if ( ! empty( $image_url ) ) {
-			$attachment_id = $this->sideload_image( $image_url, $prompt );
-		} elseif ( ! empty( $image_b64 ) ) {
-			$attachment_id = $this->sideload_base64_image( $image_b64, $prompt );
-		} else {
-			return new \WP_Error(
-				'aimg_no_image',
-				__( 'No image returned by the API.', 'artificial-image-generator' ),
-				array( 'status' => 502 )
-			);
-		}
-
-		if ( is_wp_error( $attachment_id ) ) {
-			return $attachment_id;
-		}
-
-		Generator::mark_generated(
-			$attachment_id,
-			array(
-				'source'   => 'prompt',
-				'prompt'   => $prompt,
-				'provider' => 'openai',
-				'model'    => $model,
-			)
-		);
 
 		return rest_ensure_response(
 			array(
-				'url'    => wp_get_attachment_url( $attachment_id ),
-				'id'     => (int) $attachment_id,
+				'url'    => $images[0]['url'],
+				'id'     => $images[0]['id'],
 				'alt'    => $prompt,
 				'source' => 'prompt',
+				'images' => $images,
 			)
 		);
 	}
@@ -419,11 +614,7 @@ class RestAPI {
 	 * @return string
 	 */
 	protected function get_api_key() {
-		if ( defined( 'AIMG_API_KEY' ) && AIMG_API_KEY ) {
-			return (string) AIMG_API_KEY;
-		}
-
-		return (string) aimg_get_settings( 'api_key', '' );
+		return ( new Providers\OpenAI() )->get_api_key();
 	}
 
 	/**
@@ -433,9 +624,10 @@ class RestAPI {
 	 * @return string
 	 */
 	protected function get_model() {
-		$model = (string) aimg_get_settings( 'api_model', '' );
+		$provider = new Providers\OpenAI();
+		$model    = (string) aimg_get_settings( 'api_model', '' );
 
-		return '' !== $model ? $model : 'gpt-image-1';
+		return isset( $provider->get_models()[ $model ] ) ? $model : $provider->get_default_model();
 	}
 
 	/**
@@ -448,60 +640,11 @@ class RestAPI {
 	 * @return int|\WP_Error Attachment ID on success, WP_Error on failure.
 	 */
 	public function sideload_image( $url, $title = '' ) {
-		require_once ABSPATH . 'wp-admin/includes/image.php';
-		require_once ABSPATH . 'wp-admin/includes/file.php';
-		require_once ABSPATH . 'wp-admin/includes/media.php';
-
-		$tmp = download_url( $url );
-		if ( is_wp_error( $tmp ) ) {
-			return $tmp;
-		}
-
-		// Detect the extension from the temp file (download_url stores it without one).
-		$type = wp_check_filetype( $tmp );
-		if ( empty( $type['ext'] ) ) {
-			$mime = function_exists( 'mime_content_type' ) ? mime_content_type( $tmp ) : '';
-			$ext  = 'png';
-			if ( 'image/jpeg' === $mime ) {
-				$ext = 'jpg';
-			} elseif ( 'image/webp' === $mime ) {
-				$ext = 'webp';
-			}
-		} else {
-			$ext = $type['ext'];
-		}
-
-		$slug = sanitize_title( $title );
-		if ( '' === $slug ) {
-			$slug = 'ai-generated';
-		}
-
-		$file_array = array(
-			'name'     => $slug . '-' . wp_generate_password( 6, false, false ) . '.' . $ext,
-			'tmp_name' => $tmp,
-		);
-
-		$id = media_handle_sideload( $file_array, 0, $title );
-		if ( is_wp_error( $id ) ) {
-			if ( file_exists( $tmp ) ) {
-				wp_delete_file( $tmp );
-			}
-			return $id;
-		}
-
-		// Save the prompt as alt text for accessibility.
-		if ( $title ) {
-			update_post_meta( $id, '_wp_attachment_image_alt', sanitize_text_field( $title ) );
-		}
-
-		return $id;
+		return Generator::sideload_url( $url, $title );
 	}
 
 	/**
-	 * Decode a base64 encoded image returned by the API and add it to the Media Library.
-	 *
-	 * GPT image models (gpt-image-1 and gpt-image-1-mini) return the image as
-	 * base64 JSON instead of a temporary URL.
+	 * Decode a base64 encoded image and add it to the Media Library.
 	 *
 	 * @param string $b64   Base64 encoded image contents.
 	 * @param string $title Optional title for the media item.
@@ -510,69 +653,6 @@ class RestAPI {
 	 * @return int|\WP_Error Attachment ID on success, WP_Error on failure.
 	 */
 	public function sideload_base64_image( $b64, $title = '' ) {
-		require_once ABSPATH . 'wp-admin/includes/image.php';
-		require_once ABSPATH . 'wp-admin/includes/file.php';
-		require_once ABSPATH . 'wp-admin/includes/media.php';
-
-		$bytes = base64_decode( $b64, true ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode -- Decoding the image payload returned by the API.
-		if ( false === $bytes || '' === $bytes ) {
-			return new \WP_Error(
-				'aimg_invalid_image',
-				__( 'The image returned by the API could not be decoded.', 'artificial-image-generator' ),
-				array( 'status' => 502 )
-			);
-		}
-
-		$tmp = wp_tempnam( 'aimg' );
-		if ( ! $tmp ) {
-			return new \WP_Error(
-				'aimg_temp_file',
-				__( 'Could not create a temporary file for the generated image.', 'artificial-image-generator' ),
-				array( 'status' => 500 )
-			);
-		}
-
-		if ( false === file_put_contents( $tmp, $bytes ) ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- Writing to a wp_tempnam() file before sideloading.
-			wp_delete_file( $tmp );
-
-			return new \WP_Error(
-				'aimg_temp_file',
-				__( 'Could not write the generated image to a temporary file.', 'artificial-image-generator' ),
-				array( 'status' => 500 )
-			);
-		}
-
-		$mime = function_exists( 'mime_content_type' ) ? mime_content_type( $tmp ) : 'image/png';
-		$ext  = 'png';
-		if ( 'image/jpeg' === $mime ) {
-			$ext = 'jpg';
-		} elseif ( 'image/webp' === $mime ) {
-			$ext = 'webp';
-		}
-
-		$slug = sanitize_title( $title );
-		if ( '' === $slug ) {
-			$slug = 'ai-generated';
-		}
-
-		$file_array = array(
-			'name'     => $slug . '-' . wp_generate_password( 6, false, false ) . '.' . $ext,
-			'tmp_name' => $tmp,
-		);
-
-		$id = media_handle_sideload( $file_array, 0, $title );
-		if ( is_wp_error( $id ) ) {
-			if ( file_exists( $tmp ) ) {
-				wp_delete_file( $tmp );
-			}
-			return $id;
-		}
-
-		// Save the prompt as alt text for accessibility.
-		if ( $title ) {
-			update_post_meta( $id, '_wp_attachment_image_alt', sanitize_text_field( $title ) );
-		}
-
-		return $id;
+		return Generator::sideload_bytes( (string) base64_decode( $b64, true ), $title ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode -- Image payload returned by the API.
 	}
 }

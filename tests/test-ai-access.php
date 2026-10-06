@@ -118,4 +118,35 @@ class Test_AI_Access extends AIMG_TestCase {
 
 		$this->assertSame( 120, $this->requests[0]['timeout'] );
 	}
+
+	public function test_images_cannot_be_attached_to_posts_the_user_cannot_edit() {
+		$template = $this->create_template();
+		$other    = self::factory()->post->create( array( 'post_author' => $this->admin_id ) );
+		$author   = self::factory()->user->create( array( 'role' => 'author' ) );
+		$own      = self::factory()->post->create( array( 'post_author' => $author ) );
+		wp_set_current_user( $author );
+
+		$this->assertSame(
+			403,
+			$this->rest(
+				'POST',
+				'/aimg/v1/generate',
+				array(
+					'template_id' => $template,
+					'post_id'     => $other,
+				)
+			)->get_status()
+		);
+		$this->assertSame(
+			200,
+			$this->rest(
+				'POST',
+				'/aimg/v1/generate',
+				array(
+					'template_id' => $template,
+					'post_id'     => $own,
+				)
+			)->get_status()
+		);
+	}
 }

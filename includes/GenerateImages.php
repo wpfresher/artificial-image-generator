@@ -119,44 +119,72 @@ class GenerateImages {
 			return;
 		}
 
-		$title = aimg_get_plain_title( $post_id );
-
-		// Check if the title is empty.
-		if ( empty( $title ) ) {
+		if ( '' === aimg_get_plain_title( $post_id ) ) {
 			return;
 		}
 
-		// Get a random image template ID.
-		$template_id = Generator::get_random_template_id();
+		$method = Generator::get_runnable_method();
 
-		if ( ! $template_id ) {
+		if ( '' === $method ) {
 			return;
 		}
 
-		$image_path = Generator::render( $template_id, $title );
+		if ( Generator::method_starts_with_ai( $method ) ) {
+			if ( self::can_use_ai( $post_id ) && ! self::last_job_failed( $post_id ) ) {
+				Queue::enqueue( $post_id, $method );
+			}
 
-		if ( ! $image_path ) {
 			return;
 		}
 
-		$attachment_id = Generator::create_attachment(
-			$image_path,
-			array(
-				'title'      => $title,
-				'alt'        => $title,
-				'parent'     => $post_id,
-				'provenance' => array(
-					'source'      => 'template',
-					'template_id' => $template_id,
-				),
-			)
-		);
+		$attachment_id = Generator::generate_template_for_post( $post_id );
 
 		if ( is_wp_error( $attachment_id ) ) {
+			if ( Generator::METHOD_TEMPLATE_AI === $method && self::can_use_ai( $post_id ) && ! self::last_job_failed( $post_id ) ) {
+				Queue::enqueue( $post_id, Generator::METHOD_AI );
+			}
+
 			return;
 		}
 
-		// Set the post thumbnail.
 		set_post_thumbnail( $post_id, $attachment_id );
+	}
+
+	/**
+	 * Whether the post's last background job failed. Saving doesn't retry it, so a
+	 * failing service isn't called again on every save; "Try again" in the editor does.
+	 *
+	 * @param int $post_id Post ID.
+	 *
+	 * @since 1.6.0
+	 * @return bool
+	 */
+	public static function last_job_failed( $post_id ) {
+		return 'failed' === Queue::get_status( $post_id )['status'];
+	}
+
+	/**
+	 * Whether a post may get an AI featured image automatically.
+	 *
+	 * AI images cost money, so drafts don't get one until they are published or
+	 * scheduled; authors can still generate one from the editor.
+	 *
+	 * @param int $post_id Post ID.
+	 *
+	 * @since 1.6.0
+	 * @return bool
+	 */
+	public static function can_use_ai( $post_id ) {
+		/**
+		 * Filter the post statuses that get an AI featured image automatically.
+		 *
+		 * @param string[] $statuses Post statuses.
+		 * @param int      $post_id  Post ID.
+		 *
+		 * @since 1.6.0
+		 */
+		$statuses = (array) apply_filters( 'aimg_auto_generate_statuses', array( 'publish', 'future', 'private' ), $post_id );
+
+		return in_array( get_post_status( $post_id ), $statuses, true );
 	}
 }

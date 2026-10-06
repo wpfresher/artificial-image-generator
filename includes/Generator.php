@@ -36,6 +36,425 @@ class Generator {
 	const GENERATED_DATA_META = '_aimg_generated_data';
 
 	/**
+	 * Generation methods.
+	 *
+	 * @var string
+	 */
+	const METHOD_TEMPLATE    = 'template';
+	const METHOD_AI          = 'ai';
+	const METHOD_TEMPLATE_AI = 'template_ai';
+	const METHOD_AI_TEMPLATE = 'ai_template';
+
+	/**
+	 * Methods for automatic featured images, as ID => label.
+	 *
+	 * @since 1.6.0
+	 * @return array
+	 */
+	public static function get_methods() {
+		$methods = array(
+			self::METHOD_TEMPLATE    => __( 'Image template', 'artificial-image-generator' ),
+			self::METHOD_AI          => __( 'AI image', 'artificial-image-generator' ),
+			self::METHOD_TEMPLATE_AI => __( 'Image template, AI if no template is available', 'artificial-image-generator' ),
+			self::METHOD_AI_TEMPLATE => __( 'AI image, template if AI fails', 'artificial-image-generator' ),
+		);
+
+		/**
+		 * Filter the generation methods offered for automatic featured images.
+		 *
+		 * Custom methods are generated through the `aimg_pre_generate_for_post` filter.
+		 *
+		 * @param array $methods Methods as ID => label.
+		 *
+		 * @since 1.6.0
+		 */
+		return (array) apply_filters( 'aimg_generation_methods', $methods );
+	}
+
+	/**
+	 * The configured method for automatic featured images.
+	 *
+	 * @since 1.6.0
+	 * @return string
+	 */
+	public static function get_method() {
+		$method = (string) aimg_get_settings( 'generation_method', self::METHOD_TEMPLATE );
+
+		return isset( self::get_methods()[ $method ] ) ? $method : self::METHOD_TEMPLATE;
+	}
+
+	/**
+	 * Whether a method calls the AI provider first.
+	 *
+	 * @param string $method Method.
+	 *
+	 * @since 1.6.0
+	 * @return bool
+	 */
+	public static function method_starts_with_ai( $method ) {
+		return in_array( $method, array( self::METHOD_AI, self::METHOD_AI_TEMPLATE ), true );
+	}
+
+	/**
+	 * The method that can actually run: without a configured AI provider the AI
+	 * part is dropped, so `ai_template` and `template_ai` become `template` and
+	 * `ai` becomes an empty string.
+	 *
+	 * @param string $method Method. Defaults to the configured one.
+	 *
+	 * @since 1.6.0
+	 * @return string
+	 */
+	public static function get_runnable_method( $method = '' ) {
+		$method = '' !== $method ? $method : self::get_method();
+
+		if ( ! in_array( $method, array( self::METHOD_AI, self::METHOD_AI_TEMPLATE, self::METHOD_TEMPLATE_AI ), true ) ) {
+			return $method;
+		}
+
+		$provider = Providers\Registry::get();
+
+		if ( $provider && $provider->is_configured() ) {
+			return $method;
+		}
+
+		return self::METHOD_AI === $method ? '' : self::METHOD_TEMPLATE;
+	}
+
+	/**
+	 * Generate an image for a post and add it to the Media Library.
+	 *
+	 * Does not set it as the featured image; callers decide that.
+	 *
+	 * @param int    $post_id Post ID.
+	 * @param string $method  Generation method. Defaults to the configured one.
+	 *
+	 * @since 1.6.0
+	 * @return int|\WP_Error Attachment ID.
+	 */
+	public static function generate_for_post( $post_id, $method = '' ) {
+		$method = '' !== $method ? $method : self::get_method();
+
+		/**
+		 * Short-circuit generating an image for a post, e.g. for a custom method.
+		 *
+		 * @param int|\WP_Error|null $result  Attachment ID or error to return instead, or null to continue.
+		 * @param int                $post_id Post ID.
+		 * @param string             $method  Generation method.
+		 *
+		 * @since 1.6.0
+		 */
+		$pre = apply_filters( 'aimg_pre_generate_for_post', null, $post_id, $method );
+		if ( null !== $pre ) {
+			return $pre;
+		}
+
+		switch ( $method ) {
+			case self::METHOD_AI:
+				return self::generate_ai_for_post( $post_id );
+
+			case self::METHOD_TEMPLATE_AI:
+				$result = self::generate_template_for_post( $post_id );
+
+				return is_wp_error( $result ) ? self::generate_ai_for_post( $post_id ) : $result;
+
+			case self::METHOD_AI_TEMPLATE:
+				$result = self::generate_ai_for_post( $post_id );
+
+				return is_wp_error( $result ) ? self::generate_template_for_post( $post_id ) : $result;
+
+			default:
+				return self::generate_template_for_post( $post_id );
+		}
+	}
+
+	/**
+	 * Template to use for a post: the configured default when it is published, otherwise a random one.
+	 *
+	 * @param int $post_id Post ID.
+	 *
+	 * @since 1.6.0
+	 * @return int Template ID, or 0 when none is available.
+	 */
+	public static function get_template_id_for_post( $post_id ) {
+		$template_id = absint( aimg_get_settings( 'default_template_id', 0 ) );
+		$template    = $template_id ? aimg_get_template( $template_id ) : false;
+
+		if ( ! $template || 'publish' !== $template->post_status ) {
+			$template_id = self::get_random_template_id();
+		}
+
+		/**
+		 * Filter the template used for a post's automatic featured image.
+		 *
+		 * @param int $template_id Template ID.
+		 * @param int $post_id     Post ID.
+		 *
+		 * @since 1.6.0
+		 */
+		return absint( apply_filters( 'aimg_template_for_post', $template_id, $post_id ) );
+	}
+
+	/**
+	 * Render a post's title onto its template.
+	 *
+	 * @param int $post_id Post ID.
+	 *
+	 * @since 1.6.0
+	 * @return int|\WP_Error Attachment ID.
+	 */
+	public static function generate_template_for_post( $post_id ) {
+		$title       = aimg_get_plain_title( $post_id );
+		$template_id = self::get_template_id_for_post( $post_id );
+
+		if ( ! $template_id ) {
+			return new \WP_Error( 'aimg_no_template', __( 'There is no published image template to use.', 'artificial-image-generator' ) );
+		}
+
+		$image_path = self::render( $template_id, $title );
+
+		if ( ! $image_path ) {
+			return new \WP_Error( 'aimg_generation_failed', __( 'Failed to generate image from template.', 'artificial-image-generator' ) );
+		}
+
+		return self::create_attachment(
+			$image_path,
+			array(
+				'title'      => $title,
+				'alt'        => $title,
+				'parent'     => $post_id,
+				'provenance' => array(
+					'source'      => 'template',
+					'template_id' => $template_id,
+				),
+			)
+		);
+	}
+
+	/**
+	 * Generate a post's image with AI from its prompt template.
+	 *
+	 * Counts against the post author's hourly AI limit.
+	 *
+	 * @param int $post_id Post ID.
+	 *
+	 * @since 1.6.0
+	 * @return int|\WP_Error Attachment ID.
+	 */
+	public static function generate_ai_for_post( $post_id ) {
+		$provider = Providers\Registry::get();
+
+		if ( ! $provider || ! $provider->is_configured() ) {
+			return new \WP_Error( 'aimg_no_api_key', __( 'No API key configured. Please add your API key on the Image Generator settings page.', 'artificial-image-generator' ), array( 'status' => 400 ) );
+		}
+
+		$quota = aimg_consume_ai_quota( (int) get_post_field( 'post_author', $post_id ) );
+
+		if ( is_wp_error( $quota ) ) {
+			return $quota;
+		}
+
+		$title = aimg_get_plain_title( $post_id );
+		$ids   = self::generate_ai(
+			PromptBuilder::build( $post_id ),
+			array(
+				'size'   => (string) aimg_get_settings( 'auto_ai_size', 'landscape' ),
+				'title'  => $title,
+				'parent' => $post_id,
+				'source' => 'auto',
+			)
+		);
+
+		return is_wp_error( $ids ) ? $ids : (int) reset( $ids );
+	}
+
+	/**
+	 * Generate images with the configured AI provider and add them to the Media Library.
+	 *
+	 * Does not check access or the hourly limit; callers do.
+	 *
+	 * @param string $prompt Prompt.
+	 * @param array  $args   {
+	 *     Optional.
+	 *
+	 *     @type string $size    square, landscape or portrait. Defaults to the `ai_size` setting.
+	 *     @type string $quality auto, low, medium or high. Defaults to the `ai_quality` setting.
+	 *     @type int    $n       Number of images. Default 1.
+	 *     @type string $title   Attachment title and alt text. Defaults to the prompt.
+	 *     @type int    $parent  Parent post ID.
+	 *     @type string $source  Provenance source. Default 'prompt'.
+	 * }
+	 *
+	 * @since 1.6.0
+	 * @return int[]|\WP_Error Attachment IDs.
+	 */
+	public static function generate_ai( $prompt, $args = array() ) {
+		$args = wp_parse_args(
+			$args,
+			array(
+				'size'    => (string) aimg_get_settings( 'ai_size', 'square' ),
+				'quality' => (string) aimg_get_settings( 'ai_quality', 'auto' ),
+				'n'       => 1,
+				'title'   => $prompt,
+				'parent'  => 0,
+				'source'  => 'prompt',
+			)
+		);
+
+		$provider = Providers\Registry::get();
+
+		if ( ! $provider ) {
+			return new \WP_Error( 'aimg_no_provider', __( 'No AI image provider is available.', 'artificial-image-generator' ), array( 'status' => 500 ) );
+		}
+
+		$model = (string) aimg_get_settings( 'api_model', '' );
+		$model = isset( $provider->get_models()[ $model ] ) ? $model : $provider->get_default_model();
+
+		$results = $provider->generate(
+			$prompt,
+			array(
+				'model'   => $model,
+				'size'    => $args['size'],
+				'quality' => $args['quality'],
+				'n'       => (int) $args['n'],
+			)
+		);
+
+		if ( is_wp_error( $results ) ) {
+			return $results;
+		}
+
+		$ids   = array();
+		$error = null;
+		foreach ( $results as $result ) {
+			$id = '' !== $result->data
+				? self::sideload_bytes( $result->data, $args['title'], (int) $args['parent'] )
+				: self::sideload_url( $result->url, $args['title'], (int) $args['parent'] );
+
+			if ( is_wp_error( $id ) ) {
+				$error = $id;
+				continue;
+			}
+
+			self::mark_generated(
+				$id,
+				array(
+					'source'         => $args['source'],
+					'prompt'         => $prompt,
+					'revised_prompt' => $result->revised_prompt,
+					'provider'       => $provider->get_id(),
+					'model'          => $model,
+				)
+			);
+
+			$ids[] = (int) $id;
+		}
+
+		return empty( $ids ) && $error ? $error : $ids;
+	}
+
+	/**
+	 * Add image bytes to the Media Library.
+	 *
+	 * @param string $bytes  Image contents.
+	 * @param string $title  Title and alt text.
+	 * @param int    $parent_id Parent post ID.
+	 *
+	 * @since 1.6.0
+	 * @return int|\WP_Error Attachment ID.
+	 */
+	public static function sideload_bytes( $bytes, $title = '', $parent_id = 0 ) {
+		if ( '' === (string) $bytes ) {
+			return new \WP_Error( 'aimg_invalid_image', __( 'The image returned by the API could not be decoded.', 'artificial-image-generator' ), array( 'status' => 502 ) );
+		}
+
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+
+		$tmp = wp_tempnam( 'aimg' );
+		if ( ! $tmp || false === file_put_contents( $tmp, $bytes ) ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- Writing to a wp_tempnam() file before sideloading.
+			if ( $tmp ) {
+				wp_delete_file( $tmp );
+			}
+
+			return new \WP_Error( 'aimg_temp_file', __( 'Could not write the generated image to a temporary file.', 'artificial-image-generator' ), array( 'status' => 500 ) );
+		}
+
+		return self::sideload_file( $tmp, $title, $parent_id );
+	}
+
+	/**
+	 * Download an image into the Media Library.
+	 *
+	 * @param string $url    Image URL.
+	 * @param string $title  Title and alt text.
+	 * @param int    $parent_id Parent post ID.
+	 *
+	 * @since 1.6.0
+	 * @return int|\WP_Error Attachment ID.
+	 */
+	public static function sideload_url( $url, $title = '', $parent_id = 0 ) {
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+
+		$tmp = download_url( $url );
+
+		if ( is_wp_error( $tmp ) ) {
+			return $tmp;
+		}
+
+		return self::sideload_file( $tmp, $title, $parent_id );
+	}
+
+	/**
+	 * Move a temporary image file into the Media Library.
+	 *
+	 * @param string $tmp    Temporary file path.
+	 * @param string $title  Title and alt text.
+	 * @param int    $parent_id Parent post ID.
+	 *
+	 * @return int|\WP_Error Attachment ID.
+	 */
+	private static function sideload_file( $tmp, $title, $parent_id ) {
+		require_once ABSPATH . 'wp-admin/includes/image.php';
+		require_once ABSPATH . 'wp-admin/includes/media.php';
+
+		$mime = function_exists( 'mime_content_type' ) ? mime_content_type( $tmp ) : 'image/png';
+		$ext  = 'png';
+		if ( 'image/jpeg' === $mime ) {
+			$ext = 'jpg';
+		} elseif ( 'image/webp' === $mime ) {
+			$ext = 'webp';
+		}
+
+		$slug = sanitize_title( $title );
+		if ( '' === $slug ) {
+			$slug = 'ai-generated';
+		}
+
+		$id = media_handle_sideload(
+			array(
+				'name'     => mb_substr( $slug, 0, 80 ) . '-' . wp_generate_password( 6, false, false ) . '.' . $ext,
+				'tmp_name' => $tmp,
+			),
+			(int) $parent_id,
+			$title
+		);
+
+		if ( is_wp_error( $id ) ) {
+			if ( file_exists( $tmp ) ) {
+				wp_delete_file( $tmp );
+			}
+
+			return $id;
+		}
+
+		if ( $title ) {
+			update_post_meta( $id, '_wp_attachment_image_alt', sanitize_text_field( $title ) );
+		}
+
+		return (int) $id;
+	}
+
+	/**
 	 * Build the render arguments for a template.
 	 *
 	 * Reads the template meta and resolves overlay attachment IDs to absolute
@@ -244,7 +663,7 @@ class Generator {
 	 * @param array $provenance    {
 	 *     Optional. Provenance details.
 	 *
-	 *     @type string $source      'template' or 'prompt'.
+	 *     @type string $source      'template', 'prompt' or 'auto' (AI image made from the post).
 	 *     @type int    $template_id Template used, when rendered from a template.
 	 *     @type string $prompt      Prompt used, when generated from a prompt.
 	 *     @type string $provider    Service that produced the image.

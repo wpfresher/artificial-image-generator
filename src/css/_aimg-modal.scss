@@ -209,3 +209,84 @@ $aimg-muted:         #6b7280;
 	font-size: 14px;
 	margin: 0;
 }
+
+/* ── Template preview with the post title ────────────────────────────────── */
+.aimg-template-preview {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 120px;
+	margin: 0 0 16px;
+	border: 1px solid $aimg-border;
+	border-radius: 8px;
+	background: #f9fafb;
+	overflow: hidden;
+
+	&__image {
+		display: block;
+		max-width: 100%;
+		max-height: 260px;
+	}
+
+	&.is-busy &__image {
+		opacity: 0.5;
+	}
+
+	&__spinner {
+		position: absolute;
+	}
+}
+
+/* ── Prompt options ──────────────────────────────────────────────────────── */
+.aimg-modal .aimg-modal__build-prompt {
+	display: inline-block;
+	margin: 8px 0 20px;
+}
+
+.aimg-modal__options {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+	gap: 12px;
+}
+
+/* ── Variation picker ────────────────────────────────────────────────────── */
+.aimg-variations__intro {
+	margin: 0 0 12px;
+	color: $aimg-muted;
+}
+
+.aimg-variations {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+	gap: 12px;
+
+	&__item {
+		padding: 0;
+		border: 2px solid $aimg-border;
+		border-radius: 8px;
+		background: none;
+		overflow: hidden;
+		cursor: pointer;
+
+		&:focus-visible {
+			border-color: $aimg-accent;
+			outline: none;
+		}
+
+		&:disabled {
+			opacity: 0.55;
+			cursor: not-allowed;
+		}
+
+		&:hover:not(:disabled) {
+			border-color: $aimg-accent;
+		}
+	}
+
+	&__image {
+		display: block;
+		width: 100%;
+		height: auto;
+	}
+}

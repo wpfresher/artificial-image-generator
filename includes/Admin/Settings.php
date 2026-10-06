@@ -2,6 +2,10 @@
 
 namespace ArtificialImageGenerator\Admin;
 
+use ArtificialImageGenerator\Generator;
+use ArtificialImageGenerator\PromptBuilder;
+use ArtificialImageGenerator\Providers\OpenAI;
+
 defined( 'ABSPATH' ) || exit; // Exit if accessed directly.
 
 /**
@@ -61,6 +65,7 @@ class Settings {
 				<abbr title="<?php esc_attr_e( 'Image Generator', 'artificial-image-generator' ); ?>" class="dashicons dashicons-format-image"></abbr>
 			</h1>
 			<p><?php esc_html_e( 'Configure the settings for the Image Generator plugin.', 'artificial-image-generator' ); ?></p>
+			<?php settings_errors(); ?>
 			<form method="post" action="<?php echo esc_url( admin_url( 'options.php' ) ); ?>">
 				<?php
 				settings_fields( 'aimg' );
@@ -107,24 +112,6 @@ class Settings {
 			'aimg_general_settings'
 		);
 
-		// Generate Thumbnails for Posts.
-		add_settings_field(
-			'aimg_is_post_thumbnail',
-			__( 'Enable Post Thumbnails', 'artificial-image-generator' ),
-			array( $this, 'is_post_thumbnail' ),
-			'aimg-settings',
-			'aimg_general_settings'
-		);
-
-		// Generate Thumbnails for Pages.
-		add_settings_field(
-			'aimg_is_page_thumbnail',
-			__( 'Enable Page Thumbnails', 'artificial-image-generator' ),
-			array( $this, 'is_page_thumbnail' ),
-			'aimg-settings',
-			'aimg_general_settings'
-		);
-
 		// Remove plugin data when the plugin is deleted.
 		add_settings_field(
 			'aimg_remove_data',
@@ -133,6 +120,44 @@ class Settings {
 			'aimg-settings',
 			'aimg_general_settings'
 		);
+
+		add_settings_section(
+			'aimg_auto_settings',
+			__( 'Automatic Featured Images', 'artificial-image-generator' ),
+			array( $this, 'auto_settings' ),
+			'aimg-settings'
+		);
+
+		// Generate Thumbnails for Posts.
+		add_settings_field(
+			'aimg_is_post_thumbnail',
+			__( 'Enable Post Thumbnails', 'artificial-image-generator' ),
+			array( $this, 'is_post_thumbnail' ),
+			'aimg-settings',
+			'aimg_auto_settings'
+		);
+
+		// Generate Thumbnails for Pages.
+		add_settings_field(
+			'aimg_is_page_thumbnail',
+			__( 'Enable Page Thumbnails', 'artificial-image-generator' ),
+			array( $this, 'is_page_thumbnail' ),
+			'aimg-settings',
+			'aimg_auto_settings'
+		);
+
+		$auto_fields = array(
+			'generation_method'   => __( 'Generate With', 'artificial-image-generator' ),
+			'default_template_id' => __( 'Image Template', 'artificial-image-generator' ),
+			'auto_ai_size'        => __( 'AI Image Shape', 'artificial-image-generator' ),
+			'ai_prompt_template'  => __( 'AI Prompt', 'artificial-image-generator' ),
+			'ai_style'            => __( 'AI Style', 'artificial-image-generator' ),
+			'ai_negative_prompt'  => __( 'AI Instructions', 'artificial-image-generator' ),
+		);
+
+		foreach ( $auto_fields as $key => $label ) {
+			add_settings_field( 'aimg_' . $key, $label, array( $this, $key . '_field' ), 'aimg-settings', 'aimg_auto_settings' );
+		}
 
 		// AI service section.
 		add_settings_section(
@@ -156,6 +181,22 @@ class Settings {
 			'aimg_api_model',
 			__( 'Image Model', 'artificial-image-generator' ),
 			array( $this, 'api_model_field' ),
+			'aimg-settings',
+			'aimg_ai_service_settings'
+		);
+
+		add_settings_field(
+			'aimg_ai_size',
+			__( 'Default Image Shape', 'artificial-image-generator' ),
+			array( $this, 'ai_size_field' ),
+			'aimg-settings',
+			'aimg_ai_service_settings'
+		);
+
+		add_settings_field(
+			'aimg_ai_quality',
+			__( 'Image Quality', 'artificial-image-generator' ),
+			array( $this, 'ai_quality_field' ),
 			'aimg-settings',
 			'aimg_ai_service_settings'
 		);
@@ -218,15 +259,11 @@ class Settings {
 	 * Supported image generation models.
 	 *
 	 * @since 1.4.3
+	 * @since 1.6.0 Lists the OpenAI provider's models.
 	 * @return array
 	 */
 	public static function get_models() {
-		return array(
-			'gpt-image-1'      => __( 'GPT Image 1 (recommended)', 'artificial-image-generator' ),
-			'gpt-image-1-mini' => __( 'GPT Image 1 Mini (lower cost)', 'artificial-image-generator' ),
-			'dall-e-3'         => __( 'DALL·E 3 (legacy)', 'artificial-image-generator' ),
-			'dall-e-2'         => __( 'DALL·E 2 (legacy)', 'artificial-image-generator' ),
-		);
+		return ( new OpenAI() )->get_models();
 	}
 
 	/**
@@ -236,7 +273,179 @@ class Settings {
 	 * @return void
 	 */
 	public function ai_service_settings() {
-		echo '<p>' . esc_html__( 'Configure the AI image generation service used by the block editor. The API key is used when generating images from a custom prompt.', 'artificial-image-generator' ) . '</p>';
+		echo '<p>' . esc_html__( 'The AI service used for prompts in the editor and the Media Library, and for automatic AI featured images.', 'artificial-image-generator' ) . '</p>';
+	}
+
+	/**
+	 * Image shapes, as key => label.
+	 *
+	 * @since 1.6.0
+	 * @return array
+	 */
+	public static function get_sizes() {
+		return array(
+			'square'    => __( 'Square', 'artificial-image-generator' ),
+			'landscape' => __( 'Landscape', 'artificial-image-generator' ),
+			'portrait'  => __( 'Portrait', 'artificial-image-generator' ),
+		);
+	}
+
+	/**
+	 * Image qualities, as key => label.
+	 *
+	 * @since 1.6.0
+	 * @return array
+	 */
+	public static function get_qualities() {
+		return array(
+			'auto'   => __( 'Automatic', 'artificial-image-generator' ),
+			'low'    => __( 'Low (cheapest)', 'artificial-image-generator' ),
+			'medium' => __( 'Medium', 'artificial-image-generator' ),
+			'high'   => __( 'High', 'artificial-image-generator' ),
+		);
+	}
+
+	/**
+	 * Print a select field.
+	 *
+	 * @param string $key         Setting key.
+	 * @param array  $options     Options as value => label.
+	 * @param string $default_value Default value.
+	 * @param string $description Description.
+	 *
+	 * @return void
+	 */
+	private function select_field( $key, $options, $default_value, $description = '' ) {
+		$current = (string) aimg_get_settings( $key, $default_value );
+		?>
+		<select name="aimg_settings[<?php echo esc_attr( $key ); ?>]" id="aimg_settings_<?php echo esc_attr( $key ); ?>">
+			<?php foreach ( $options as $value => $label ) : ?>
+				<option value="<?php echo esc_attr( $value ); ?>" <?php selected( $current, (string) $value ); ?>><?php echo esc_html( $label ); ?></option>
+			<?php endforeach; ?>
+		</select>
+		<?php if ( $description ) : ?>
+			<p class="description"><?php echo esc_html( $description ); ?></p>
+		<?php endif; ?>
+		<?php
+	}
+
+	/**
+	 * Automatic featured images section description.
+	 *
+	 * @since 1.6.0
+	 * @return void
+	 */
+	public function auto_settings() {
+		echo '<p>' . esc_html__( 'When a post or page is saved without a featured image, one is generated for it.', 'artificial-image-generator' ) . '</p>';
+	}
+
+	/**
+	 * Generation method field.
+	 *
+	 * @since 1.6.0
+	 * @return void
+	 */
+	public function generation_method_field() {
+		$this->select_field(
+			'generation_method',
+			Generator::get_methods(),
+			Generator::METHOD_TEMPLATE,
+			__( 'AI images are created in the background once a post is published or scheduled, and use your API key. Templates are free and instant.', 'artificial-image-generator' )
+		);
+	}
+
+	/**
+	 * Default template field.
+	 *
+	 * @since 1.6.0
+	 * @return void
+	 */
+	public function default_template_id_field() {
+		$options = array( 0 => __( 'A random template', 'artificial-image-generator' ) );
+
+		foreach ( (array) aimg_get_templates( array( 'post_status' => 'publish' ) ) as $template ) {
+			if ( $template ) {
+				$options[ $template->ID ] = $template->post_title;
+			}
+		}
+
+		$this->select_field( 'default_template_id', $options, '0' );
+	}
+
+	/**
+	 * Automatic AI image shape field.
+	 *
+	 * @since 1.6.0
+	 * @return void
+	 */
+	public function auto_ai_size_field() {
+		$this->select_field( 'auto_ai_size', self::get_sizes(), 'landscape' );
+	}
+
+	/**
+	 * Prompt template field.
+	 *
+	 * @since 1.6.0
+	 * @return void
+	 */
+	public function ai_prompt_template_field() {
+		$template = (string) aimg_get_settings( 'ai_prompt_template', '' );
+		?>
+		<textarea name="aimg_settings[ai_prompt_template]" id="aimg_settings_ai_prompt_template" rows="3" class="large-text" placeholder="<?php echo esc_attr( PromptBuilder::get_default_template() ); ?>"><?php echo esc_textarea( $template ); ?></textarea>
+		<p class="description">
+			<?php
+			printf(
+				/* translators: %s: list of merge tags */
+				esc_html__( 'Leave empty to use the default shown. Available tags: %s', 'artificial-image-generator' ),
+				'<code>{title}</code> <code>{excerpt}</code> <code>{category}</code> <code>{tags}</code> <code>{site_name}</code> <code>{custom_field:key}</code>'
+			);
+			?>
+		</p>
+		<?php
+	}
+
+	/**
+	 * Style preset field.
+	 *
+	 * @since 1.6.0
+	 * @return void
+	 */
+	public function ai_style_field() {
+		$this->select_field( 'ai_style', wp_list_pluck( PromptBuilder::get_styles(), 0 ), 'photo', __( 'Added to the prompt of automatic AI images.', 'artificial-image-generator' ) );
+	}
+
+	/**
+	 * Negative instructions field.
+	 *
+	 * @since 1.6.0
+	 * @return void
+	 */
+	public function ai_negative_prompt_field() {
+		$value = (string) aimg_get_settings( 'ai_negative_prompt', PromptBuilder::get_default_negative() );
+		?>
+		<textarea name="aimg_settings[ai_negative_prompt]" id="aimg_settings_ai_negative_prompt" rows="2" class="large-text"><?php echo esc_textarea( $value ); ?></textarea>
+		<p class="description"><?php esc_html_e( 'Added to the end of every automatic AI prompt. AI models often draw garbled text, so the default asks for none.', 'artificial-image-generator' ); ?></p>
+		<?php
+	}
+
+	/**
+	 * Default AI image shape field.
+	 *
+	 * @since 1.6.0
+	 * @return void
+	 */
+	public function ai_size_field() {
+		$this->select_field( 'ai_size', self::get_sizes(), 'square', __( 'Used for prompts in the editor and the Media Library; it can be changed per image there.', 'artificial-image-generator' ) );
+	}
+
+	/**
+	 * AI image quality field.
+	 *
+	 * @since 1.6.0
+	 * @return void
+	 */
+	public function ai_quality_field() {
+		$this->select_field( 'ai_quality', self::get_qualities(), 'auto', __( 'Higher quality costs more.', 'artificial-image-generator' ) );
 	}
 
 	/**
@@ -276,7 +485,7 @@ class Settings {
 			} elseif ( $api_key ) {
 				esc_html_e( 'An API key is saved. Leave the field empty to keep it, or enter a new key to replace it.', 'artificial-image-generator' );
 			} else {
-				esc_html_e( 'Enter your image generation API key (e.g. an OpenAI key for DALL·E). For maximum security you can instead define the AIMG_API_KEY constant in wp-config.php.', 'artificial-image-generator' );
+				esc_html_e( 'Enter your image generation API key (an OpenAI API key). For maximum security you can instead define the AIMG_API_KEY constant in wp-config.php.', 'artificial-image-generator' );
 			}
 			?>
 		</p>
@@ -290,7 +499,7 @@ class Settings {
 	 * @return void
 	 */
 	public function api_model_field() {
-		$model = aimg_get_settings( 'api_model', 'gpt-image-1' );
+		$model = aimg_get_settings( 'api_model', ( new OpenAI() )->get_default_model() );
 		?>
 		<select name="aimg_settings[api_model]" id="aimg_settings_api_model">
 			<?php foreach ( self::get_models() as $value => $label ) : ?>
@@ -298,7 +507,7 @@ class Settings {
 			<?php endforeach; ?>
 		</select>
 		<p class="description">
-			<?php esc_html_e( 'The OpenAI model used for prompt-based generation. GPT Image 1 is available to all current API accounts; the DALL·E models are legacy and newer accounts may not have access to them.', 'artificial-image-generator' ); ?>
+			<?php esc_html_e( 'The OpenAI model used for AI images. GPT Image 2.5 Flare is fast and suited to everyday images; Sunburst is OpenAI\'s most capable model. Retired models (GPT Image 1 and DALL·E) are switched to GPT Image 2.5 Flare automatically.', 'artificial-image-generator' ); ?>
 		</p>
 		<?php
 	}
@@ -354,7 +563,7 @@ class Settings {
 			<input type="checkbox" name="aimg_settings[is_post_thumbnail]" id="aimg_settings[is_post_thumbnail]" value="1" <?php checked( $is_post_thumbnail, 'yes' ); ?> />
 			<?php esc_html_e( 'Enable Post Thumbnails', 'artificial-image-generator' ); ?>
 		</label>
-		<p class="description"><?php esc_html_e( 'Check this box to enable automatic generation of post thumbnails when a post is saved. This will create a thumbnail image based on the post title, using the random background colors and overlay images if configured.', 'artificial-image-generator' ); ?></p>
+		<p class="description"><?php esc_html_e( 'Generate a featured image when a post is saved without one, using the method chosen below.', 'artificial-image-generator' ); ?></p>
 		<?php
 	}
 
@@ -371,7 +580,7 @@ class Settings {
 			<input type="checkbox" name="aimg_settings[is_page_thumbnail]" id="aimg_settings[is_page_thumbnail]" value="1" <?php checked( $is_page_thumbnail, 'yes' ); ?> />
 			<?php esc_html_e( 'Enable Page Thumbnails', 'artificial-image-generator' ); ?>
 		</label>
-		<p class="description"><?php esc_html_e( 'Check this box to enable automatic generation of page thumbnails when a page is saved. This will create a thumbnail image based on the page title, using the random background colors and overlay images if configured.', 'artificial-image-generator' ); ?></p>
+		<p class="description"><?php esc_html_e( 'Generate a featured image when a page is saved without one, using the method chosen below.', 'artificial-image-generator' ); ?></p>
 		<?php
 	}
 
@@ -431,12 +640,31 @@ class Settings {
 
 		// Sanitize the model; fall back to the default when the value is unknown.
 		$model                           = isset( $settings['api_model'] ) ? sanitize_text_field( $settings['api_model'] ) : '';
-		$sanitized_settings['api_model'] = array_key_exists( $model, self::get_models() ) ? $model : 'gpt-image-1';
+		$sanitized_settings['api_model'] = array_key_exists( $model, self::get_models() ) ? $model : ( new OpenAI() )->get_default_model();
 
 		$access                          = isset( $settings['ai_access'] ) ? sanitize_key( $settings['ai_access'] ) : '';
 		$sanitized_settings['ai_access'] = array_key_exists( $access, aimg_get_ai_access_levels() ) ? $access : 'authors';
 
 		$sanitized_settings['ai_hourly_limit'] = isset( $settings['ai_hourly_limit'] ) && '' !== $settings['ai_hourly_limit'] ? absint( $settings['ai_hourly_limit'] ) : 20;
+
+		$choices = array(
+			'generation_method' => array( array_keys( Generator::get_methods() ), Generator::METHOD_TEMPLATE ),
+			'auto_ai_size'      => array( array_keys( self::get_sizes() ), 'landscape' ),
+			'ai_size'           => array( array_keys( self::get_sizes() ), 'square' ),
+			'ai_quality'        => array( array_keys( self::get_qualities() ), 'auto' ),
+			'ai_style'          => array( array_keys( PromptBuilder::get_styles() ), 'photo' ),
+		);
+
+		foreach ( $choices as $key => $choice ) {
+			$value                      = isset( $settings[ $key ] ) ? sanitize_key( $settings[ $key ] ) : '';
+			$sanitized_settings[ $key ] = in_array( $value, $choice[0], true ) ? $value : $choice[1];
+		}
+
+		$template_id                               = isset( $settings['default_template_id'] ) ? absint( $settings['default_template_id'] ) : 0;
+		$sanitized_settings['default_template_id'] = $template_id && aimg_get_template( $template_id ) ? $template_id : 0;
+
+		$sanitized_settings['ai_prompt_template'] = isset( $settings['ai_prompt_template'] ) ? sanitize_textarea_field( $settings['ai_prompt_template'] ) : '';
+		$sanitized_settings['ai_negative_prompt'] = isset( $settings['ai_negative_prompt'] ) ? sanitize_textarea_field( $settings['ai_negative_prompt'] ) : PromptBuilder::get_default_negative();
 
 		return $sanitized_settings;
 	}

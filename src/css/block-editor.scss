@@ -30,3 +30,24 @@
 		justify-content: center;
 	}
 }
+
+.aimg-featured__status {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 0;
+
+	.components-spinner {
+		margin: 0;
+	}
+}
+
+.aimg-featured__help {
+	margin: 0;
+	color: $aimg-muted;
+	font-size: 12px;
+}
+
+.aimg-featured__more {
+	align-self: flex-start;
+}
