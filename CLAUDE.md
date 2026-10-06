@@ -65,7 +65,8 @@ for asset-only rebuilds during development use `npx wp-scripts build --webpack-s
 | `Admin\Actions` | `includes/Admin/Actions.php` | Processes template CRUD via `admin_post_aimg_update_template` |
 | `Admin\Editor` | `includes/Admin/Editor.php` | Enqueues the block editor integration |
 | `Admin\MediaLibrary` | `includes/Admin/MediaLibrary.php` | Enqueues the generator modal on `upload.php` / `media-new.php` |
-| `Admin\ListTables\TemplatesTable` | `includes/Admin/ListTables/TemplatesTable.php` | Extends `WP_List_Table` for template management |
+| `Admin\ListTables\TemplatesTable` | `includes/Admin/ListTables/TemplatesTable.php` | Since 1.7.0 only used for bulk-delete handling; the list is a card grid (`views/img-templates.php`, actions via `Admin\Actions::template_action()`) |
+| `Templates\Starters` | `includes/Templates/Starters.php` | Starter designs for new templates (`aimg_template_starters`) |
 | `Templates\Schema` | `includes/Templates/Schema.php` | Template document v2 and its sanitizer; layer type registry (`aimg_template_layers`) |
 | `Templates\Repository` | `includes/Templates/Repository.php` | v2 document in `_aimg_template_data`; falls back to `Migration::from_template()` (never writes on read) |
 | `Templates\Migration` | `includes/Templates/Migration.php` | Builds v2 documents from 1.x meta (`from_template`) or render args (`from_render_args`, the bridge `aimg_generate_thumbnail()` uses) |
