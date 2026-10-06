@@ -209,5 +209,68 @@ class Admin {
 		// Enqueue media uploader scripts.
 		wp_enqueue_media();
 		wp_enqueue_script( 'aimg-admin', AIMG_URL . 'assets/js/admin.js', array( 'jquery' ), AIMG_VERSION, true );
+
+		if ( self::is_add_screen() || self::is_edit_screen() ) {
+			$this->enqueue_studio();
+		}
+	}
+
+	/**
+	 * Enqueue the Template Studio and the data it starts with.
+	 *
+	 * @since 1.7.0
+	 * @return void
+	 */
+	private function enqueue_studio() {
+		wp_enqueue_style( 'aimg-template-studio', AIMG_URL . 'assets/css/template-studio.css', array( 'wp-components' ), AIMG_VERSION );
+		wp_enqueue_script(
+			'aimg-template-studio',
+			AIMG_URL . 'assets/js/template-studio.js',
+			array( 'wp-element', 'wp-components', 'wp-data', 'wp-api-fetch', 'wp-i18n' ),
+			AIMG_VERSION,
+			true
+		);
+		wp_set_script_translations( 'aimg-template-studio', 'artificial-image-generator', AIMG_PATH . 'languages' );
+
+		$template = null;
+		$edit     = self::is_edit_screen();
+
+		if ( $edit ) {
+			$response = rest_do_request( new \WP_REST_Request( 'GET', '/aimg/v1/templates/' . (int) $edit ) );
+			$template = $response->is_error() ? null : $response->get_data();
+		}
+
+		$logo = (int) get_theme_mod( 'custom_logo' );
+		$icon = (int) get_option( 'site_icon' );
+		$user = wp_get_current_user();
+
+		$data = array(
+			'template'      => $template,
+			'starter'       => \ArtificialImageGenerator\Templates\Schema::starter(),
+			'capabilities'  => \ArtificialImageGenerator\Rendering\Capabilities::all(),
+			'settings'      => array(
+				'bgColor'   => (string) aimg_get_settings( 'default_bg_color', '#008000' ),
+				'textColor' => (string) aimg_get_settings( 'default_text_color', '#ffffff' ),
+			),
+			'listUrl'       => admin_url( 'admin.php?page=image-generator' ),
+			'editUrl'       => admin_url( 'admin.php?page=image-generator&edit=' ),
+			'dynamicImages' => array(
+				'site_logo' => $logo ? (string) wp_get_attachment_image_url( $logo, 'large' ) : '',
+				'site_icon' => $icon ? (string) wp_get_attachment_image_url( $icon, 'large' ) : '',
+			),
+			'sampleTags'    => array(
+				'title'        => __( 'How to grow tomatoes on a small balcony', 'artificial-image-generator' ),
+				'excerpt'      => __( 'A simple guide to pots, soil, sun and watering for a big summer harvest.', 'artificial-image-generator' ),
+				'category'     => __( 'Gardening', 'artificial-image-generator' ),
+				'tags'         => __( 'Tomatoes, Balcony', 'artificial-image-generator' ),
+				'author'       => $user->display_name,
+				'date'         => wp_date( get_option( 'date_format' ) ),
+				'site_name'    => html_entity_decode( get_bloginfo( 'name' ), ENT_QUOTES | ENT_HTML5, 'UTF-8' ),
+				/* translators: %d: minutes */
+				'reading_time' => sprintf( _n( '%d min read', '%d min read', 4, 'artificial-image-generator' ), 4 ),
+			),
+		);
+
+		wp_add_inline_script( 'aimg-template-studio', 'window.aimgStudio = ' . wp_json_encode( $data ) . ';', 'before' );
 	}
 }

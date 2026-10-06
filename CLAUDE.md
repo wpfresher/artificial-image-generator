@@ -137,6 +137,12 @@ Webpack is configured in `webpack.config.js` extending `@wordpress/scripts`:
 - **Entry:** `src/css/admin.scss` → `assets/css/admin.css` (+ RTL), `src/js/admin.js` → `assets/js/admin.js`
 - **Fonts:** `CopyWebpackPlugin` copies `src/fonts/` → `assets/fonts/`
 - `RemoveEmptyScriptsPlugin` strips empty `.js` stubs from CSS-only entries
+- **Template Studio** (`src/js/template-studio/` → `assets/js/template-studio.js`, plus
+  `src/css/template-studio.scss`): loaded on the template add/edit screens with data inlined as
+  `window.aimgStudio` (`Admin::enqueue_studio()`). Uses the `wp.*` globals plus bundled **Konva**
+  (not react-konva: react-konva is pinned to one React major, WordPress ships 17–19). It mounts on
+  `#aimg-template-studio` and hides `#aimg-classic-form` only after mounting (fallback).
+  `canvas/text-layout.js` and `canvas/draw.js` mirror the PHP renderer; keep them in step.
 
 The `assets/` directory is **built output** — do not edit files there directly.
 

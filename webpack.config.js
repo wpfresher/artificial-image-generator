@@ -11,9 +11,11 @@ module.exports = [
             'css/admin': './src/css/admin.scss',
             'css/block-editor': './src/css/block-editor.scss',
             'css/media-library': './src/css/media-library.scss',
+            'css/template-studio': './src/css/template-studio.scss',
             'js/admin': './src/js/admin.js',
             'js/block-editor': './src/js/block-editor.js',
             'js/media-library': './src/js/media-library.js',
+            'js/template-studio': './src/js/template-studio/index.js',
         },
         output: {
             ...defaultConfig.output,

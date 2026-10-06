@@ -1,0 +1,186 @@
+// Template Studio: toolbar on top, then layers | canvas | inspector.
+
+.aimg-studio {
+	margin: 12px 20px 0 0;
+
+	.components-notice {
+		margin: 0 0 12px;
+	}
+
+	h2 {
+		margin: 0;
+		font-size: 13px;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.02em;
+	}
+}
+
+.aimg-studio__toolbar {
+	display: flex;
+	gap: 12px;
+	align-items: center;
+	padding: 10px 12px;
+	margin-bottom: 12px;
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+
+	.components-base-control {
+		margin: 0;
+	}
+}
+
+.aimg-studio__back {
+	white-space: nowrap;
+	text-decoration: none;
+}
+
+.aimg-studio__title {
+	flex: 0 1 320px;
+
+	input {
+		font-size: 15px;
+		font-weight: 600;
+	}
+}
+
+.aimg-studio__spacer {
+	flex: 1;
+}
+
+.aimg-studio__body {
+	display: grid;
+	grid-template-columns: 250px minmax(0, 1fr) 300px;
+	gap: 12px;
+	align-items: start;
+}
+
+.aimg-studio__layers,
+.aimg-studio__side > div {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+}
+
+.aimg-studio__panel-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 8px 8px 8px 12px;
+	border-bottom: 1px solid #f0f0f1;
+}
+
+.aimg-studio__empty {
+	padding: 0 12px;
+	color: #646970;
+}
+
+.aimg-studio__layer-list {
+	margin: 0;
+	padding: 4px 0;
+	max-height: 70vh;
+	overflow: auto;
+}
+
+.aimg-studio__layer {
+	display: flex;
+	align-items: center;
+	margin: 0;
+	padding: 0 4px;
+
+	&.is-selected {
+		background: #f0f6fc;
+		box-shadow: inset 3px 0 0 #3858e9;
+	}
+
+	&.is-hidden .aimg-studio__layer-name {
+		opacity: 0.5;
+	}
+
+	.components-button.has-icon {
+		min-width: 28px;
+		padding: 2px;
+	}
+}
+
+.aimg-studio__layer-name.components-button {
+	flex: 1;
+	min-width: 0;
+	height: auto;
+	padding: 6px 4px;
+	flex-direction: column;
+	align-items: flex-start;
+	text-align: left;
+
+	span {
+		max-width: 100%;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+}
+
+.aimg-studio__layer-type {
+	font-size: 11px;
+	color: #646970;
+}
+
+.aimg-studio__canvas {
+	min-width: 0;
+	padding: 16px;
+	background: repeating-conic-gradient(#e0e0e0 0% 25%, #f6f7f7 0% 50%) 50% / 20px 20px;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+
+	.description {
+		margin: 10px 0 0;
+		text-align: center;
+	}
+}
+
+.aimg-studio__stage {
+	display: flex;
+	justify-content: center;
+	width: 100%;
+
+	.konvajs-content {
+		box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
+	}
+}
+
+.aimg-studio__side {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.aimg-studio__inspector .components-base-control {
+	margin-bottom: 12px;
+}
+
+.aimg-studio__row {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 8px;
+	margin-bottom: 12px;
+}
+
+.aimg-studio__preview {
+	padding: 12px;
+
+	img {
+		display: block;
+		width: 100%;
+		height: auto;
+		margin-top: 10px;
+		border: 1px solid #dcdcde;
+	}
+}
+
+@media (max-width: 960px) {
+
+	.aimg-studio__body {
+		grid-template-columns: 1fr;
+	}
+}

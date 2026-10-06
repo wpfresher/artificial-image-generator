@@ -1,0 +1,237 @@
+/**
+ * The design canvas: draws the document with Konva and turns drag, resize and
+ * rotate on the selected layer into store updates.
+ */
+import Konva from 'konva';
+import { BOXED, drawLayer } from './draw';
+import { attachmentUrl } from '../api';
+
+const { createElement: el, useEffect, useRef, useState } = wp.element;
+const { __ } = wp.i18n;
+
+const fontFamily = ( id ) => `aimg-${ id }`;
+const loadedFonts = new Map();
+
+function loadFonts( fonts ) {
+	return Promise.all(
+		( fonts || [] )
+			.filter( ( font ) => font.url && ! loadedFonts.has( font.id ) )
+			.map( ( font ) => {
+				const face = new window.FontFace(
+					fontFamily( font.id ),
+					`url(${ font.url })`
+				);
+				loadedFonts.set( font.id, face );
+				return face
+					.load()
+					.then( ( loaded ) => document.fonts.add( loaded ) )
+					.catch( () => {} );
+			} )
+	);
+}
+
+export default function StudioCanvas( {
+	doc,
+	selectedId,
+	onSelect,
+	onChangeLayer,
+	data,
+	tags,
+} ) {
+	const container = useRef( null );
+	const stage = useRef( null );
+	const content = useRef( null );
+	const ui = useRef( null );
+	const transformer = useRef( null );
+	const images = useRef( new Map() );
+	const [ width, setWidth ] = useState( 0 );
+	const [ version, setVersion ] = useState( 0 );
+	const refresh = () => setVersion( ( v ) => v + 1 );
+
+	useEffect( () => {
+		stage.current = new Konva.Stage( {
+			container: container.current,
+			width: 1,
+			height: 1,
+		} );
+		content.current = new Konva.Layer();
+		ui.current = new Konva.Layer();
+		transformer.current = new Konva.Transformer( {
+			rotateEnabled: true,
+			keepRatio: false,
+			rotationSnaps: [ 0, 90, 180, 270 ],
+			borderStroke: '#3858e9',
+			anchorStroke: '#3858e9',
+			anchorSize: 9,
+		} );
+		ui.current.add( transformer.current );
+		stage.current.add( content.current, ui.current );
+
+		stage.current.on( 'mousedown touchstart', ( event ) => {
+			if ( event.target === stage.current ) {
+				onSelect( null );
+			}
+		} );
+
+		const observer = new window.ResizeObserver( ( entries ) =>
+			setWidth( Math.floor( entries[ 0 ].contentRect.width ) )
+		);
+		observer.observe( container.current );
+
+		loadFonts( data.capabilities.fonts ).then( refresh );
+
+		return () => {
+			observer.disconnect();
+			stage.current.destroy();
+		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
+
+	useEffect( () => {
+		if ( ! doc || ! width ) {
+			return;
+		}
+
+		const { canvas } = doc;
+		const scale = Math.min( 1, width / canvas.width );
+		stage.current.size( {
+			width: Math.round( canvas.width * scale ),
+			height: Math.round( canvas.height * scale ),
+		} );
+		stage.current.scale( { x: scale, y: scale } );
+
+		let background = canvas.background;
+		const ctx = {
+			canvas,
+			merge: ( text ) =>
+				String( text ).replace(
+					/\{([a-z_]+)(?::([A-Za-z0-9_\-]+))?\}/g,
+					( match, name, key ) =>
+						name === 'custom_field' && key
+							? `[${ key }]`
+							: tags[ name ] ?? ''
+				),
+			fontFamily,
+			backgroundColor: () => background,
+			sourceLabel: ( layer ) =>
+				( data.capabilities.imageSources || {} )[
+					layer.source || 'media'
+				] || __( 'Image', 'artificial-image-generator' ),
+			imageFor: ( layer ) => {
+				const source = layer.source || 'media';
+				let key = '';
+				let url = null;
+				if ( source === 'media' ) {
+					key = ( layer.attachments || [] )[ 0 ];
+				} else if (
+					data.dynamicImages &&
+					data.dynamicImages[ source ]
+				) {
+					key = source;
+					url = data.dynamicImages[ source ];
+				}
+				if ( ! key ) {
+					return null;
+				}
+				const cached = images.current.get( key );
+				if ( cached ) {
+					return cached === 'loading' || cached === 'missing'
+						? null
+						: cached;
+				}
+				images.current.set( key, 'loading' );
+				Promise.resolve( url || attachmentUrl( key ) ).then(
+					( src ) => {
+						if ( ! src ) {
+							images.current.set( key, 'missing' );
+							return;
+						}
+						const img = new window.Image();
+						img.onload = () => {
+							images.current.set( key, img );
+							refresh();
+						};
+						img.onerror = () =>
+							images.current.set( key, 'missing' );
+						img.src = src;
+					}
+				);
+				return null;
+			},
+		};
+
+		content.current.destroyChildren();
+		content.current.add(
+			new Konva.Rect( {
+				width: canvas.width,
+				height: canvas.height,
+				fill: canvas.background,
+				listening: false,
+			} )
+		);
+
+		let selectedNode = null;
+		doc.layers.forEach( ( layer ) => {
+			if ( layer.type === 'background' && layer.fill ) {
+				background =
+					layer.fill.kind === 'palette'
+						? layer.fill.colors[ 0 ]
+						: layer.fill.color ||
+						  ( layer.fill.stops || [ {} ] )[ 0 ].color ||
+						  background;
+			}
+
+			const node = drawLayer( layer, ctx );
+			if ( ! node ) {
+				return;
+			}
+
+			const boxed = BOXED.includes( layer.type );
+			node.on( 'mousedown touchstart', ( event ) => {
+				event.cancelBubble = true;
+				onSelect( layer.id );
+			} );
+
+			if ( boxed && layer.id === selectedId ) {
+				selectedNode = node;
+				node.draggable( true );
+				node.on( 'dragend', () =>
+					onChangeLayer( layer.id, {
+						box: {
+							...layer.box,
+							x: Math.round( node.x() - layer.box.w / 2 ),
+							y: Math.round( node.y() - layer.box.h / 2 ),
+						},
+					} )
+				);
+				node.on( 'transformend', () => {
+					const w = Math.max(
+						1,
+						Math.round( layer.box.w * Math.abs( node.scaleX() ) )
+					);
+					const h = Math.max(
+						1,
+						Math.round( layer.box.h * Math.abs( node.scaleY() ) )
+					);
+					onChangeLayer( layer.id, {
+						rotation: Math.round( node.rotation() * 10 ) / 10,
+						box: {
+							x: Math.round( node.x() - w / 2 ),
+							y: Math.round( node.y() - h / 2 ),
+							w,
+							h,
+						},
+					} );
+				} );
+			}
+
+			content.current.add( node );
+		} );
+
+		transformer.current.nodes( selectedNode ? [ selectedNode ] : [] );
+		stage.current.batchDraw();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ doc, selectedId, width, version, tags ] );
+
+	return el( 'div', { className: 'aimg-studio__stage', ref: container } );
+}
