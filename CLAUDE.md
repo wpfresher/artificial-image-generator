@@ -59,6 +59,7 @@ for asset-only rebuilds during development use `npx wp-scripts build --webpack-s
 | `Providers\*` | `includes/Providers/` | `ProviderInterface`, `Result`, `OpenAI`, `Registry` (`aimg_providers` filter) |
 | `GenerateImages` | `includes/GenerateImages.php` | Hooks `wp_after_insert_post`; auto-generates featured images when none exists (per-post opt-out `_aimg_disable_auto`) |
 | `RestAPI` | `includes/RestAPI.php` | `aimg/v1/generate`, `/templates`, `/templates/{id}/preview`, `/prompt`, `/status/{post}`, `/featured/{post}` |
+| `Templates\RestController` | `includes/Templates/RestController.php` | Template CRUD (`POST /templates`, `GET/PUT/PATCH/DELETE /templates/{id}`), `POST /templates/preview` (unsaved document → data URI, 60/min per user), `GET /capabilities`; capability filter `aimg_manage_templates_capability` (default `manage_options`). The classic form refuses templates that have a v2 document |
 | `Admin\Admin` | `includes/Admin/Admin.php` | Admin menu, page routing (list / add / edit), script enqueuing |
 | `Admin\Settings` | `includes/Admin/Settings.php` | Settings page UI and option validation |
 | `Admin\Actions` | `includes/Admin/Actions.php` | Processes template CRUD via `admin_post_aimg_update_template` |
@@ -157,6 +158,7 @@ Form submissions use the `admin_post_aimg_update_template` action with nonce ver
   Takes `template_id`; the legacy `post_id` key is still accepted
 - `aimg_generate_preview()` — template editor preview (same pipeline, immediate output)
 - `aimg_uploads_path($path)` — rewrite an uploads path into the separator style WordPress expects
+- `aimg_upload_url($path)` — URL of a file inside uploads ('' outside it)
 - `aimg_delete_upload_by_url($url)` — delete a file inside uploads, given its URL
 - `aimg_get_plain_title($post_id)` — post title without entities; use it for anything drawn or used as alt text
 - `aimg_plain_text($text)` — the same for any text (REST `title` params use it as their sanitizer)

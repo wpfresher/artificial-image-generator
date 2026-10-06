@@ -61,6 +61,44 @@ class Repository {
 
 		update_post_meta( $template_id, self::META, wp_slash( wp_json_encode( $document ) ) );
 
+		// The template list and the editor modal show these sizes.
+		update_post_meta( $template_id, '_aimg_width', $document['canvas']['width'] );
+		update_post_meta( $template_id, '_aimg_height', $document['canvas']['height'] );
+
 		return $document;
+	}
+
+	/**
+	 * Render a template's preview image with its own title, replacing the previous one.
+	 *
+	 * @param int $template_id Template ID.
+	 *
+	 * @return string Preview URL, or '' when it could not be rendered.
+	 */
+	public static function update_preview( $template_id ) {
+		$document = self::get_document( $template_id );
+		$title    = aimg_get_plain_title( $template_id );
+		$image    = \ArtificialImageGenerator\Rendering\GdRenderer::render( $document, MergeTags::values( 0, array( 'title' => $title ) ) );
+		$previous = (string) get_post_meta( $template_id, '_aimg_preview_image_url', true );
+
+		if ( ! $image ) {
+			return '';
+		}
+
+		$slug = sanitize_title( $title );
+		$path = \ArtificialImageGenerator\Rendering\GdRenderer::save( $image, $document, ( '' !== $slug ? $slug : 'aimg-template' ) . '-' . (int) $template_id );
+		$url  = $path ? aimg_upload_url( $path ) : '';
+
+		if ( '' === $url ) {
+			return '';
+		}
+
+		if ( $previous && $previous !== $url ) {
+			aimg_delete_upload_by_url( $previous );
+		}
+
+		update_post_meta( $template_id, '_aimg_preview_image_url', esc_url_raw( $url ) );
+
+		return $url;
 	}
 }

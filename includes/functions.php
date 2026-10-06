@@ -164,17 +164,11 @@ function aimg_generate_preview( $post_id, $colors, $width, $height, $overlays = 
 		return false;
 	}
 
-	// Get URL from filepath. Compare on normalized copies so a Windows upload path, which mixes separators, still matches.
-	$upload_dir = wp_upload_dir();
-	$basedir    = wp_normalize_path( trailingslashit( $upload_dir['basedir'] ) );
-	$normalized = wp_normalize_path( $filepath );
-	$baseurl    = trailingslashit( $upload_dir['baseurl'] );
+	$url = aimg_upload_url( $filepath );
 
-	if ( strpos( $normalized, $basedir ) !== 0 ) {
+	if ( '' === $url ) {
 		return false;
 	}
-
-	$url = $baseurl . ltrim( substr( $normalized, strlen( $basedir ) ), '/' );
 
 	// Previews now get a unique file name, so drop the one this replaces.
 	$previous = get_post_meta( $post_id, '_aimg_preview_image_url', true );
@@ -183,6 +177,34 @@ function aimg_generate_preview( $post_id, $colors, $width, $height, $overlays = 
 	}
 
 	return $url;
+}
+
+/**
+ * URL of a file inside the uploads directory.
+ *
+ * Paths are compared on normalized copies, so a Windows upload path, which mixes
+ * separators, still matches.
+ *
+ * @param string $path Absolute path.
+ *
+ * @since 1.7.0
+ * @return string URL, or '' when the file is outside uploads.
+ */
+function aimg_upload_url( $path ) {
+	$upload_dir = wp_upload_dir();
+
+	if ( ! empty( $upload_dir['error'] ) ) {
+		return '';
+	}
+
+	$basedir    = wp_normalize_path( trailingslashit( $upload_dir['basedir'] ) );
+	$normalized = wp_normalize_path( $path );
+
+	if ( 0 !== strpos( $normalized, $basedir ) ) {
+		return '';
+	}
+
+	return trailingslashit( $upload_dir['baseurl'] ) . ltrim( substr( $normalized, strlen( $basedir ) ), '/' );
 }
 
 /**

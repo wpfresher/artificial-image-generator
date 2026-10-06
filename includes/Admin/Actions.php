@@ -50,6 +50,13 @@ class Actions {
 			exit;
 		}
 
+		// This form only knows the 1.x fields; saving would leave the design and its preview out of step.
+		if ( $template_id && \ArtificialImageGenerator\Templates\Repository::has_document( $template_id ) ) {
+			artificial_image_generator()->flash_notice( __( 'This template was designed in the Template Studio and cannot be edited with this form.', 'artificial-image-generator' ), 'error' );
+			wp_safe_redirect( $referer );
+			exit;
+		}
+
 		if ( empty( $title ) ) {
 			artificial_image_generator()->flash_notice( __( 'The title field is required.', 'artificial-image-generator' ), 'error' );
 			wp_safe_redirect( $referer );

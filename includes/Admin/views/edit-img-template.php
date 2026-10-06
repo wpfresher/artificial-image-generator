@@ -17,7 +17,12 @@ defined( 'ABSPATH' ) || exit; // Exit if accessed directly.
 		<abbr title="<?php esc_attr_e( 'Image Generator', 'artificial-image-generator' ); ?>" class="dashicons dashicons-format-image"></abbr>
 	</h1>
 	<p><?php esc_html_e( 'Configure the template options to generate images.', 'artificial-image-generator' ); ?></p>
+	<?php $aimg_has_document = \ArtificialImageGenerator\Templates\Repository::has_document( $template->ID ); ?>
+	<?php if ( $aimg_has_document ) : ?>
+		<div class="notice notice-info inline"><p><?php esc_html_e( 'This template was designed in the Template Studio. Its settings are not shown in this form and cannot be changed here; the preview shows how it looks.', 'artificial-image-generator' ); ?></p></div>
+	<?php endif; ?>
 	<form id="aimg-form" method="POST" enctype="multipart/form-data" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+		<fieldset <?php disabled( $aimg_has_document ); ?>>
 		<div class="columns">
 			<div class="column column-left">
 				<table class="form-table">
@@ -155,5 +160,6 @@ defined( 'ABSPATH' ) || exit; // Exit if accessed directly.
 		<input type="hidden" name="action" value="aimg_update_template"/>
 		<?php wp_nonce_field( 'aimg_update_template' ); ?>
 		<?php submit_button( 'Save Changes', 'primary', 'aimg_submit' ); ?>
+		</fieldset>
 	</form>
 </div>

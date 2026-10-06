@@ -35,6 +35,8 @@ class RestAPI {
 	 * @return void
 	 */
 	public function register_routes() {
+		( new Templates\RestController() )->register_routes( self::REST_NAMESPACE );
+
 		register_rest_route(
 			self::REST_NAMESPACE,
 			'/generate',

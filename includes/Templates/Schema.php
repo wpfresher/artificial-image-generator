@@ -92,6 +92,48 @@ class Schema {
 	}
 
 	/**
+	 * The document a new template starts with: the site's default colors and a centered title.
+	 *
+	 * @return array Sanitized document.
+	 */
+	public static function starter() {
+		return self::sanitize(
+			array(
+				'canvas' => array(
+					'width'  => 1200,
+					'height' => 630,
+				),
+				'layers' => array(
+					array(
+						'id'   => 'background',
+						'type' => 'background',
+						'fill' => array(
+							'kind'  => 'solid',
+							'color' => aimg_get_settings( 'default_bg_color', '#008000' ),
+						),
+					),
+					array(
+						'id'      => 'title',
+						'type'    => 'text',
+						'content' => '{title}',
+						'box'     => array(
+							'x' => 80,
+							'y' => 80,
+							'w' => 1040,
+							'h' => 470,
+						),
+						'size'    => array(
+							'max' => 64,
+							'min' => 24,
+						),
+						'color'   => aimg_get_settings( 'default_text_color', '#ffffff' ),
+					),
+				),
+			)
+		);
+	}
+
+	/**
 	 * Clean a document.
 	 *
 	 * @param mixed $document Document, as an array or a JSON string.
