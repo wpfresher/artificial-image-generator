@@ -4,7 +4,7 @@ Tags: ai, ai image, image generator, featured image, block editor
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.6.0
+Stable tag: 1.7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -66,8 +66,11 @@ Adds an **"AI Generate" sparkle button** to the toolbar of core Image and Media 
 ✅ **Two Generation Modes in One Modal**
 A single, unified modal lets editors switch between **Templates** (fast, on-brand, free) and **Custom Prompt** (AI-generated, unique). Pick the right tool for each post.
 
+✅ **Visual Template Studio**
+Design image templates on a canvas: drag, resize and rotate layers, with snapping guides, undo/redo and keyboard shortcuts. Combine backgrounds (colors, random palettes, gradients, your images or the post's own featured image), images with rounded or circle masks and duotone, see-through overlays and fades, shapes, patterns, frames and text. Text fits itself to its box, with 11 bundled fonts (or upload your own .ttf/.otf), outlines, shadows, highlight boxes and tags like `{title}`, `{category}`, `{author}`, `{date}` and `{custom_field:key}`. Preview with long titles or a real post, check the exact image your server will make, start from 8 ready-made designs, and import or export designs as JSON.
+
 ✅ **Unlimited Reusable Image Templates**
-Build as many image templates as you want with custom **background colors, dimensions, title size, and PNG overlays**. The title text color is set once for the whole site under Settings. Each template is rendered server-side using PHP's GD library, no external dependency.
+Build as many image templates as you want. Each template is rendered server-side using PHP's GD library, no external dependency — the canvas you design on draws the same way, so what you see is what your posts get.
 
 ✅ **Automatic Featured Image on Save — Template or AI**
 When a post or page is saved without a featured image, the plugin creates one: from a template (a random one, or the one you pick) using the post title, or with AI from a prompt built from the post. AI images are created in the background, so saving never waits on the AI service, and the editor shows the progress.
@@ -269,6 +272,18 @@ AI image generation calls a third-party API (**OpenAI** by default, `https://api
 6. Plugin settings — defaults and AI API key configuration.
 
 == Changelog ==
+= 1.7.0 ( 07th October 2026 ) =
+* New: **Visual Template Studio.** Design templates on a canvas with layers you can drag, resize and rotate, with snapping guides, undo/redo and keyboard shortcuts.
+* New: Layer types for backgrounds (color, random palette, gradients, images, the post's featured or first image), images (rounded or circle masks, brightness, contrast, blur, black and white, duotone), overlays and gradient fades, shapes, patterns, frames and text.
+* New: Text fits its box, with max lines, letter case, letter spacing, outline, shadow and highlight boxes, plus tags `{title}`, `{excerpt}`, `{category}`, `{tags}`, `{author}`, `{date}`, `{site_name}`, `{reading_time}` and `{custom_field:key}`, and layers that show only when a tag has a value.
+* New: 10 more bundled fonts (Roboto, Inter, Montserrat, Poppins, Playfair Display, Noto Sans), font uploads (.ttf/.otf), and the theme's color palette as swatches.
+* New: Preview with short, long or very long titles or a real post, and an exact preview rendered by your server.
+* New: Start from 8 ready-made designs, import and export designs as JSON, and duplicate templates.
+* New: The templates list shows large previews with Edit, Duplicate, Set as default, Export and Delete.
+* New: REST endpoints for managing templates (`/templates`, `/templates/{id}`, `/templates/preview`, `/fonts`, `/capabilities`) and developer filters `aimg_template_layers`, `aimg_fonts`, `aimg_merge_tags`, `aimg_template_document`, `aimg_template_starters` and `aimg_manage_templates_capability`.
+* Enhance: Template images made from the editor are now attached to their post in the Media Library.
+* Compatibility: Existing templates look exactly as before and keep their settings; they switch to the Studio only when you save them there. The classic form stays available for templates you haven't changed.
+
 = 1.6.0 ( 06th October 2026 ) =
 * New: **Template or AI for automatic featured images.** Choose under Settings → Automatic Featured Images: an image template (default, as before), an AI image, or either one with the other as a fallback.
 * New: Pick which template automatic images use, instead of a random one.
@@ -352,6 +367,9 @@ AI image generation calls a third-party API (**OpenAI** by default, `https://api
 * Initial release.
 
 == Upgrade Notice ==
+
+= 1.7.0 =
+Adds the visual Template Studio. Your existing templates and images are not changed; a template switches to the Studio format only when you save it in the Studio.
 
 = 1.6.0 =
 Automatic featured images can now be made with AI as well as templates. Important for AI users: OpenAI shuts down GPT Image 1 on October 23, 2026 and has retired DALL·E; this update switches AI images to GPT Image 2.5 Flare automatically. Template images work exactly as before.
