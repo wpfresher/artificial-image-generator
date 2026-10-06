@@ -126,4 +126,14 @@ class Test_Queue_Kick extends AIMG_TestCase {
 		$this->assertCount( 0, $this->openai_bodies );
 		$this->assertSame( 'running', get_post_meta( $post_id, Queue::STATUS_META, true ) );
 	}
+
+	public function test_only_the_first_job_of_a_request_is_kicked() {
+		$first  = $this->queued_post();
+		$second = $this->queued_post();
+
+		$this->assertCount( 1, $this->kicks );
+		$this->assertSame( $first, $this->kicks[0]['body']['post_id'] );
+		$this->assertSame( 'queued', Queue::get_status( $second )['status'] );
+		$this->assertNotFalse( wp_next_scheduled( Queue::HOOK, array( $second, 'ai', false ) ), 'The others run in the background.' );
+	}
 }

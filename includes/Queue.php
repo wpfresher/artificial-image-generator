@@ -66,6 +66,13 @@ class Queue {
 	const KICK_ACTION = 'aimg_run_job';
 
 	/**
+	 * Whether this request already started a job right away.
+	 *
+	 * @var bool
+	 */
+	private static $kicked = false;
+
+	/**
 	 * Constructor.
 	 */
 	public function __construct() {
@@ -113,11 +120,18 @@ class Queue {
 	 * minute, and WP-Cron waits for the next page view. The scheduled action
 	 * stays as a backup in case the request can't reach the site.
 	 *
+	 * Only the first job queued in a request is started this way, so a bulk
+	 * publish doesn't start a PHP process per post; the rest run in the background.
+	 *
 	 * @param int $post_id Post ID.
 	 *
 	 * @return void
 	 */
 	private static function kick( $post_id ) {
+		if ( self::$kicked ) {
+			return;
+		}
+
 		/**
 		 * Filter whether a queued job is started right away with a request to this site.
 		 *
@@ -130,7 +144,8 @@ class Queue {
 			return;
 		}
 
-		$token = wp_generate_password( 32, false );
+		self::$kicked = true;
+		$token        = wp_generate_password( 32, false );
 		set_transient( 'aimg_kick_' . $post_id, $token, self::STALE_AFTER );
 
 		wp_remote_post(
@@ -241,7 +256,13 @@ class Queue {
 
 		delete_post_meta( $post_id, self::JOB_META );
 
+		// Act as the post's author, so the image is uploaded by them.
+		$user_id = get_current_user_id();
+		wp_set_current_user( (int) get_post_field( 'post_author', $post_id ) );
+
 		$attachment_id = Generator::generate_for_post( $post_id, $method );
+
+		wp_set_current_user( $user_id );
 
 		if ( is_wp_error( $attachment_id ) ) {
 			self::set_status( $post_id, 'failed', $attachment_id->get_error_message() );

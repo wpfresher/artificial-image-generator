@@ -80,6 +80,7 @@ function aimg_get_js_data() {
 	$model    = (string) aimg_get_settings( 'api_model', '' );
 	$method   = \ArtificialImageGenerator\Generator::get_method();
 	$methods  = \ArtificialImageGenerator\Generator::get_methods();
+	$runnable = \ArtificialImageGenerator\Generator::get_runnable_method( $method );
 
 	return array(
 		'endpoints' => array(
@@ -95,13 +96,14 @@ function aimg_get_js_data() {
 		'settings'  => array(
 			'hasApiKey'   => $provider && $provider->is_configured(),
 			'canUseAi'    => aimg_user_can_use_ai(),
+			'canUpload'   => current_user_can( 'upload_files' ),
 			'settingsUrl' => admin_url( 'admin.php?page=aimg-settings' ),
 			'size'        => (string) aimg_get_settings( 'ai_size', 'square' ),
 			'quality'     => (string) aimg_get_settings( 'ai_quality', 'auto' ),
 			'maxImages'   => $provider ? min( 4, $provider->get_max_images( $model ) ) : 1,
 			'method'      => $method,
 			'methodLabel' => isset( $methods[ $method ] ) ? $methods[ $method ] : '',
-			'methodIsAi'  => \ArtificialImageGenerator\Generator::method_starts_with_ai( $method ),
+			'methodIsAi'  => '' === $runnable || \ArtificialImageGenerator\Generator::method_starts_with_ai( $runnable ),
 		),
 		'options'   => array(
 			'sizes'     => \ArtificialImageGenerator\Admin\Settings::get_sizes(),

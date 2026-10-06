@@ -96,6 +96,32 @@ class Generator {
 	}
 
 	/**
+	 * The method that can actually run: without a configured AI provider the AI
+	 * part is dropped, so `ai_template` and `template_ai` become `template` and
+	 * `ai` becomes an empty string.
+	 *
+	 * @param string $method Method. Defaults to the configured one.
+	 *
+	 * @since 1.6.0
+	 * @return string
+	 */
+	public static function get_runnable_method( $method = '' ) {
+		$method = '' !== $method ? $method : self::get_method();
+
+		if ( ! in_array( $method, array( self::METHOD_AI, self::METHOD_AI_TEMPLATE, self::METHOD_TEMPLATE_AI ), true ) ) {
+			return $method;
+		}
+
+		$provider = Providers\Registry::get();
+
+		if ( $provider && $provider->is_configured() ) {
+			return $method;
+		}
+
+		return self::METHOD_AI === $method ? '' : self::METHOD_TEMPLATE;
+	}
+
+	/**
 	 * Generate an image for a post and add it to the Media Library.
 	 *
 	 * Does not set it as the featured image; callers decide that.
@@ -216,6 +242,12 @@ class Generator {
 	 * @return int|\WP_Error Attachment ID.
 	 */
 	public static function generate_ai_for_post( $post_id ) {
+		$provider = Providers\Registry::get();
+
+		if ( ! $provider || ! $provider->is_configured() ) {
+			return new \WP_Error( 'aimg_no_api_key', __( 'No API key configured. Please add your API key on the Image Generator settings page.', 'artificial-image-generator' ), array( 'status' => 400 ) );
+		}
+
 		$quota = aimg_consume_ai_quota( (int) get_post_field( 'post_author', $post_id ) );
 
 		if ( is_wp_error( $quota ) ) {
@@ -631,7 +663,7 @@ class Generator {
 	 * @param array $provenance    {
 	 *     Optional. Provenance details.
 	 *
-	 *     @type string $source      'template' or 'prompt'.
+	 *     @type string $source      'template', 'prompt' or 'auto' (AI image made from the post).
 	 *     @type int    $template_id Template used, when rendered from a template.
 	 *     @type string $prompt      Prompt used, when generated from a prompt.
 	 *     @type string $provider    Service that produced the image.

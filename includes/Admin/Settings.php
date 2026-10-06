@@ -4,6 +4,7 @@ namespace ArtificialImageGenerator\Admin;
 
 use ArtificialImageGenerator\Generator;
 use ArtificialImageGenerator\PromptBuilder;
+use ArtificialImageGenerator\Providers\OpenAI;
 
 defined( 'ABSPATH' ) || exit; // Exit if accessed directly.
 
@@ -258,15 +259,11 @@ class Settings {
 	 * Supported image generation models.
 	 *
 	 * @since 1.4.3
+	 * @since 1.6.0 Lists the OpenAI provider's models.
 	 * @return array
 	 */
 	public static function get_models() {
-		return array(
-			'gpt-image-1'      => __( 'GPT Image 1 (recommended)', 'artificial-image-generator' ),
-			'gpt-image-1-mini' => __( 'GPT Image 1 Mini (lower cost)', 'artificial-image-generator' ),
-			'dall-e-3'         => __( 'DALL·E 3 (legacy)', 'artificial-image-generator' ),
-			'dall-e-2'         => __( 'DALL·E 2 (legacy)', 'artificial-image-generator' ),
-		);
+		return ( new OpenAI() )->get_models();
 	}
 
 	/**
@@ -438,7 +435,7 @@ class Settings {
 	 * @return void
 	 */
 	public function ai_size_field() {
-		$this->select_field( 'ai_size', self::get_sizes(), 'square', __( 'Used for prompts in the editor and the Media Library; it can be changed per image there. DALL·E 2 only makes square images.', 'artificial-image-generator' ) );
+		$this->select_field( 'ai_size', self::get_sizes(), 'square', __( 'Used for prompts in the editor and the Media Library; it can be changed per image there.', 'artificial-image-generator' ) );
 	}
 
 	/**
@@ -448,7 +445,7 @@ class Settings {
 	 * @return void
 	 */
 	public function ai_quality_field() {
-		$this->select_field( 'ai_quality', self::get_qualities(), 'auto', __( 'Higher quality costs more. DALL·E 3 has standard and HD only; DALL·E 2 ignores this.', 'artificial-image-generator' ) );
+		$this->select_field( 'ai_quality', self::get_qualities(), 'auto', __( 'Higher quality costs more.', 'artificial-image-generator' ) );
 	}
 
 	/**
@@ -488,7 +485,7 @@ class Settings {
 			} elseif ( $api_key ) {
 				esc_html_e( 'An API key is saved. Leave the field empty to keep it, or enter a new key to replace it.', 'artificial-image-generator' );
 			} else {
-				esc_html_e( 'Enter your image generation API key (e.g. an OpenAI key for DALL·E). For maximum security you can instead define the AIMG_API_KEY constant in wp-config.php.', 'artificial-image-generator' );
+				esc_html_e( 'Enter your image generation API key (an OpenAI API key). For maximum security you can instead define the AIMG_API_KEY constant in wp-config.php.', 'artificial-image-generator' );
 			}
 			?>
 		</p>
@@ -502,7 +499,7 @@ class Settings {
 	 * @return void
 	 */
 	public function api_model_field() {
-		$model = aimg_get_settings( 'api_model', 'gpt-image-1' );
+		$model = aimg_get_settings( 'api_model', ( new OpenAI() )->get_default_model() );
 		?>
 		<select name="aimg_settings[api_model]" id="aimg_settings_api_model">
 			<?php foreach ( self::get_models() as $value => $label ) : ?>
@@ -510,7 +507,7 @@ class Settings {
 			<?php endforeach; ?>
 		</select>
 		<p class="description">
-			<?php esc_html_e( 'The OpenAI model used for prompt-based generation. GPT Image 1 is available to all current API accounts; the DALL·E models are legacy and newer accounts may not have access to them.', 'artificial-image-generator' ); ?>
+			<?php esc_html_e( 'The OpenAI model used for AI images. GPT Image 2.5 Flare is fast and suited to everyday images; Sunburst is OpenAI\'s most capable model. Retired models (GPT Image 1 and DALL·E) are switched to GPT Image 2.5 Flare automatically.', 'artificial-image-generator' ); ?>
 		</p>
 		<?php
 	}
@@ -643,7 +640,7 @@ class Settings {
 
 		// Sanitize the model; fall back to the default when the value is unknown.
 		$model                           = isset( $settings['api_model'] ) ? sanitize_text_field( $settings['api_model'] ) : '';
-		$sanitized_settings['api_model'] = array_key_exists( $model, self::get_models() ) ? $model : 'gpt-image-1';
+		$sanitized_settings['api_model'] = array_key_exists( $model, self::get_models() ) ? $model : ( new OpenAI() )->get_default_model();
 
 		$access                          = isset( $settings['ai_access'] ) ? sanitize_key( $settings['ai_access'] ) : '';
 		$sanitized_settings['ai_access'] = array_key_exists( $access, aimg_get_ai_access_levels() ) ? $access : 'authors';

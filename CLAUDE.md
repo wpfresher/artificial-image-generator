@@ -104,7 +104,10 @@ Generated attachments are stamped with `_aimg_generated` (`'1'`, queryable) and
 
 AI images: `PromptBuilder::build()` → `Providers\Registry::get()->generate()` (size and quality keys
 are provider-neutral: square/landscape/portrait, auto/low/medium/high) → `Generator::sideload_*()` →
-provenance. With default settings the OpenAI request body is identical to 1.5.x; keep it that way.
+provenance. With default settings the OpenAI request body keeps the 1.5.x shape (`model`, `prompt`, `n`, `size`);
+only the model changed. Models in `Providers\OpenAI::get_models()` must be current per OpenAI's
+deprecations page (https://developers.openai.com/api/docs/deprecations); saved models that are no longer
+listed fall back to `get_default_model()` at runtime.
 
 `aimg_generate_preview()` runs the same pipeline on-demand for the template editor preview, and
 deletes the preview file it replaces.

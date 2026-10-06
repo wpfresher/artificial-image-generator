@@ -16,7 +16,7 @@ AI image generator for WordPress. Auto-create featured images, post thumbnails &
 
 Stop wasting hours on stock photo sites. Stop publishing posts with broken thumbnail spots. With **Image Generator** you can:
 
-- **Generate AI images** from a custom prompt using **OpenAI GPT Image or DALL·E** (your own API key) — right inside the block editor.
+- **Generate AI images** from a custom prompt using **OpenAI GPT Image** (your own API key) — right inside the block editor.
 - **Auto-generate featured images** from reusable **image templates** whenever a post or page is saved without one.
 - **Insert AI-generated images** straight into Image and Media & Text blocks while you write.
 - **Set a Featured Image** with a single click from the new **AI Featured Image** sidebar panel.
@@ -175,10 +175,10 @@ Without Image Generator | With Image Generator
 **No — only for AI prompt-based generation.** Template-based image creation, including the automatic featured image on publish, runs entirely on your own server using PHP's built-in GD library. No external services, no API calls, no recurring costs.
 
 = Which AI image generation service is supported? =
-Out of the box, the plugin calls **OpenAI's Images API** using **GPT Image 1** by default — you can switch to GPT Image 1 Mini, DALL·E 3, or DALL·E 2 under **Image Generator → Settings**. Developers can swap the endpoint, model, or request body via the `aimg_generate_endpoint` and `aimg_generate_request_body` filters — so you can point it at compatible services (Stability AI, self-hosted SDXL via a compatible proxy, etc.).
+Out of the box, the plugin calls **OpenAI's Images API** using **GPT Image 2.5 Flare** by default — you can switch to GPT Image 2.5 Sunburst or GPT Image 2 under **Image Generator → Settings**. Models OpenAI has retired (GPT Image 1, DALL·E 2 and DALL·E 3) are no longer offered; sites that used them switch to GPT Image 2.5 Flare automatically. Developers can swap the endpoint, model, or request body via the `aimg_generate_endpoint` and `aimg_generate_request_body` filters — so you can point it at compatible services (Stability AI, self-hosted SDXL via a compatible proxy, etc.).
 
 = How much does AI image generation cost? =
-You pay OpenAI directly for usage. As of 2026, a 1024×1024 image costs roughly $0.01–$0.07 per generation depending on the model and quality; larger shapes, higher quality and more variations cost more. The plugin itself is free; you only pay your AI provider for the images it creates. To keep costs predictable, limit AI to certain roles, set an hourly limit per user, and use templates for everyday posts. Automatic AI images are only created when a post is published or scheduled, not for drafts.
+You pay OpenAI directly for usage, based on the model, image size and quality; see OpenAI's pricing page for current rates. Larger shapes, higher quality and more variations cost more. The plugin itself is free; you only pay your AI provider for the images it creates. To keep costs predictable, limit AI to certain roles, set an hourly limit per user, and use templates for everyday posts. Automatic AI images are only created when a post is published or scheduled, not for drafts.
 
 = Where is my OpenAI API key stored? =
 By default, it's stored in the `aimg_settings` option in the WordPress database. **For maximum security**, define `AIMG_API_KEY` in `wp-config.php` instead — the settings UI will detect the constant and disable the input field, so the key never sits in the database.
@@ -218,7 +218,7 @@ Use the [plugin support forum on WordPress.org](https://wordpress.org/support/pl
 - **"No API key configured" notice in the editor**: add a key under **Image Generator → Settings**, or define `AIMG_API_KEY` in `wp-config.php`.
 - **Thumbnails not displaying on the frontend**: make sure your theme calls `add_theme_support( 'post-thumbnails' )` in `functions.php`.
 - **AI generation fails or times out**: check that your server can make outbound HTTPS requests, that PHP's `max_execution_time` is at least 60 seconds, and that your OpenAI API key has billing enabled.
-- **"The model 'dall-e-3' does not exist" (or similar) error**: your OpenAI account doesn't have access to the selected model — DALL·E models are legacy and unavailable to newer accounts. Switch the **Image Model** to **GPT Image 1** under **Image Generator → Settings**.
+- **"The model … does not exist" (or similar) error**: your OpenAI account doesn't have access to the selected model. Pick another **Image Model** under **Image Generator → Settings**; GPT Image 2.5 Flare is the default.
 - **"No templates available" in the editor modal**: create at least one template under **Image Generator → Image Templates**.
 - **Image looks wrong / wrong colors**: check your template's background colors, the default text color under Settings, and your overlay PNG transparency.
 - **Cache plugins showing stale images**: clear page, object, and CDN caches after generating new images.
@@ -274,6 +274,14 @@ AI image generation calls a third-party API (**OpenAI** by default, `https://api
 * Enhance: The template list is loaded once per modal instead of on every tab switch, and the prompt box is disabled until an API key is set.
 * Fix: Titles containing `&` or quotes are no longer shown as HTML codes in the Title text field, or drawn that way on images generated from the modal.
 * Fix: The Settings page now confirms when your settings are saved.
+* Update: **Current OpenAI models.** The Image Model setting now offers GPT Image 2.5 Flare (new default), GPT Image 2.5 Sunburst and GPT Image 2. OpenAI retired DALL·E 2 and DALL·E 3 on May 12, 2026 and shuts down GPT Image 1 on October 23, 2026, so those models are removed and sites using them switch to GPT Image 2.5 Flare automatically.
+* Fix: Images can only be attached to posts you can edit, and automatic AI images are no longer queued when no API key is set ("AI image, template if AI fails" then uses the template right away).
+* Fix: Publishing many posts at once with an AI method no longer starts a server process per post; the extra images are created in the background one after another.
+* Fix: Images created in the background are now uploaded by the post's author, and an old failure message no longer shows on posts that have a featured image.
+* Fix: Saving a post no longer retries a failed AI image on every save (each retry was a paid request); use **Try again** in the AI Featured Image panel instead.
+* Fix: A finished background image now appears in the editor even while the AI Featured Image panel is collapsed.
+* Fix: Users who can't upload files (such as Contributors) no longer see generate buttons that would only show a permission error, and the panel is hidden on post types without featured images.
+* Fix: AI request timeouts now show a plain message instead of a technical error.
 
 = 1.5.4 ( 06th October 2026 ) =
 * New: **Who Can Generate AI Images** setting — allow AI images for Authors and above (default), Editors and above, or Administrators only. Template images stay available to everyone who can upload files.
@@ -338,7 +346,7 @@ AI image generation calls a third-party API (**OpenAI** by default, `https://api
 == Upgrade Notice ==
 
 = 1.6.0 =
-Automatic featured images can now be made with AI as well as templates, plus prompt templates, styles and image variations. Nothing changes until you choose a new method under Settings → Automatic Featured Images.
+Automatic featured images can now be made with AI as well as templates. Important for AI users: OpenAI shuts down GPT Image 1 on October 23, 2026 and has retired DALL·E; this update switches AI images to GPT Image 2.5 Flare automatically. Template images work exactly as before.
 
 = 1.5.4 =
 Adds settings to control who can generate AI images and how many per hour. Your API key is kept but no longer shown in the settings field. No action required when updating.

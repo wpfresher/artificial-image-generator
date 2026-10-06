@@ -31,6 +31,11 @@ abstract class AIMG_TestCase extends WP_UnitTestCase {
 		$this->admin_id = self::factory()->user->create( array( 'role' => 'administrator' ) );
 		wp_set_current_user( $this->admin_id );
 		delete_option( 'aimg_settings' );
+
+		// Each test is a new request as far as the queue is concerned.
+		$kicked = new ReflectionProperty( \ArtificialImageGenerator\Queue::class, 'kicked' );
+		$kicked->setAccessible( true );
+		$kicked->setValue( null, false );
 	}
 
 	/**

@@ -43,6 +43,12 @@ import {
 	const POLL_INTERVAL = 3000;
 	const POLL_LIMIT = 60;
 
+	// Every generate endpoint needs upload_files; don't offer what would be refused.
+	const CAN_UPLOAD =
+		! window.aimgData ||
+		! window.aimgData.settings ||
+		window.aimgData.settings.canUpload !== false;
+
 	// ── Block → attribute mapping ─────────────────────────────────────────────
 	const BLOCK_ATTR_MAP = {
 		'core/image': { urlAttr: 'url', idAttr: 'id', altAttr: 'alt' },
@@ -57,7 +63,7 @@ import {
 	const withAIGenerateButton = createHigherOrderComponent( ( BlockEdit ) => {
 		return ( props ) => {
 			const attrMap = BLOCK_ATTR_MAP[ props.name ];
-			if ( ! attrMap ) {
+			if ( ! attrMap || ! CAN_UPLOAD ) {
 				return el( BlockEdit, props );
 			}
 
@@ -149,8 +155,9 @@ import {
 		}
 	}
 
-	function FeaturedImageAIPanel() {
-		const settings = ( window.aimgData && window.aimgData.settings ) || {};
+	// Tracks the post's background job. It lives outside the panel so it keeps
+	// working while the panel is collapsed.
+	function useFeaturedJob( isEnabled ) {
 		const endpoints =
 			( window.aimgData && window.aimgData.endpoints ) || {};
 
@@ -193,10 +200,19 @@ import {
 			return res.status === 'queued' || res.status === 'running';
 		};
 
-		const poll = ( attempt = 0 ) => {
+		const poll = ( attempt = 0, isInitial = false ) => {
 			stopPolling();
 			apiRequest( endpoints.status + post.id, { method: 'GET' } )
 				.then( ( res ) => {
+					// A finished job from an earlier visit only matters while the post has no image.
+					if (
+						isInitial &&
+						post.featuredId &&
+						res.status !== 'queued' &&
+						res.status !== 'running'
+					) {
+						return;
+					}
 					if ( applyStatus( res ) && attempt < POLL_LIMIT ) {
 						timer.current = setTimeout(
 							() => poll( attempt + 1 ),
@@ -207,18 +223,23 @@ import {
 				.catch( () => {} );
 		};
 
-		// Pick up a job queued earlier, and stop polling when the panel goes away.
+		// Pick up a job queued earlier.
 		useEffect( () => {
-			if ( post.id ) {
-				poll();
+			if ( isEnabled && post.id ) {
+				poll( 0, true );
 			}
 			return stopPolling;
 			// eslint-disable-next-line react-hooks/exhaustive-deps
-		}, [ post.id ] );
+		}, [ isEnabled, post.id ] );
 
 		// Saving can queue a job (e.g. publishing with the AI method).
 		useEffect( () => {
-			if ( wasSaving.current && ! post.isSaving && post.didSave ) {
+			if (
+				isEnabled &&
+				wasSaving.current &&
+				! post.isSaving &&
+				post.didSave
+			) {
 				poll();
 			}
 			wasSaving.current = post.isSaving;
@@ -246,6 +267,13 @@ import {
 				.finally( () => setStarting( false ) );
 		};
 
+		return { post, job, isStarting, requestError, generateNow };
+	}
+
+	function FeaturedImageAIPanel( {
+		featured: { post, job, isStarting, requestError, generateNow },
+	} ) {
+		const settings = ( window.aimgData && window.aimgData.settings ) || {};
 		const { editPost } = useDispatch( 'core/editor' );
 
 		const generator = useGenerator( {
@@ -391,19 +419,31 @@ import {
 		);
 	}
 
+	function FeaturedImagePanelSlot() {
+		const isAvailable = useSelect( ( sel ) => {
+			const type = sel( 'core' ).getPostType(
+				sel( 'core/editor' ).getCurrentPostType()
+			);
+			return CAN_UPLOAD && !! type?.supports?.thumbnail;
+		}, [] );
+		const featured = useFeaturedJob( isAvailable );
+
+		if ( ! isAvailable ) {
+			return null;
+		}
+
+		return el(
+			PluginDocumentSettingPanel,
+			{
+				name: 'aimg-featured-image',
+				title: __( 'AI Featured Image', 'artificial-image-generator' ),
+				icon: AIG_ICON,
+			},
+			el( FeaturedImageAIPanel, { featured } )
+		);
+	}
+
 	registerPlugin( 'aimg-featured-image-panel', {
-		render: () =>
-			el(
-				PluginDocumentSettingPanel,
-				{
-					name: 'aimg-featured-image',
-					title: __(
-						'AI Featured Image',
-						'artificial-image-generator'
-					),
-					icon: AIG_ICON,
-				},
-				el( FeaturedImageAIPanel )
-			),
+		render: FeaturedImagePanelSlot,
 	} );
 } )();

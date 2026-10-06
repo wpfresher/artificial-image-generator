@@ -210,7 +210,7 @@ class RestAPI {
 			);
 		}
 
-		if ( Generator::method_starts_with_ai( Generator::get_method() ) && ! aimg_user_can_use_ai() ) {
+		if ( Generator::method_starts_with_ai( Generator::get_runnable_method() ) && ! aimg_user_can_use_ai() ) {
 			return new \WP_Error(
 				'rest_forbidden',
 				__( 'You do not have permission to generate AI images.', 'artificial-image-generator' ),
@@ -295,7 +295,11 @@ class RestAPI {
 	 */
 	public function handle_featured( \WP_REST_Request $request ) {
 		$post_id = absint( $request['post_id'] );
-		$method  = Generator::get_method();
+		$method  = Generator::get_runnable_method();
+
+		if ( '' === $method ) {
+			return new \WP_Error( 'aimg_no_api_key', __( 'No API key configured. Please add your API key on the Image Generator settings page.', 'artificial-image-generator' ), array( 'status' => 400 ) );
+		}
 
 		if ( '' === aimg_get_plain_title( $post_id ) ) {
 			return new \WP_Error( 'aimg_no_title', __( 'Add a title to the post first; it is used to generate the image.', 'artificial-image-generator' ), array( 'status' => 400 ) );
@@ -394,6 +398,16 @@ class RestAPI {
 			);
 		}
 
+		$post_id = absint( $request->get_param( 'post_id' ) );
+
+		if ( $post_id && ! current_user_can( 'edit_post', $post_id ) ) {
+			return new \WP_Error(
+				'rest_forbidden',
+				__( 'You do not have permission to edit this post.', 'artificial-image-generator' ),
+				array( 'status' => rest_authorization_required_code() )
+			);
+		}
+
 		return true;
 	}
 
@@ -425,7 +439,7 @@ class RestAPI {
 
 			$data[] = array(
 				'id'      => (int) $template->ID,
-				'title'   => $template->post_title,
+				'title'   => aimg_plain_text( $template->post_title ),
 				'preview' => $preview ? esc_url_raw( $preview ) : '',
 				'width'   => $width,
 				'height'  => $height,
@@ -610,9 +624,10 @@ class RestAPI {
 	 * @return string
 	 */
 	protected function get_model() {
-		$model = (string) aimg_get_settings( 'api_model', '' );
+		$provider = new Providers\OpenAI();
+		$model    = (string) aimg_get_settings( 'api_model', '' );
 
-		return '' !== $model ? $model : 'gpt-image-1';
+		return isset( $provider->get_models()[ $model ] ) ? $model : $provider->get_default_model();
 	}
 
 	/**

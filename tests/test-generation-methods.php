@@ -314,4 +314,60 @@ class Test_Generation_Methods extends AIMG_TestCase {
 
 		$this->assertSame( 'Handled', Generator::generate_for_post( self::factory()->post->create(), 'custom' )->get_error_message() );
 	}
+
+	public function test_ai_methods_without_an_api_key_skip_the_ai_part() {
+		$this->set_settings(
+			array(
+				'api_key'           => '',
+				'generation_method' => 'ai',
+			)
+		);
+		$this->create_template();
+
+		$post_id = $this->create_post();
+		$this->assertSame( '', Queue::get_status( $post_id )['status'], 'Nothing is queued that cannot run.' );
+		$this->assertFalse( has_post_thumbnail( $post_id ) );
+		$this->assertSame( 400, $this->rest( 'POST', '/aimg/v1/featured/' . $post_id )->get_status() );
+
+		$this->set_settings( array( 'generation_method' => 'ai_template' ) );
+		$post_id = $this->create_post();
+		$this->assertSame( 'template', $this->featured_source( $post_id ), 'The template fallback runs right away.' );
+	}
+
+	public function test_saving_does_not_retry_a_failed_job() {
+		$this->set_settings( array( 'generation_method' => 'ai' ) );
+		$this->stub_openai( 400 );
+		$post_id = $this->create_post();
+		Queue::run( $post_id, 'ai', false );
+		$this->assertSame( 'failed', Queue::get_status( $post_id )['status'] );
+
+		wp_update_post(
+			array(
+				'ID'           => $post_id,
+				'post_content' => 'Saved again.',
+			)
+		);
+
+		$this->assertSame( 'failed', Queue::get_status( $post_id )['status'] );
+		$this->assertCount( 1, $this->openai_bodies );
+		$this->assertSame( 'queued', $this->rest( 'POST', '/aimg/v1/featured/' . $post_id )->get_data()['status'], 'Try again still works.' );
+	}
+
+	public function test_background_images_are_uploaded_by_the_post_author() {
+		$this->set_settings( array( 'generation_method' => 'ai' ) );
+		$this->stub_openai();
+		$author  = self::factory()->user->create( array( 'role' => 'author' ) );
+		$post_id = wp_insert_post(
+			array(
+				'post_title'  => 'By an author',
+				'post_status' => 'publish',
+				'post_author' => $author,
+			)
+		);
+
+		Queue::run( $post_id, 'ai', false );
+
+		$this->assertSame( $author, (int) get_post_field( 'post_author', get_post_thumbnail_id( $post_id ) ) );
+		$this->assertSame( $this->admin_id, get_current_user_id(), 'The previous user is restored.' );
+	}
 }

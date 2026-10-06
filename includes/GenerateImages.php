@@ -123,10 +123,14 @@ class GenerateImages {
 			return;
 		}
 
-		$method = Generator::get_method();
+		$method = Generator::get_runnable_method();
+
+		if ( '' === $method ) {
+			return;
+		}
 
 		if ( Generator::method_starts_with_ai( $method ) ) {
-			if ( self::can_use_ai( $post_id ) ) {
+			if ( self::can_use_ai( $post_id ) && ! self::last_job_failed( $post_id ) ) {
 				Queue::enqueue( $post_id, $method );
 			}
 
@@ -136,7 +140,7 @@ class GenerateImages {
 		$attachment_id = Generator::generate_template_for_post( $post_id );
 
 		if ( is_wp_error( $attachment_id ) ) {
-			if ( Generator::METHOD_TEMPLATE_AI === $method && self::can_use_ai( $post_id ) ) {
+			if ( Generator::METHOD_TEMPLATE_AI === $method && self::can_use_ai( $post_id ) && ! self::last_job_failed( $post_id ) ) {
 				Queue::enqueue( $post_id, Generator::METHOD_AI );
 			}
 
@@ -144,6 +148,19 @@ class GenerateImages {
 		}
 
 		set_post_thumbnail( $post_id, $attachment_id );
+	}
+
+	/**
+	 * Whether the post's last background job failed. Saving doesn't retry it, so a
+	 * failing service isn't called again on every save; "Try again" in the editor does.
+	 *
+	 * @param int $post_id Post ID.
+	 *
+	 * @since 1.6.0
+	 * @return bool
+	 */
+	public static function last_job_failed( $post_id ) {
+		return 'failed' === Queue::get_status( $post_id )['status'];
 	}
 
 	/**

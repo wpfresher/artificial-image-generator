@@ -13,42 +13,22 @@ defined( 'ABSPATH' ) || exit; // Exit if accessed directly.
 class OpenAI implements ProviderInterface {
 
 	/**
-	 * Pixel sizes per model for each size key.
+	 * Pixel size for each size key; the standard sizes every GPT Image model supports.
 	 *
 	 * @var array
 	 */
 	const SIZES = array(
-		'gpt-image-1'      => array(
-			'square'    => '1024x1024',
-			'landscape' => '1536x1024',
-			'portrait'  => '1024x1536',
-		),
-		'gpt-image-1-mini' => array(
-			'square'    => '1024x1024',
-			'landscape' => '1536x1024',
-			'portrait'  => '1024x1536',
-		),
-		'dall-e-3'         => array(
-			'square'    => '1024x1024',
-			'landscape' => '1792x1024',
-			'portrait'  => '1024x1792',
-		),
-		'dall-e-2'         => array(
-			'square'    => '1024x1024',
-			'landscape' => '1024x1024',
-			'portrait'  => '1024x1024',
-		),
+		'square'    => '1024x1024',
+		'landscape' => '1536x1024',
+		'portrait'  => '1024x1536',
 	);
 
 	/**
-	 * Longest prompt each model accepts.
+	 * Longest prompt the Images API accepts.
 	 *
-	 * @var array
+	 * @var int
 	 */
-	const PROMPT_LIMITS = array(
-		'dall-e-2' => 1000,
-		'dall-e-3' => 4000,
-	);
+	const PROMPT_LIMIT = 32000;
 
 	/**
 	 * Provider ID.
@@ -75,10 +55,9 @@ class OpenAI implements ProviderInterface {
 	 */
 	public function get_models() {
 		return array(
-			'gpt-image-1'      => __( 'GPT Image 1 (recommended)', 'artificial-image-generator' ),
-			'gpt-image-1-mini' => __( 'GPT Image 1 Mini (lower cost)', 'artificial-image-generator' ),
-			'dall-e-3'         => __( 'DALL·E 3 (legacy)', 'artificial-image-generator' ),
-			'dall-e-2'         => __( 'DALL·E 2 (legacy)', 'artificial-image-generator' ),
+			'gpt-image-2.5-flare'    => __( 'GPT Image 2.5 Flare (recommended, fast)', 'artificial-image-generator' ),
+			'gpt-image-2.5-sunburst' => __( 'GPT Image 2.5 Sunburst (most capable)', 'artificial-image-generator' ),
+			'gpt-image-2'            => __( 'GPT Image 2', 'artificial-image-generator' ),
 		);
 	}
 
@@ -88,7 +67,7 @@ class OpenAI implements ProviderInterface {
 	 * @return string
 	 */
 	public function get_default_model() {
-		return 'gpt-image-1';
+		return 'gpt-image-2.5-flare';
 	}
 
 	/**
@@ -99,7 +78,7 @@ class OpenAI implements ProviderInterface {
 	 * @return int
 	 */
 	public function get_max_images( $model ) {
-		return 'dall-e-3' === $model ? 1 : 10;
+		return 10;
 	}
 
 	/**
@@ -134,23 +113,15 @@ class OpenAI implements ProviderInterface {
 	 */
 	public function get_request_body( $prompt, $args ) {
 		$model = $args['model'];
-		$sizes = isset( self::SIZES[ $model ] ) ? self::SIZES[ $model ] : self::SIZES['gpt-image-1'];
-		$size  = isset( $sizes[ $args['size'] ] ) ? $sizes[ $args['size'] ] : $sizes['square'];
-
-		if ( isset( self::PROMPT_LIMITS[ $model ] ) ) {
-			$prompt = mb_substr( $prompt, 0, self::PROMPT_LIMITS[ $model ] );
-		}
 
 		$body = array(
 			'model'  => $model,
-			'prompt' => $prompt,
+			'prompt' => mb_substr( $prompt, 0, self::PROMPT_LIMIT ),
 			'n'      => max( 1, min( (int) $args['n'], $this->get_max_images( $model ) ) ),
-			'size'   => $size,
+			'size'   => isset( self::SIZES[ $args['size'] ] ) ? self::SIZES[ $args['size'] ] : self::SIZES['square'],
 		);
 
-		if ( 'dall-e-3' === $model ) {
-			$body['quality'] = 'high' === $args['quality'] ? 'hd' : 'standard';
-		} elseif ( 0 === strpos( $model, 'gpt-image' ) && in_array( $args['quality'], array( 'low', 'medium', 'high' ), true ) ) {
+		if ( in_array( $args['quality'], array( 'low', 'medium', 'high' ), true ) ) {
 			$body['quality'] = $args['quality'];
 		}
 
@@ -232,7 +203,13 @@ class OpenAI implements ProviderInterface {
 		);
 
 		if ( is_wp_error( $response ) ) {
-			return new \WP_Error( 'aimg_api_error', $response->get_error_message(), array( 'status' => 502 ) );
+			$message = $response->get_error_message();
+
+			if ( false !== stripos( $message, 'timed out' ) || false !== stripos( $message, 'cURL error 28' ) ) {
+				$message = __( 'The AI service did not respond in time. Please try again.', 'artificial-image-generator' );
+			}
+
+			return new \WP_Error( 'aimg_api_error', $message, array( 'status' => 504 ) );
 		}
 
 		$status  = (int) wp_remote_retrieve_response_code( $response );
@@ -247,7 +224,7 @@ class OpenAI implements ProviderInterface {
 			$error_code = isset( $decoded['error']['code'] ) ? (string) $decoded['error']['code'] : '';
 			if ( 'model_not_found' === $error_code || false !== stripos( $message, 'does not exist' ) ) {
 				$message .= ' ' . sprintf(
-					/* translators: %s: model identifier, e.g. dall-e-3. */
+					/* translators: %s: model identifier, e.g. gpt-image-2. */
 					__( 'Your API account may not have access to the "%s" model. Try selecting a different model under Image Generator → Settings → AI Service.', 'artificial-image-generator' ),
 					$model
 				);
