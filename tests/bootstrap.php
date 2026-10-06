@@ -31,3 +31,4 @@ tests_add_filter(
 
 require $aimg_tests_dir . '/includes/bootstrap.php';
 require __DIR__ . '/class-aimg-testcase.php';
+require __DIR__ . '/legacy/legacy-renderer.php';

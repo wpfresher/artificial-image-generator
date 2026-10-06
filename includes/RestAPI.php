@@ -487,9 +487,10 @@ class RestAPI {
 	 * @return \WP_REST_Response|\WP_Error
 	 */
 	protected function generate_from_template( $template_id, $title = '' ) {
-		$args = Generator::get_render_args( $template_id, $title );
+		$template = aimg_get_template( $template_id );
+		$args     = Generator::get_render_args( $template_id, $title );
 
-		if ( ! $args ) {
+		if ( ! $args || ! $template ) {
 			return new \WP_Error(
 				'aimg_invalid_template',
 				__( 'Invalid template ID.', 'artificial-image-generator' ),
@@ -497,8 +498,13 @@ class RestAPI {
 			);
 		}
 
-		$render_title = $args['title'];
-		$image_path   = aimg_generate_thumbnail( $args );
+		if ( Templates\Repository::has_document( $template_id ) ) {
+			$render_title = '' !== trim( $title ) ? $title : aimg_get_plain_title( $template_id );
+			$image_path   = Generator::render( $template_id, $render_title );
+		} else {
+			$render_title = $args['title'];
+			$image_path   = aimg_generate_thumbnail( $args );
+		}
 
 		if ( ! $image_path || ! file_exists( $image_path ) ) {
 			return new \WP_Error(

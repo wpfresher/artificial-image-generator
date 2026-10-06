@@ -65,6 +65,12 @@ for asset-only rebuilds during development use `npx wp-scripts build --webpack-s
 | `Admin\Editor` | `includes/Admin/Editor.php` | Enqueues the block editor integration |
 | `Admin\MediaLibrary` | `includes/Admin/MediaLibrary.php` | Enqueues the generator modal on `upload.php` / `media-new.php` |
 | `Admin\ListTables\TemplatesTable` | `includes/Admin/ListTables/TemplatesTable.php` | Extends `WP_List_Table` for template management |
+| `Templates\Schema` | `includes/Templates/Schema.php` | Template document v2 and its sanitizer; layer type registry (`aimg_template_layers`) |
+| `Templates\Repository` | `includes/Templates/Repository.php` | v2 document in `_aimg_template_data`; falls back to `Migration::from_template()` (never writes on read) |
+| `Templates\Migration` | `includes/Templates/Migration.php` | Builds v2 documents from 1.x meta (`from_template`) or render args (`from_render_args`, the bridge `aimg_generate_thumbnail()` uses) |
+| `Rendering\GdRenderer` | `includes/Rendering/GdRenderer.php` | Draws a document layer by layer; `save()` writes PNG/JPEG/WebP into uploads |
+| `Rendering\Layers\*` | `includes/Rendering/Layers/` | One class per layer type (`sanitize()` + `draw()`): `Background`, `Image`, `Overlay`, `Text` |
+| `Rendering\TextLayout` | `includes/Rendering/TextLayout.php` | `wrap()` (the 1.x title wrapping) and `fit()` (shrink to a box, max lines, ellipsis) |
 
 ### Data Model
 
@@ -93,12 +99,18 @@ Generated attachments are stamped with `_aimg_generated` (`'1'`, queryable) and
    published template; `Generator::get_render_args()`
    maps its meta to render arguments (this mapping lives only here — the REST endpoint uses it too);
    it returns `false` for templates that are not published.
-3. `aimg_generate_thumbnail()` in `includes/functions.php` uses PHP's **GD library** to:
+3. `Generator::render()` renders a template's v2 document when it has one (`Repository`);
+   otherwise `aimg_generate_thumbnail()` turns the render args into a v2 document
+   (`Migration::from_render_args()`) and draws it with `Rendering\GdRenderer`. The 1.x look:
    - Fill background with one of the template's colors, chosen at random
    - Composite an optional PNG overlay at the chosen position
    - Tint the whole canvas with the same background colour at ~70% opacity (GD alpha 38), so
      overlays show through at ~30%. Keep this value: changing it changes every existing image
    - Render the post title using the bundled Roboto Bold font (`assets/fonts/`)
+
+   **Golden tests** (`tests/test-renderer-parity.php`) compare every v1 path byte-for-byte with the
+   frozen 1.6.0 renderer in `tests/legacy/` (excluded from phpcs; never edit it). Text `size` in
+   documents uses the template font size field's unit (GD size, ≈ 96/72 CSS px) so v1 values map 1:1.
 4. `Generator::create_attachment()` imports the file, sets alt text, stamps provenance meta, and
    fires `aimg_generated_image`. `GenerateImages` then sets it as the post thumbnail.
 
