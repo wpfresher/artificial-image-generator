@@ -27,6 +27,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 	const { createElement: el } = wp.element;
 	const template = data.template;
 
+	wp.data.dispatch( STORE ).setFonts( data.capabilities.fonts );
 	wp.data.dispatch( STORE ).load( {
 		templateId: template ? template.id : 0,
 		title: template ? template.title : '',

@@ -287,3 +287,14 @@ html:has(#aimg-template-studio:not([hidden])) {
 		display: none;
 	}
 }
+
+.aimg-studio__font-list {
+	margin: 0;
+}
+
+.aimg-studio__font {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin: 0;
+}

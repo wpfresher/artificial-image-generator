@@ -27,6 +27,15 @@ export const searchPosts = ( search ) =>
 export const postTags = ( postId ) =>
 	apiFetch( { path: `/aimg/v1/merge-tags/${ postId }` } );
 
+export function uploadFont( file ) {
+	const body = new window.FormData();
+	body.append( 'file', file );
+	return apiFetch( { path: '/aimg/v1/fonts', method: 'POST', body } );
+}
+
+export const deleteFont = ( id ) =>
+	apiFetch( { path: `/aimg/v1/fonts/${ id }`, method: 'DELETE' } );
+
 const mediaCache = new Map();
 
 /**

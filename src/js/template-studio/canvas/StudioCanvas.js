@@ -10,24 +10,27 @@ const { createElement: el, useEffect, useRef, useState } = wp.element;
 const { __ } = wp.i18n;
 
 const fontFamily = ( id ) => `aimg-${ id }`;
-const loadedFonts = new Map();
+const fontState = new Map();
 
-function loadFonts( fonts ) {
-	return Promise.all(
-		( fonts || [] )
-			.filter( ( font ) => font.url && ! loadedFonts.has( font.id ) )
-			.map( ( font ) => {
-				const face = new window.FontFace(
-					fontFamily( font.id ),
-					`url(${ font.url })`
-				);
-				loadedFonts.set( font.id, face );
-				return face
-					.load()
-					.then( ( loaded ) => document.fonts.add( loaded ) )
-					.catch( () => {} );
-			} )
-	);
+/**
+ * Load a font the first time a layer uses it.
+ *
+ * @param {Object}   font     Font { id, url }.
+ * @param {Function} onLoaded Called once the font can be drawn.
+ */
+function ensureFont( font, onLoaded ) {
+	if ( ! font || ! font.url || fontState.has( font.id ) ) {
+		return;
+	}
+	fontState.set( font.id, 'loading' );
+	new window.FontFace( fontFamily( font.id ), `url(${ font.url })` )
+		.load()
+		.then( ( loaded ) => {
+			document.fonts.add( loaded );
+			fontState.set( font.id, 'ready' );
+			onLoaded();
+		} )
+		.catch( () => fontState.set( font.id, 'failed' ) );
 }
 
 export default function StudioCanvas( {
@@ -38,6 +41,7 @@ export default function StudioCanvas( {
 	data,
 	tags,
 	images: sources,
+	fonts,
 } ) {
 	const container = useRef( null );
 	const stage = useRef( null );
@@ -157,8 +161,6 @@ export default function StudioCanvas( {
 		);
 		observer.observe( container.current );
 
-		loadFonts( data.capabilities.fonts ).then( refresh );
-
 		return () => {
 			observer.disconnect();
 			stage.current.destroy();
@@ -190,7 +192,13 @@ export default function StudioCanvas( {
 							? `[${ key }]`
 							: tags[ name ] ?? ''
 				),
-			fontFamily,
+			fontFamily: ( id ) => {
+				ensureFont(
+					fonts.find( ( font ) => font.id === id ),
+					refresh
+				);
+				return fontFamily( id );
+			},
 			backgroundColor: () => background,
 			sourceLabel: ( layer ) =>
 				( data.capabilities.imageSources || {} )[
@@ -321,7 +329,7 @@ export default function StudioCanvas( {
 		transformer.current.nodes( selectedNode ? [ selectedNode ] : [] );
 		stage.current.batchDraw();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ doc, selectedId, width, version, tags, sources ] );
+	}, [ doc, selectedId, width, version, tags, sources, fonts ] );
 
 	// Arrow keys nudge the selected layer; Shift moves 10 px.
 	const latest = useRef( {} );

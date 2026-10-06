@@ -243,6 +243,14 @@ Source: https://fonts.google.com/specimen/Roboto
 
 The Roboto font is bundled under the Apache License 2.0. Full license text available at the URI above.
 
+= Template Studio Fonts =
+Roboto (Regular), Inter, Montserrat, Poppins, Playfair Display and Noto Sans are bundled for the Template Studio.
+License: SIL Open Font License 1.1
+License URI: https://openfontlicense.org
+Source: https://fonts.google.com
+
+Each font's license, with its copyright notice, ships in `assets/fonts/licenses/`.
+
 = AI Image Generation =
 AI image generation calls a third-party API (**OpenAI** by default, `https://api.openai.com/v1/images/generations`). You are responsible for the API key, usage costs, and compliance with the provider's [terms of use](https://openai.com/policies/terms-of-use) and [privacy policy](https://openai.com/policies/privacy-policy). **Nothing is sent to an external service unless you add an API key and either generate from a prompt, click *Write a prompt from this post*, or choose an AI method for automatic featured images.** Template-based generation never leaves your server.
 

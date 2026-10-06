@@ -6,6 +6,7 @@ import { LABELS } from '../layers';
 import { BOXED } from '../canvas/draw';
 import { TYPE_FIELDS } from './LayerFields';
 import { ShowIfField } from './fields';
+import { UploadedFonts } from './FontField';
 
 const { createElement: el, Fragment } = wp.element;
 const { PanelBody, TextControl, SelectControl, ToggleControl, RangeControl } =
@@ -113,7 +114,8 @@ function CanvasSettings( { data } ) {
 				max: 100,
 				onChange: ( quality ) => updateOutput( { quality } ),
 				__nextHasNoMarginBottom: true,
-			} )
+			} ),
+		el( UploadedFonts )
 	);
 }
 

@@ -69,6 +69,17 @@ function aimg_uninstall_site() {
 		wp_delete_post( $template_id, true );
 	}
 
+	// Uploaded fonts: only the files the plugin recorded, only inside its own folder.
+	$fonts_folder = wp_normalize_path( trailingslashit( $upload_dir['basedir'] ) . 'aimg-fonts/' );
+	foreach ( (array) get_option( 'aimg_uploaded_fonts', array() ) as $font ) {
+		$path = is_array( $font ) && isset( $font[1] ) ? wp_normalize_path( trailingslashit( $upload_dir['basedir'] ) . ltrim( $font[1], '/' ) ) : '';
+
+		if ( '' !== $path && empty( $upload_dir['error'] ) && 0 === strpos( $path, $fonts_folder ) && false === strpos( $path, '..' ) ) {
+			wp_delete_file( $path );
+		}
+	}
+
+	delete_option( 'aimg_uploaded_fonts' );
 	delete_option( 'aimg_settings' );
 	delete_option( 'aimg_version' );
 }

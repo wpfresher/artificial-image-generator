@@ -136,11 +136,83 @@ class RestController {
 
 		register_rest_route(
 			$route_namespace,
+			'/fonts',
+			array(
+				'methods'             => \WP_REST_Server::CREATABLE,
+				'callback'            => array( $this, 'upload_font' ),
+				'permission_callback' => array( $this, 'check_manage_permission' ),
+			)
+		);
+
+		register_rest_route(
+			$route_namespace,
+			'/fonts/(?P<id>[a-z0-9_\-]+)',
+			array(
+				'methods'             => \WP_REST_Server::DELETABLE,
+				'callback'            => array( $this, 'delete_font' ),
+				'permission_callback' => array( $this, 'check_manage_permission' ),
+			)
+		);
+
+		register_rest_route(
+			$route_namespace,
 			'/merge-tags/(?P<post_id>\d+)',
 			array(
 				'methods'             => \WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'merge_tags' ),
 				'permission_callback' => array( $this, 'check_preview_permission' ),
+			)
+		);
+	}
+
+	/**
+	 * Upload a .ttf or .otf font (multipart field `file`).
+	 *
+	 * @param \WP_REST_Request $request Request.
+	 *
+	 * @return \WP_REST_Response|\WP_Error
+	 */
+	public function upload_font( \WP_REST_Request $request ) {
+		$files = $request->get_file_params();
+		$file  = isset( $files['file'] ) ? $files['file'] : null;
+
+		if ( ! $file || ! empty( $file['error'] ) || empty( $file['tmp_name'] ) || ! is_uploaded_file( $file['tmp_name'] ) ) {
+			return new \WP_Error( 'aimg_font_missing', __( 'Choose a font file to upload.', 'artificial-image-generator' ), array( 'status' => 400 ) );
+		}
+
+		$id = \ArtificialImageGenerator\Rendering\Fonts::add_upload( $file['tmp_name'], (string) $file['name'] );
+
+		if ( is_wp_error( $id ) ) {
+			return $id;
+		}
+
+		$response = rest_ensure_response(
+			array(
+				'id'    => $id,
+				'fonts' => Capabilities::fonts(),
+			)
+		);
+		$response->set_status( 201 );
+
+		return $response;
+	}
+
+	/**
+	 * Delete an uploaded font.
+	 *
+	 * @param \WP_REST_Request $request Request.
+	 *
+	 * @return \WP_REST_Response|\WP_Error
+	 */
+	public function delete_font( \WP_REST_Request $request ) {
+		if ( ! \ArtificialImageGenerator\Rendering\Fonts::delete_upload( (string) $request['id'] ) ) {
+			return new \WP_Error( 'aimg_font_not_found', __( 'Only uploaded fonts can be deleted.', 'artificial-image-generator' ), array( 'status' => 404 ) );
+		}
+
+		return rest_ensure_response(
+			array(
+				'deleted' => true,
+				'fonts'   => Capabilities::fonts(),
 			)
 		);
 	}

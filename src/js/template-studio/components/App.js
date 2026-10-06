@@ -290,6 +290,7 @@ export default function App( { data, onClassic } ) {
 					data,
 					tags,
 					images,
+					fonts: state.fonts,
 				} ),
 				el(
 					'p',

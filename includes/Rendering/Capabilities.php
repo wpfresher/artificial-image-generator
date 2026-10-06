@@ -42,25 +42,12 @@ class Capabilities {
 	 * @return array
 	 */
 	public static function all() {
-		$fonts = array();
-		foreach ( Fonts::all() as $id => $font ) {
-			if ( ! is_array( $font ) || ! isset( $font[0], $font[1] ) ) {
-				continue;
-			}
-
-			$fonts[] = array(
-				'id'    => $id,
-				'label' => $font[0],
-				'url'   => self::font_url( $font[1] ),
-			);
-		}
-
 		return array(
 			'canRender'     => aimg_can_render(),
 			'features'      => self::features(),
 			'layerTypes'    => array_keys( Schema::layer_types() ),
 			'outputFormats' => Schema::output_formats(),
-			'fonts'         => $fonts,
+			'fonts'         => self::fonts(),
 			'mergeTags'     => MergeTags::names(),
 			'imageSources'  => Images::sources(),
 			'limits'        => array(
@@ -68,6 +55,32 @@ class Capabilities {
 				'maxSize'   => Schema::MAX_SIZE,
 			),
 		);
+	}
+
+	/**
+	 * Fonts for the editor: ID, label, file URL, scripts covered and whether it was uploaded.
+	 *
+	 * @return array[]
+	 */
+	public static function fonts() {
+		$uploaded = Fonts::uploaded();
+		$fonts    = array();
+
+		foreach ( Fonts::all() as $id => $font ) {
+			if ( ! is_array( $font ) || ! isset( $font[0], $font[1] ) ) {
+				continue;
+			}
+
+			$fonts[] = array(
+				'id'       => $id,
+				'label'    => $font[0],
+				'url'      => self::font_url( $font[1] ),
+				'scripts'  => Fonts::scripts( $id ),
+				'uploaded' => isset( $uploaded[ $id ] ),
+			);
+		}
+
+		return $fonts;
 	}
 
 	/**

@@ -13,6 +13,8 @@ import {
 	defaultGradient,
 } from './fields';
 
+import { FontField } from './FontField';
+
 const { createElement: el, Fragment } = wp.element;
 const { Button, PanelBody, TextareaControl } = wp.components;
 const { __ } = wp.i18n;
@@ -426,10 +428,6 @@ function OverlayFields( { layer, update, data } ) {
 }
 
 function TextFields( { layer, update, data } ) {
-	const fonts = {};
-	data.capabilities.fonts.forEach(
-		( font ) => ( fonts[ font.id ] = font.label )
-	);
 	const set = ( key, changes ) =>
 		update( { [ key ]: { ...layer[ key ], ...changes } } );
 	const tags = Object.keys( data.capabilities.mergeTags )
@@ -455,10 +453,8 @@ function TextFields( { layer, update, data } ) {
 				onChange: ( content ) => update( { content } ),
 				__nextHasNoMarginBottom: true,
 			} ),
-			el( Select, {
-				label: __( 'Font', 'artificial-image-generator' ),
+			el( FontField, {
 				value: layer.font,
-				choices: fonts,
 				onChange: ( font ) => update( { font } ),
 			} ),
 			el( ColorField, {

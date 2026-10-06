@@ -26,6 +26,7 @@ const DEFAULT_STATE = {
 	preview: { image: '', loading: false, error: '' },
 	sample: { key: 'sample', tags: null, postId: 0, images: {} },
 	history: { past: [], future: [], lastKey: '', lastTime: 0 },
+	fonts: [],
 };
 
 const withLayers = ( document, layers ) => ( { ...document, layers } );
@@ -209,6 +210,8 @@ function reducer( state = DEFAULT_STATE, action ) {
 			return { ...state, status: action.status, dirty: true };
 		case 'SELECT':
 			return { ...state, selectedId: action.id };
+		case 'SET_FONTS':
+			return { ...state, fonts: action.fonts };
 		case 'SET_SAVING':
 			return { ...state, saving: action.saving };
 		case 'SET_NOTICE':
@@ -270,6 +273,7 @@ const actions = {
 	redo: () => ( { type: 'REDO' } ),
 	select: ( id ) => ( { type: 'SELECT', id } ),
 	setSaving: ( saving ) => ( { type: 'SET_SAVING', saving } ),
+	setFonts: ( fonts ) => ( { type: 'SET_FONTS', fonts } ),
 	setNotice: ( notice ) => ( { type: 'SET_NOTICE', notice } ),
 	setPreview: ( preview ) => ( { type: 'SET_PREVIEW', preview } ),
 	setSample: ( sample ) => ( { type: 'SET_SAMPLE', sample } ),
@@ -278,6 +282,7 @@ const actions = {
 const selectors = {
 	getState: ( state ) => state,
 	getDocument: ( state ) => state.document,
+	getFonts: ( state ) => state.fonts,
 	canUndo: ( state ) => state.history.past.length > 0,
 	canRedo: ( state ) => state.history.future.length > 0,
 	getSelectedLayer: ( state ) =>

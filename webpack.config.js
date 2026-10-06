@@ -17,6 +17,10 @@ module.exports = [
             'js/media-library': './src/js/media-library.js',
             'js/template-studio': './src/js/template-studio/index.js',
         },
+        // Fonts are copied for the server and loaded only when a layer uses one; keep size hints for bundles.
+        performance: {
+            assetFilter: ( file ) => ! /\.(ttf|otf)$/.test( file ),
+        },
         output: {
             ...defaultConfig.output,
             filename: '[name].js',
