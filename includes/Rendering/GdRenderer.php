@@ -18,11 +18,12 @@ class GdRenderer {
 	 * Draw a document.
 	 *
 	 * @param array $document Document; sanitized, or built internally.
-	 * @param array $tags     Merge tag values as tag => value, e.g. array( 'title' => 'Hello' ).
+	 * @param array $tags     Merge tag values as name => value, e.g. array( 'title' => 'Hello' ).
+	 * @param int   $post_id  Post the image is for, for `{custom_field:key}` and post images.
 	 *
 	 * @return \GdImage|resource|false
 	 */
-	public static function render( $document, $tags = array() ) {
+	public static function render( $document, $tags = array(), $post_id = 0 ) {
 		if ( ! aimg_can_render() ) {
 			return false;
 		}
@@ -45,11 +46,9 @@ class GdRenderer {
 		imagealphablending( $image, true );
 		imagesavealpha( $image, true );
 
-		$canvas = new Canvas( $image, $width, $height );
-
-		foreach ( $tags as $tag => $value ) {
-			$canvas->tags[ '{' . $tag . '}' ] = (string) $value;
-		}
+		$canvas          = new Canvas( $image, $width, $height );
+		$canvas->tags    = $tags;
+		$canvas->post_id = (int) $post_id;
 
 		$background = Canvas::rgb( $document['canvas']['background'] );
 		if ( $background ) {
@@ -61,6 +60,10 @@ class GdRenderer {
 
 		foreach ( $document['layers'] as $layer ) {
 			if ( empty( $layer['visible'] ) || ! isset( $types[ $layer['type'] ] ) ) {
+				continue;
+			}
+
+			if ( ! empty( $layer['showIf'] ) && '' === trim( $canvas->merge( '{' . $layer['showIf'] . '}' ) ) ) {
 				continue;
 			}
 

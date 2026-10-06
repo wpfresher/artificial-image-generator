@@ -578,6 +578,7 @@ export function AIMGModal( {
 				mode: 'template',
 				template_id: selectedId,
 				title: ( titleText || postTitle || '' ).trim(),
+				post_id: postContext ? postContext.postId : 0,
 			} );
 		} else {
 			const trimmed = prompt.trim();

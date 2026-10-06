@@ -69,7 +69,9 @@ for asset-only rebuilds during development use `npx wp-scripts build --webpack-s
 | `Templates\Repository` | `includes/Templates/Repository.php` | v2 document in `_aimg_template_data`; falls back to `Migration::from_template()` (never writes on read) |
 | `Templates\Migration` | `includes/Templates/Migration.php` | Builds v2 documents from 1.x meta (`from_template`) or render args (`from_render_args`, the bridge `aimg_generate_thumbnail()` uses) |
 | `Rendering\GdRenderer` | `includes/Rendering/GdRenderer.php` | Draws a document layer by layer; `save()` writes PNG/JPEG/WebP into uploads |
-| `Rendering\Layers\*` | `includes/Rendering/Layers/` | One class per layer type (`sanitize()` + `draw()`): `Background`, `Image`, `Overlay`, `Text` |
+| `Rendering\Layers\*` | `includes/Rendering/Layers/` | One class per layer type (`sanitize()` + `draw()`): `Background`, `Image`, `Overlay`, `Text`, `Shape`, `Pattern`, `Frame` |
+| `Rendering\Paint` / `Rendering\Images` | `includes/Rendering/` | Gradients, supersampled shapes, masks, opacity, rotated compositing, adjustments / image sources (incl. post, logo, local avatar), loading and fitting |
+| `Templates\MergeTags` | `includes/Templates/MergeTags.php` | `{title}` … `{custom_field:key}` (protected meta excluded), one-pass replace, `showIf` conditions; filter `aimg_merge_tags` |
 | `Rendering\TextLayout` | `includes/Rendering/TextLayout.php` | `wrap()` (the 1.x title wrapping) and `fit()` (shrink to a box, max lines, ellipsis) |
 
 ### Data Model

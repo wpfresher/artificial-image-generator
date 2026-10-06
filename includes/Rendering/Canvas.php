@@ -2,6 +2,8 @@
 
 namespace ArtificialImageGenerator\Rendering;
 
+use ArtificialImageGenerator\Templates\MergeTags;
+
 defined( 'ABSPATH' ) || exit; // Exit if accessed directly.
 
 /**
@@ -41,11 +43,18 @@ class Canvas {
 	public $background = array( 0, 0, 0 );
 
 	/**
-	 * Merge tag values, as '{tag}' => value.
+	 * Merge tag values, as name => value.
 	 *
 	 * @var array
 	 */
 	public $tags = array();
+
+	/**
+	 * Post being rendered for, or 0.
+	 *
+	 * @var int
+	 */
+	public $post_id = 0;
 
 	/**
 	 * Constructor.
@@ -83,6 +92,6 @@ class Canvas {
 	 * @return string
 	 */
 	public function merge( $text ) {
-		return strtr( (string) $text, $this->tags );
+		return MergeTags::replace( $text, $this->tags, $this->post_id );
 	}
 }

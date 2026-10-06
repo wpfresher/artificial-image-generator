@@ -27,13 +27,19 @@ class TextLayout {
 	 * @param string $text      Text.
 	 * @param float  $size      Font size.
 	 * @param string $font_path TrueType font path.
+	 * @param float  $spacing   Extra pixels between letters.
 	 *
-	 * @return int
+	 * @return float
 	 */
-	public static function measure( $text, $size, $font_path ) {
-		$bbox = imagettfbbox( $size, 0, $font_path, $text );
+	public static function measure( $text, $size, $font_path, $spacing = 0.0 ) {
+		$bbox  = imagettfbbox( $size, 0, $font_path, $text );
+		$width = $bbox ? $bbox[2] - $bbox[0] : 0;
 
-		return $bbox ? $bbox[2] - $bbox[0] : 0;
+		if ( $spacing ) {
+			$width += $spacing * max( 0, mb_strlen( $text ) - 1 );
+		}
+
+		return $width;
 	}
 
 	/**
@@ -45,16 +51,17 @@ class TextLayout {
 	 * @param string $font_path TrueType font path.
 	 * @param int    $max_width Maximum line width in pixels.
 	 * @param float  $min_size  Smallest size to shrink to. Defaults to MIN_WRAP_SIZE.
+	 * @param float  $spacing   Extra pixels between letters.
 	 *
 	 * @return array { @type float $font_size, @type string[] $lines }
 	 */
-	public static function wrap( $text, $font_size, $font_path, $max_width, $min_size = null ) {
+	public static function wrap( $text, $font_size, $font_path, $max_width, $min_size = null, $spacing = 0.0 ) {
 		$words    = preg_split( '/\s+/u', trim( $text ) );
 		$min_size = min( $font_size, null === $min_size ? self::MIN_WRAP_SIZE : $min_size );
 
 		$widest = 0;
 		foreach ( $words as $word ) {
-			$widest = max( $widest, self::measure( $word, $font_size, $font_path ) );
+			$widest = max( $widest, self::measure( $word, $font_size, $font_path, $spacing ) );
 		}
 
 		if ( $widest > $max_width ) {
@@ -63,7 +70,7 @@ class TextLayout {
 
 		return array(
 			'font_size' => $font_size,
-			'lines'     => self::break_lines( $words, $font_size, $font_path, $max_width ),
+			'lines'     => self::break_lines( $words, $font_size, $font_path, $max_width, $spacing ),
 		);
 	}
 
@@ -82,6 +89,7 @@ class TextLayout {
 	 *     @type int   $height      Box height.
 	 *     @type float $line_height Line height as a multiple of the size.
 	 *     @type int   $max_lines   Most lines, 0 for no limit.
+	 *     @type float $spacing     Extra pixels between letters. Optional.
 	 * }
 	 *
 	 * @return array { @type float $font_size, @type string[] $lines }
@@ -90,9 +98,10 @@ class TextLayout {
 		$words = preg_split( '/\s+/u', trim( $text ) );
 		$size  = (float) $args['max_size'];
 		$min   = min( $size, (float) $args['min_size'] );
+		$gap   = isset( $args['spacing'] ) ? (float) $args['spacing'] : 0.0;
 
-		$try = function ( $size ) use ( $words, $font_path, $args ) {
-			$lines = self::break_lines( $words, $size, $font_path, $args['width'] );
+		$try = function ( $size ) use ( $words, $font_path, $args, $gap ) {
+			$lines = self::break_lines( $words, $size, $font_path, $args['width'], $gap );
 			$fits  = count( $lines ) * $size * $args['line_height'] <= $args['height']
 				&& ( ! $args['max_lines'] || count( $lines ) <= $args['max_lines'] );
 
@@ -130,7 +139,7 @@ class TextLayout {
 			$lines = array_slice( $lines, 0, $max_lines );
 			$last  = array_pop( $lines );
 
-			while ( '' !== $last && self::measure( $last . '…', $size, $font_path ) > $args['width'] ) {
+			while ( '' !== $last && self::measure( $last . '…', $size, $font_path, $gap ) > $args['width'] ) {
 				$last = rtrim( mb_substr( $last, 0, -1 ) );
 			}
 
@@ -150,20 +159,21 @@ class TextLayout {
 	 * @param float    $font_size Font size.
 	 * @param string   $font_path TrueType font path.
 	 * @param int      $max_width Maximum line width.
+	 * @param float    $spacing   Extra pixels between letters.
 	 *
 	 * @return string[]
 	 */
-	private static function break_lines( $words, $font_size, $font_path, $max_width ) {
+	private static function break_lines( $words, $font_size, $font_path, $max_width, $spacing = 0.0 ) {
 		$pieces = array();
 		foreach ( $words as $word ) {
-			if ( self::measure( $word, $font_size, $font_path ) <= $max_width ) {
+			if ( self::measure( $word, $font_size, $font_path, $spacing ) <= $max_width ) {
 				$pieces[] = $word;
 				continue;
 			}
 
 			$chunk = '';
 			foreach ( preg_split( '//u', $word, -1, PREG_SPLIT_NO_EMPTY ) as $char ) {
-				if ( '' !== $chunk && self::measure( $chunk . $char, $font_size, $font_path ) > $max_width ) {
+				if ( '' !== $chunk && self::measure( $chunk . $char, $font_size, $font_path, $spacing ) > $max_width ) {
 					$pieces[] = $chunk;
 					$chunk    = '';
 				}
@@ -177,7 +187,7 @@ class TextLayout {
 		foreach ( $pieces as $piece ) {
 			$new_line = '' !== $line ? $line . ' ' . $piece : $piece;
 
-			if ( '' !== $line && self::measure( $new_line, $font_size, $font_path ) > $max_width ) {
+			if ( '' !== $line && self::measure( $new_line, $font_size, $font_path, $spacing ) > $max_width ) {
 				$lines[] = $line;
 				$line    = $piece;
 			} else {

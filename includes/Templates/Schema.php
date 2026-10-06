@@ -50,6 +50,9 @@ class Schema {
 			'image'      => Layers\Image::class,
 			'overlay'    => Layers\Overlay::class,
 			'text'       => Layers\Text::class,
+			'shape'      => Layers\Shape::class,
+			'pattern'    => Layers\Pattern::class,
+			'frame'      => Layers\Frame::class,
 		);
 
 		/**
@@ -135,10 +138,12 @@ class Schema {
 
 			$clean['layers'][] = array_merge(
 				array(
-					'id'      => $id,
-					'type'    => $layer['type'],
-					'name'    => isset( $layer['name'] ) ? sanitize_text_field( (string) $layer['name'] ) : '',
-					'visible' => ! isset( $layer['visible'] ) || (bool) $layer['visible'],
+					'id'       => $id,
+					'type'     => $layer['type'],
+					'name'     => isset( $layer['name'] ) ? sanitize_text_field( (string) $layer['name'] ) : '',
+					'visible'  => ! isset( $layer['visible'] ) || (bool) $layer['visible'],
+					'rotation' => self::number( isset( $layer['rotation'] ) ? $layer['rotation'] : 0, -360, 360 ),
+					'showIf'   => MergeTags::sanitize_condition( isset( $layer['showIf'] ) ? $layer['showIf'] : '' ),
 				),
 				call_user_func( array( $types[ $layer['type'] ], 'sanitize' ), $layer, $clean['canvas'] )
 			);
@@ -198,6 +203,78 @@ class Schema {
 		}
 
 		return '' !== $default_value ? $default_value : reset( $allowed );
+	}
+
+	/**
+	 * A linear or radial gradient: { kind, angle, cx, cy, stops: [ { color, pos, opacity } ] }.
+	 *
+	 * @param mixed $gradient Gradient.
+	 *
+	 * @return array
+	 */
+	public static function gradient( $gradient ) {
+		$gradient = is_array( $gradient ) ? $gradient : array();
+		$stops    = array();
+
+		foreach ( array_slice( isset( $gradient['stops'] ) && is_array( $gradient['stops'] ) ? $gradient['stops'] : array(), 0, 8 ) as $stop ) {
+			$color = is_array( $stop ) ? self::color( isset( $stop['color'] ) ? $stop['color'] : '' ) : '';
+
+			if ( $color ) {
+				$stops[] = array(
+					'color'   => $color,
+					'pos'     => self::number( isset( $stop['pos'] ) ? $stop['pos'] : 0, 0, 1 ),
+					'opacity' => self::number( isset( $stop['opacity'] ) ? $stop['opacity'] : 1, 0, 1 ),
+				);
+			}
+		}
+
+		if ( count( $stops ) < 2 ) {
+			$stops = array(
+				array(
+					'color'   => '#000000',
+					'pos'     => 0.0,
+					'opacity' => 1.0,
+				),
+				array(
+					'color'   => '#ffffff',
+					'pos'     => 1.0,
+					'opacity' => 1.0,
+				),
+			);
+		}
+
+		return array(
+			'kind'  => self::choice( isset( $gradient['kind'] ) ? $gradient['kind'] : '', array( 'linear', 'radial' ) ),
+			'angle' => self::number( isset( $gradient['angle'] ) ? $gradient['angle'] : 180, -360, 360 ),
+			'cx'    => self::number( isset( $gradient['cx'] ) ? $gradient['cx'] : 0.5, 0, 1 ),
+			'cy'    => self::number( isset( $gradient['cy'] ) ? $gradient['cy'] : 0.5, 0, 1 ),
+			'stops' => $stops,
+		);
+	}
+
+	/**
+	 * Image adjustments: { brightness, contrast (-100–100), blur (0–10), grayscale, duotone }.
+	 *
+	 * @param mixed $adjust Adjustments.
+	 *
+	 * @return array
+	 */
+	public static function adjustments( $adjust ) {
+		$adjust  = is_array( $adjust ) ? $adjust : array();
+		$duotone = isset( $adjust['duotone'] ) && is_array( $adjust['duotone'] ) ? $adjust['duotone'] : array();
+		$dark    = self::color( isset( $duotone['dark'] ) ? $duotone['dark'] : '' );
+		$light   = self::color( isset( $duotone['light'] ) ? $duotone['light'] : '' );
+
+		return array(
+			'brightness' => self::number( isset( $adjust['brightness'] ) ? $adjust['brightness'] : 0, -100, 100 ),
+			'contrast'   => self::number( isset( $adjust['contrast'] ) ? $adjust['contrast'] : 0, -100, 100 ),
+			'blur'       => (int) self::number( isset( $adjust['blur'] ) ? $adjust['blur'] : 0, 0, 10 ),
+			'grayscale'  => ! empty( $adjust['grayscale'] ),
+			'duotone'    => $dark && $light ? array(
+				'dark'  => $dark,
+				'light' => $light,
+			) : null,
+		);
 	}
 
 	/**
