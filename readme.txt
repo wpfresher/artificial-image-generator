@@ -272,6 +272,9 @@ AI image generation calls a third-party API (**OpenAI** by default, `https://api
 * New: Default AI image shape and quality settings.
 * New: Developer hooks `aimg_providers`, `aimg_generation_methods`, `aimg_pre_generate_for_post`, `aimg_template_for_post`, `aimg_style_presets`, `aimg_post_prompt`, `aimg_auto_generate_statuses`, `aimg_use_action_scheduler`, `aimg_kick_queue`, and REST endpoints `/featured`, `/status`, `/prompt` and `/templates/{id}/preview`.
 * Enhance: The template list is loaded once per modal instead of on every tab switch, and the prompt box is disabled until an API key is set.
+* Fix: Titles containing `&` or quotes are no longer shown as HTML codes in the Title text field, or drawn that way on images generated from the modal.
+* Fix: The Settings page now confirms when your settings are saved.
+
 = 1.5.4 ( 06th October 2026 ) =
 * New: **Who Can Generate AI Images** setting — allow AI images for Authors and above (default), Editors and above, or Administrators only. Template images stay available to everyone who can upload files.
 * New: **Hourly Limit per User** setting for AI images (default 20, 0 for no limit) to keep API costs under control.

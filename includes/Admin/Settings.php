@@ -64,6 +64,7 @@ class Settings {
 				<abbr title="<?php esc_attr_e( 'Image Generator', 'artificial-image-generator' ); ?>" class="dashicons dashicons-format-image"></abbr>
 			</h1>
 			<p><?php esc_html_e( 'Configure the settings for the Image Generator plugin.', 'artificial-image-generator' ); ?></p>
+			<?php settings_errors(); ?>
 			<form method="post" action="<?php echo esc_url( admin_url( 'options.php' ) ); ?>">
 				<?php
 				settings_fields( 'aimg' );

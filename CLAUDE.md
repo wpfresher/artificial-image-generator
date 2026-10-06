@@ -142,6 +142,7 @@ Form submissions use the `admin_post_aimg_update_template` action with nonce ver
 - `aimg_uploads_path($path)` — rewrite an uploads path into the separator style WordPress expects
 - `aimg_delete_upload_by_url($url)` — delete a file inside uploads, given its URL
 - `aimg_get_plain_title($post_id)` — post title without entities; use it for anything drawn or used as alt text
+- `aimg_plain_text($text)` — the same for any text (REST `title` params use it as their sanitizer)
 - `aimg_wrap_title(...)` — title line wrapping; shrinks the font only when a single word is too wide
 - `aimg_can_render()` — GD + FreeType available; the renderer returns `false` without them
 - `aimg_user_can_use_ai()` / `aimg_consume_ai_quota()` — AI access setting (`ai_access`) and per-user

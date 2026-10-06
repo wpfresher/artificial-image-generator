@@ -97,4 +97,18 @@ class Test_Auto_Generation extends AIMG_TestCase {
 
 		$this->assertSame( 'Tom & Jerry\'s "Best"', aimg_get_plain_title( $post_id ) );
 	}
+
+	public function test_title_entities_sent_to_the_rest_api_are_decoded() {
+		$response = $this->rest(
+			'POST',
+			'/aimg/v1/generate',
+			array(
+				'template_id' => $this->create_template(),
+				'title'       => 'Tom &amp; Jerry&#039;s',
+			)
+		);
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( 'Tom & Jerry\'s', get_post_meta( $response->get_data()['id'], '_wp_attachment_image_alt', true ) );
+	}
 }

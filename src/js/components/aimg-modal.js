@@ -28,6 +28,7 @@ const {
 const { __, sprintf } = wp.i18n;
 const apiFetch = wp.apiFetch;
 const { useSelect } = wp.data;
+const { decodeEntities } = wp.htmlEntities;
 
 // ── Sparkle / wand icon ───────────────────────────────────────────────────────
 export const AIG_ICON = el(
@@ -112,7 +113,9 @@ function usePostContext() {
 		}
 		return {
 			postId: editor.getCurrentPostId(),
-			title: editor.getEditedPostAttribute( 'title' ) || '',
+			title: decodeEntities(
+				editor.getEditedPostAttribute( 'title' ) || ''
+			),
 			excerpt: editor.getEditedPostAttribute( 'excerpt' ) || '',
 		};
 	}, [] );

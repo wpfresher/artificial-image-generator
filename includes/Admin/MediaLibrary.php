@@ -56,6 +56,7 @@ class MediaLibrary {
 				'wp-api-fetch',
 				'wp-i18n',
 				'wp-data',
+				'wp-html-entities',
 			),
 			AIMG_VERSION,
 			true

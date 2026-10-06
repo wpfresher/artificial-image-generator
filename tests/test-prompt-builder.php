@@ -45,7 +45,7 @@ class Test_Prompt_Builder extends AIMG_TestCase {
 			)
 		);
 
-		$this->assertSame( 'Space ' . PromptBuilder::get_styles()['watercolor'][1] . ' ' . PromptBuilder::get_default_negative(), $prompt );
+		$this->assertSame( 'Space. ' . PromptBuilder::get_styles()['watercolor'][1] . ' ' . PromptBuilder::get_default_negative(), $prompt );
 
 		$this->set_settings( array( 'ai_negative_prompt' => '' ) );
 		$this->assertSame(
@@ -98,10 +98,17 @@ class Test_Prompt_Builder extends AIMG_TestCase {
 			array(
 				'post_title'   => 'Bare',
 				'post_content' => '',
+				'post_excerpt' => '',
 			)
 		);
 		$this->set_settings( array( 'ai_negative_prompt' => '' ) );
 
-		$this->assertStringEndsNotWith( ':', PromptBuilder::build( $post_id, array( 'style' => 'none' ) ) );
+		$this->assertSame( 'A featured image for an article titled "Bare".', PromptBuilder::build( $post_id, array( 'style' => 'none' ) ) );
+
+		$this->set_settings( array( 'ai_negative_prompt' => PromptBuilder::get_default_negative() ) );
+		$this->assertSame(
+			'A featured image for an article titled "Bare". ' . PromptBuilder::get_default_negative(),
+			PromptBuilder::build( $post_id, array( 'style' => 'none' ) )
+		);
 	}
 }

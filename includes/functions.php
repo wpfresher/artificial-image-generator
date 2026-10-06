@@ -438,9 +438,21 @@ function aimg_generate_thumbnail( $args = array() ) {
  * @return string
  */
 function aimg_get_plain_title( $post_id ) {
-	$title = html_entity_decode( (string) get_post_field( 'post_title', $post_id ), ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+	return aimg_plain_text( get_post_field( 'post_title', $post_id ) );
+}
 
-	return trim( wp_strip_all_tags( $title ) );
+/**
+ * Text without HTML entities or tags, for drawing onto an image and for alt text.
+ *
+ * @param string $text Text, possibly entity-encoded.
+ *
+ * @since 1.6.0
+ * @return string
+ */
+function aimg_plain_text( $text ) {
+	$text = html_entity_decode( (string) $text, ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+
+	return trim( wp_strip_all_tags( $text ) );
 }
 
 /**

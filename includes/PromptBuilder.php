@@ -15,9 +15,15 @@ class PromptBuilder {
 	/**
 	 * Default prompt template.
 	 *
+	 * @param bool $with_excerpt Whether to include the `{excerpt}` tag.
+	 *
 	 * @return string
 	 */
-	public static function get_default_template() {
+	public static function get_default_template( $with_excerpt = true ) {
+		if ( ! $with_excerpt ) {
+			return __( 'A featured image for an article titled "{title}".', 'artificial-image-generator' );
+		}
+
 		return __( 'A featured image for an article titled "{title}". The article is about: {excerpt}', 'artificial-image-generator' );
 	}
 
@@ -113,9 +119,9 @@ class PromptBuilder {
 	 */
 	public static function build( $post_id, $args = array() ) {
 		$template = isset( $args['template'] ) ? (string) $args['template'] : (string) aimg_get_settings( 'ai_prompt_template', '' );
-		$template = '' !== trim( $template ) ? $template : self::get_default_template();
 		$style    = isset( $args['style'] ) ? (string) $args['style'] : (string) aimg_get_settings( 'ai_style', 'photo' );
 		$values   = self::get_tag_values( $post_id, isset( $args['values'] ) ? (array) $args['values'] : array() );
+		$template = '' !== trim( $template ) ? $template : self::get_default_template( '' !== $values['excerpt'] );
 
 		$prompt = preg_replace_callback(
 			'/\{(custom_field:([A-Za-z0-9_\-]+)|[a-z_]+)\}/',
@@ -143,7 +149,13 @@ class PromptBuilder {
 			$parts[] = trim( $negative );
 		}
 
-		$prompt = trim( preg_replace( '/\s+/', ' ', implode( ' ', array_filter( $parts ) ) ) );
+		$parts = array_values( array_filter( $parts ) );
+
+		if ( count( $parts ) > 1 && ! preg_match( '/[.!?…"\']$/u', $parts[0] ) ) {
+			$parts[0] .= '.';
+		}
+
+		$prompt = trim( preg_replace( '/\s+/', ' ', implode( ' ', $parts ) ) );
 
 		/**
 		 * Filter the prompt built for a post.

@@ -56,7 +56,7 @@ class RestAPI {
 					'title'       => array(
 						'type'              => 'string',
 						'required'          => false,
-						'sanitize_callback' => 'sanitize_text_field',
+						'sanitize_callback' => 'aimg_plain_text',
 					),
 					'size'        => array(
 						'type'     => 'string',
@@ -110,7 +110,7 @@ class RestAPI {
 					'title' => array(
 						'type'              => 'string',
 						'required'          => false,
-						'sanitize_callback' => 'sanitize_text_field',
+						'sanitize_callback' => 'aimg_plain_text',
 					),
 				),
 			)
@@ -132,7 +132,7 @@ class RestAPI {
 					'title'   => array(
 						'type'              => 'string',
 						'required'          => false,
-						'sanitize_callback' => 'sanitize_text_field',
+						'sanitize_callback' => 'aimg_plain_text',
 					),
 					'excerpt' => array(
 						'type'              => 'string',
