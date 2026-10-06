@@ -28,6 +28,13 @@ function aimg_uninstall_site() {
 	delete_option( 'aimg_flash_notices' );
 	$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '\_transient\_aimg\_flash\_notices\_%' OR option_name LIKE '\_transient\_timeout\_aimg\_flash\_notices\_%' OR option_name LIKE '\_transient\_aimg\_ai\_usage\_%' OR option_name LIKE '\_transient\_timeout\_aimg\_ai\_usage\_%' OR option_name LIKE '\_transient\_aimg\_kick\_%' OR option_name LIKE '\_transient\_timeout\_aimg\_kick\_%'" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 
+	// Pending background jobs would otherwise fire with no handler.
+	wp_unschedule_hook( 'aimg_generate_featured_image' );
+	if ( function_exists( 'as_unschedule_all_actions' ) ) {
+		as_unschedule_all_actions( 'aimg_generate_featured_image' );
+	}
+	delete_post_meta_by_key( '_aimg_generation_job' );
+
 	$settings    = get_option( 'aimg_settings', array() );
 	$remove_data = is_array( $settings ) && isset( $settings['remove_data'] ) ? $settings['remove_data'] : 'no';
 
