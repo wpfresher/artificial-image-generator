@@ -4,6 +4,8 @@
 import { STORE } from '../store';
 import { LABELS } from '../layers';
 import { BOXED } from '../canvas/draw';
+import { TYPE_FIELDS } from './LayerFields';
+import { ShowIfField } from './fields';
 
 const { createElement: el, Fragment } = wp.element;
 const { PanelBody, TextControl, SelectControl, ToggleControl, RangeControl } =
@@ -115,7 +117,7 @@ function CanvasSettings( { data } ) {
 	);
 }
 
-function LayerSettings( { layer } ) {
+function LayerSettings( { layer, data } ) {
 	const { updateLayer } = useDispatch( STORE );
 	const update = ( changes ) => updateLayer( layer.id, changes );
 	const box = layer.box;
@@ -141,18 +143,14 @@ function LayerSettings( { layer } ) {
 				onChange: ( visible ) => update( { visible } ),
 				__nextHasNoMarginBottom: true,
 			} ),
-			layer.type === 'text' &&
-				el( wp.components.TextareaControl, {
-					label: __( 'Text', 'artificial-image-generator' ),
-					help: __(
-						'Tags such as {title} are replaced for each post.',
-						'artificial-image-generator'
-					),
-					value: layer.content,
-					onChange: ( content ) => update( { content } ),
-					__nextHasNoMarginBottom: true,
-				} )
+			el( ShowIfField, {
+				value: layer.showIf,
+				mergeTags: data.capabilities.mergeTags,
+				onChange: ( showIf ) => update( { showIf } ),
+			} )
 		),
+		TYPE_FIELDS[ layer.type ] &&
+			el( TYPE_FIELDS[ layer.type ], { layer, update, data } ),
 		BOXED.includes( layer.type ) &&
 			box &&
 			el(
