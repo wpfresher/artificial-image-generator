@@ -18,8 +18,14 @@ export default function LayersPanel( { data } ) {
 			canvas: state.document.canvas,
 		};
 	}, [] );
-	const { select, updateLayer, moveLayer, removeLayer, addLayer } =
-		useDispatch( STORE );
+	const {
+		select,
+		updateLayer,
+		moveLayer,
+		removeLayer,
+		addLayer,
+		duplicateLayer,
+	} = useDispatch( STORE );
 
 	const types = data.capabilities.layerTypes.filter(
 		( type ) => LABELS[ type ]
@@ -89,6 +95,14 @@ export default function LayersPanel( { data } ) {
 							updateLayer( layer.id, {
 								visible: ! layer.visible,
 							} ),
+					} ),
+					el( Button, {
+						icon: 'admin-page',
+						label: __(
+							'Duplicate (Ctrl+D)',
+							'artificial-image-generator'
+						),
+						onClick: () => duplicateLayer( layer.id ),
 					} ),
 					el( Button, {
 						icon: 'arrow-up-alt2',

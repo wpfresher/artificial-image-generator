@@ -1,3 +1,8 @@
+// Keep the page width steady as the inspector grows, so the canvas holds still.
+html:has(#aimg-template-studio:not([hidden])) {
+	scrollbar-gutter: stable;
+}
+
 // Template Studio: toolbar on top, then layers | canvas | inspector.
 
 .aimg-studio {
@@ -151,7 +156,8 @@
 
 .aimg-studio__side {
 	display: flex;
-	max-height: calc(100vh - 140px);
+	height: calc(100vh - 150px);
+	min-height: 400px;
 	overflow: auto;
 	flex-direction: column;
 	gap: 12px;

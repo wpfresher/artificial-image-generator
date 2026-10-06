@@ -48,6 +48,84 @@ export default function StudioCanvas( {
 	const [ width, setWidth ] = useState( 0 );
 	const [ version, setVersion ] = useState( 0 );
 	const refresh = () => setVersion( ( v ) => v + 1 );
+	const guides = useRef( [] );
+
+	const clearGuides = () => {
+		guides.current.forEach( ( line ) => line.destroy() );
+		guides.current = [];
+		if ( ui.current ) {
+			ui.current.batchDraw();
+		}
+	};
+
+	// Snap the dragged layer's edges and center to the canvas and other layers.
+	const snap = ( node, layer, current, scale, disabled ) => {
+		clearGuides();
+		if ( disabled ) {
+			return;
+		}
+		const { width: cw, height: ch } = current.canvas;
+		const threshold = 6 / scale;
+		const targets = { x: [ 0, cw / 2, cw ], y: [ 0, ch / 2, ch ] };
+		current.layers.forEach( ( other ) => {
+			if ( other.id !== layer.id && other.visible && other.box ) {
+				const ob = other.box;
+				targets.x.push( ob.x, ob.x + ob.w / 2, ob.x + ob.w );
+				targets.y.push( ob.y, ob.y + ob.h / 2, ob.y + ob.h );
+			}
+		} );
+
+		const { w, h } = layer.box;
+		const axis = ( center, half, list ) => {
+			let best = null;
+			[ -half, 0, half ].forEach( ( offset ) =>
+				list.forEach( ( target ) => {
+					const delta = target - ( center + offset );
+					if (
+						Math.abs( delta ) <= threshold &&
+						( ! best || Math.abs( delta ) < Math.abs( best.delta ) )
+					) {
+						best = { delta, target };
+					}
+				} )
+			);
+			return best;
+		};
+
+		const sx = axis( node.x(), w / 2, targets.x );
+		const sy = axis( node.y(), h / 2, targets.y );
+		if ( sx ) {
+			node.x( node.x() + sx.delta );
+		}
+		if ( sy ) {
+			node.y( node.y() + sy.delta );
+		}
+
+		const style = {
+			stroke: '#e0457b',
+			strokeWidth: 1 / scale,
+			dash: [ 4 / scale, 4 / scale ],
+			listening: false,
+		};
+		if ( sx ) {
+			guides.current.push(
+				new Konva.Line( {
+					points: [ sx.target, 0, sx.target, ch ],
+					...style,
+				} )
+			);
+		}
+		if ( sy ) {
+			guides.current.push(
+				new Konva.Line( {
+					points: [ 0, sy.target, cw, sy.target ],
+					...style,
+				} )
+			);
+		}
+		guides.current.forEach( ( line ) => ui.current.add( line ) );
+		ui.current.batchDraw();
+	};
 
 	useEffect( () => {
 		stage.current = new Konva.Stage( {
@@ -203,15 +281,19 @@ export default function StudioCanvas( {
 			if ( boxed && layer.id === selectedId ) {
 				selectedNode = node;
 				node.draggable( true );
-				node.on( 'dragend', () =>
+				node.on( 'dragmove', ( event ) =>
+					snap( node, layer, doc, scale, event.evt.altKey )
+				);
+				node.on( 'dragend', () => {
+					clearGuides();
 					onChangeLayer( layer.id, {
 						box: {
 							...layer.box,
 							x: Math.round( node.x() - layer.box.w / 2 ),
 							y: Math.round( node.y() - layer.box.h / 2 ),
 						},
-					} )
-				);
+					} );
+				} );
 				node.on( 'transformend', () => {
 					const w = Math.max(
 						1,

@@ -7,6 +7,7 @@ import StudioCanvas from '../canvas/StudioCanvas';
 import LayersPanel from './LayersPanel';
 import Inspector from './Inspector';
 import PreviewData from './PreviewData';
+import useShortcuts from '../shortcuts';
 
 const { createElement: el, useEffect, useMemo } = wp.element;
 const { Button, Notice, SelectControl, Spinner, TextControl } = wp.components;
@@ -15,7 +16,14 @@ const { __, sprintf } = wp.i18n;
 
 function Toolbar( { data, onSave, onPreview, onClassic } ) {
 	const state = useSelect( ( select ) => select( STORE ).getState(), [] );
-	const { setTitle, setStatus } = useDispatch( STORE );
+	const { setTitle, setStatus, undo, redo } = useDispatch( STORE );
+	const { canUndo, canRedo } = useSelect(
+		( select ) => ( {
+			canUndo: select( STORE ).canUndo(),
+			canRedo: select( STORE ).canRedo(),
+		} ),
+		[]
+	);
 
 	return el(
 		'div',
@@ -55,6 +63,18 @@ function Toolbar( { data, onSave, onPreview, onClassic } ) {
 			__nextHasNoMarginBottom: true,
 		} ),
 		el( 'span', { className: 'aimg-studio__spacer' } ),
+		el( Button, {
+			icon: 'undo',
+			label: __( 'Undo (Ctrl+Z)', 'artificial-image-generator' ),
+			disabled: ! canUndo,
+			onClick: undo,
+		} ),
+		el( Button, {
+			icon: 'redo',
+			label: __( 'Redo (Ctrl+Shift+Z)', 'artificial-image-generator' ),
+			disabled: ! canRedo,
+			onClick: redo,
+		} ),
 		onClassic &&
 			el(
 				Button,
@@ -196,6 +216,12 @@ export default function App( { data, onClassic } ) {
 			)
 			.finally( () => setSaving( false ) );
 	};
+
+	useShortcuts( () => {
+		if ( ! state.saving && state.title.trim() ) {
+			save();
+		}
+	} );
 
 	const preview = () => {
 		setPreview( { loading: true, error: '' } );
