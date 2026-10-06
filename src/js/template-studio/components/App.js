@@ -6,6 +6,7 @@ import { previewDocument, saveTemplate } from '../api';
 import StudioCanvas from '../canvas/StudioCanvas';
 import LayersPanel from './LayersPanel';
 import Inspector from './Inspector';
+import PreviewData from './PreviewData';
 
 const { createElement: el, useEffect, useMemo } = wp.element;
 const { Button, Notice, SelectControl, Spinner, TextControl } = wp.components;
@@ -132,7 +133,14 @@ export default function App( { data, onClassic } ) {
 	const { load, select, updateLayer, setSaving, setNotice, setPreview } =
 		useDispatch( STORE );
 
-	const tags = useMemo( () => data.sampleTags, [ data ] );
+	const tags = useMemo(
+		() => state.sample.tags || data.sampleTags,
+		[ state.sample.tags, data.sampleTags ]
+	);
+	const images = useMemo(
+		() => ( { ...data.dynamicImages, ...state.sample.images } ),
+		[ state.sample.images, data.dynamicImages ]
+	);
 
 	useEffect( () => {
 		const warn = ( event ) => {
@@ -191,7 +199,7 @@ export default function App( { data, onClassic } ) {
 
 	const preview = () => {
 		setPreview( { loading: true, error: '' } );
-		previewDocument( state.document, tags.title )
+		previewDocument( state.document, tags.title, state.sample.postId )
 			.then( ( result ) =>
 				setPreview( {
 					image: result.image,
@@ -234,11 +242,20 @@ export default function App( { data, onClassic } ) {
 			),
 		el(
 			'div',
+			{ className: 'aimg-studio__narrow' },
+			__(
+				'The Template Studio needs a wider window. Use a larger screen, or the classic form.',
+				'artificial-image-generator'
+			)
+		),
+		el(
+			'div',
 			{ className: 'aimg-studio__body' },
 			el( LayersPanel, { data } ),
 			el(
 				'div',
 				{ className: 'aimg-studio__canvas' },
+				el( PreviewData, { data } ),
 				el( StudioCanvas, {
 					doc: state.document,
 					selectedId: state.selectedId,
@@ -246,6 +263,7 @@ export default function App( { data, onClassic } ) {
 					onChangeLayer: updateLayer,
 					data,
 					tags,
+					images,
 				} ),
 				el(
 					'p',

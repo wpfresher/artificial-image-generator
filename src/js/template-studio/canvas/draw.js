@@ -4,7 +4,7 @@
  * Boxed layers (image, text, shape) are groups placed at their box center, so
  * rotation and the transformer work around the center like the server.
  */
-import Konva from 'konva';
+import Konva, { Filters } from './konva';
 import { PX_PER_SIZE, fit, fontString, measure, wrap } from './text-layout';
 
 export const BOXED = [ 'image', 'text', 'shape' ];
@@ -168,19 +168,19 @@ function applyAdjustments( node, adjust ) {
 	const filters = [];
 	const props = {};
 	if ( adjust.brightness ) {
-		filters.push( Konva.Filters.Brighten );
+		filters.push( Filters.Brighten );
 		props.brightness = adjust.brightness / 100;
 	}
 	if ( adjust.contrast ) {
-		filters.push( Konva.Filters.Contrast );
+		filters.push( Filters.Contrast );
 		props.contrast = adjust.contrast;
 	}
 	if ( adjust.blur ) {
-		filters.push( Konva.Filters.Blur );
+		filters.push( Filters.Blur );
 		props.blurRadius = adjust.blur * 2;
 	}
 	if ( adjust.grayscale && ! adjust.duotone ) {
-		filters.push( Konva.Filters.Grayscale );
+		filters.push( Filters.Grayscale );
 	}
 	if ( adjust.duotone ) {
 		filters.push(

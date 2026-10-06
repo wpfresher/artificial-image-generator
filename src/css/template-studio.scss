@@ -242,3 +242,42 @@
 	border-bottom: 1px solid #f0f0f1;
 }
 
+
+.aimg-studio__preview-data {
+	margin-bottom: 12px;
+
+	.components-base-control {
+		margin-bottom: 8px;
+	}
+}
+
+.aimg-studio__post-search ul {
+	max-height: 180px;
+	margin: 6px 0 0;
+	overflow: auto;
+	background: #fff;
+	border: 1px solid #dcdcde;
+
+	li {
+		margin: 0;
+		padding: 2px 8px;
+	}
+}
+
+.aimg-studio__narrow {
+	display: none;
+	padding: 12px;
+	background: #fff;
+	border-left: 4px solid #72aee6;
+}
+
+@media (max-width: 960px) {
+
+	.aimg-studio__narrow {
+		display: block;
+	}
+
+	.aimg-studio__body {
+		display: none;
+	}
+}

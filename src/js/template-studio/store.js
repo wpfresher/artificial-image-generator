@@ -16,6 +16,7 @@ const DEFAULT_STATE = {
 	saving: false,
 	notice: null,
 	preview: { image: '', loading: false, error: '' },
+	sample: { key: 'sample', tags: null, postId: 0, images: {} },
 };
 
 const mapLayers = ( state, fn ) => ( {
@@ -97,6 +98,11 @@ function reducer( state = DEFAULT_STATE, action ) {
 			return { ...state, saving: action.saving };
 		case 'SET_NOTICE':
 			return { ...state, notice: action.notice };
+		case 'SET_SAMPLE':
+			return {
+				...state,
+				sample: { ...DEFAULT_STATE.sample, ...action.sample },
+			};
 		case 'SET_PREVIEW':
 			return {
 				...state,
@@ -120,6 +126,7 @@ const actions = {
 	setSaving: ( saving ) => ( { type: 'SET_SAVING', saving } ),
 	setNotice: ( notice ) => ( { type: 'SET_NOTICE', notice } ),
 	setPreview: ( preview ) => ( { type: 'SET_PREVIEW', preview } ),
+	setSample: ( sample ) => ( { type: 'SET_SAMPLE', sample } ),
 };
 
 const selectors = {

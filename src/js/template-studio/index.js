@@ -6,6 +6,7 @@
  */
 import { STORE } from './store';
 import App from './components/App';
+import ErrorBoundary from './components/ErrorBoundary';
 
 ( function () {
 	const root = document.getElementById( 'aimg-template-studio' );
@@ -41,7 +42,12 @@ import App from './components/App';
 		}
 	};
 
-	const app = el( App, { data, onClassic: classic ? showClassic : null } );
+	const onClassic = classic ? showClassic : null;
+	const app = el(
+		ErrorBoundary,
+		{ onClassic },
+		el( App, { data, onClassic } )
+	);
 
 	try {
 		if ( wp.element.createRoot ) {

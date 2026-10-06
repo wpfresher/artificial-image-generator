@@ -10,12 +10,22 @@ export const saveTemplate = ( id, data ) =>
 		data,
 	} );
 
-export const previewDocument = ( document, title ) =>
+export const previewDocument = ( document, title, postId ) =>
 	apiFetch( {
 		path: '/aimg/v1/templates/preview',
 		method: 'POST',
-		data: { document, title },
+		data: { document, title, post_id: postId || 0 },
 	} );
+
+export const searchPosts = ( search ) =>
+	apiFetch( {
+		path: `/wp/v2/search?type=post&per_page=8&search=${ encodeURIComponent(
+			search
+		) }`,
+	} );
+
+export const postTags = ( postId ) =>
+	apiFetch( { path: `/aimg/v1/merge-tags/${ postId }` } );
 
 const mediaCache = new Map();
 

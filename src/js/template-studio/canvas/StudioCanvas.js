@@ -2,7 +2,7 @@
  * The design canvas: draws the document with Konva and turns drag, resize and
  * rotate on the selected layer into store updates.
  */
-import Konva from 'konva';
+import Konva from './konva';
 import { BOXED, drawLayer } from './draw';
 import { attachmentUrl } from '../api';
 
@@ -37,6 +37,7 @@ export default function StudioCanvas( {
 	onChangeLayer,
 	data,
 	tags,
+	images: sources,
 } ) {
 	const container = useRef( null );
 	const stage = useRef( null );
@@ -123,12 +124,9 @@ export default function StudioCanvas( {
 				let url = null;
 				if ( source === 'media' ) {
 					key = ( layer.attachments || [] )[ 0 ];
-				} else if (
-					data.dynamicImages &&
-					data.dynamicImages[ source ]
-				) {
-					key = source;
-					url = data.dynamicImages[ source ];
+				} else if ( sources && sources[ source ] ) {
+					url = sources[ source ];
+					key = url;
 				}
 				if ( ! key ) {
 					return null;
@@ -181,7 +179,17 @@ export default function StudioCanvas( {
 						  background;
 			}
 
-			const node = drawLayer( layer, ctx );
+			let node = null;
+			try {
+				node = drawLayer( layer, ctx );
+			} catch ( error ) {
+				// One broken layer must not take the editor down.
+				window.console.warn(
+					'Template Studio: could not draw layer',
+					layer.id,
+					error
+				);
+			}
 			if ( ! node ) {
 				return;
 			}
@@ -231,7 +239,49 @@ export default function StudioCanvas( {
 		transformer.current.nodes( selectedNode ? [ selectedNode ] : [] );
 		stage.current.batchDraw();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ doc, selectedId, width, version, tags ] );
+	}, [ doc, selectedId, width, version, tags, sources ] );
+
+	// Arrow keys nudge the selected layer; Shift moves 10 px.
+	const latest = useRef( {} );
+	latest.current = { doc, selectedId, onChangeLayer };
+	useEffect( () => {
+		const nudge = ( event ) => {
+			const steps = {
+				ArrowLeft: [ -1, 0 ],
+				ArrowRight: [ 1, 0 ],
+				ArrowUp: [ 0, -1 ],
+				ArrowDown: [ 0, 1 ],
+			};
+			const target = event.target;
+			if (
+				! steps[ event.key ] ||
+				target.closest(
+					'input, textarea, select, [contenteditable="true"]'
+				)
+			) {
+				return;
+			}
+			const current = latest.current;
+			const layer =
+				current.doc &&
+				current.doc.layers.find( ( l ) => l.id === current.selectedId );
+			if ( ! layer || ! BOXED.includes( layer.type ) ) {
+				return;
+			}
+			event.preventDefault();
+			const [ dx, dy ] = steps[ event.key ];
+			const amount = event.shiftKey ? 10 : 1;
+			current.onChangeLayer( layer.id, {
+				box: {
+					...layer.box,
+					x: layer.box.x + dx * amount,
+					y: layer.box.y + dy * amount,
+				},
+			} );
+		};
+		window.addEventListener( 'keydown', nudge );
+		return () => window.removeEventListener( 'keydown', nudge );
+	}, [] );
 
 	return el( 'div', { className: 'aimg-studio__stage', ref: container } );
 }

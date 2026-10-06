@@ -277,6 +277,23 @@ class Test_Template_Rest extends AIMG_TestCase {
 		$this->assertSame( 429, end( $statuses ) );
 	}
 
+	public function test_merge_tags_for_previewing_with_a_post() {
+		$png  = $this->create_png_attachment( 'aimg-merge-featured.png' );
+		$post = self::factory()->post->create( array( 'post_title' => 'Bees & honey' ) );
+		set_post_thumbnail( $post, $png );
+
+		$data = $this->rest( 'GET', '/aimg/v1/merge-tags/' . $post )->get_data();
+
+		$this->assertSame( 'Bees & honey', $data['tags']['title'] );
+		$this->assertStringContainsString( 'aimg-merge-featured', $data['images']['featured'] );
+		$this->assertSame( '', $data['images']['author_avatar'] );
+		$this->assertSame( 403, $this->rest( 'GET', '/aimg/v1/merge-tags/999999' )->get_status(), 'Unknown IDs fail the edit check, so IDs cannot be probed.' );
+
+		$other = self::factory()->post->create( array( 'post_author' => self::factory()->user->create( array( 'role' => 'author' ) ) ) );
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'editor' ) ) );
+		$this->assertSame( 403, $this->rest( 'GET', '/aimg/v1/merge-tags/' . $other )->get_status() );
+	}
+
 	public function test_capabilities() {
 		$data = $this->rest( 'GET', '/aimg/v1/capabilities' )->get_data();
 

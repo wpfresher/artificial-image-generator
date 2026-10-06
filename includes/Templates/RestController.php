@@ -133,6 +133,45 @@ class RestController {
 				'permission_callback' => array( $this, 'check_manage_permission' ),
 			)
 		);
+
+		register_rest_route(
+			$route_namespace,
+			'/merge-tags/(?P<post_id>\d+)',
+			array(
+				'methods'             => \WP_REST_Server::READABLE,
+				'callback'            => array( $this, 'merge_tags' ),
+				'permission_callback' => array( $this, 'check_preview_permission' ),
+			)
+		);
+	}
+
+	/**
+	 * Merge tag values and post images for a post, for previewing a template with it.
+	 *
+	 * @param \WP_REST_Request $request Request.
+	 *
+	 * @return \WP_REST_Response|\WP_Error
+	 */
+	public function merge_tags( \WP_REST_Request $request ) {
+		$post_id = absint( $request['post_id'] );
+
+		if ( ! get_post( $post_id ) ) {
+			return new \WP_Error( 'aimg_post_not_found', __( 'Post not found.', 'artificial-image-generator' ), array( 'status' => 404 ) );
+		}
+
+		$images = array();
+		foreach ( array( 'featured', 'first', 'author_avatar' ) as $source ) {
+			$id                = \ArtificialImageGenerator\Rendering\Images::dynamic( $source, $post_id );
+			$images[ $source ] = $id ? (string) wp_get_attachment_image_url( $id, 'large' ) : '';
+		}
+
+		return rest_ensure_response(
+			array(
+				'postId' => $post_id,
+				'tags'   => MergeTags::values( $post_id ),
+				'images' => $images,
+			)
+		);
 	}
 
 	/**
