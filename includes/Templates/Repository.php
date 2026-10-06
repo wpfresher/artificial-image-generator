@@ -69,6 +69,66 @@ class Repository {
 	}
 
 	/**
+	 * Copy a template as a draft. A Studio template copies its document; a 1.x
+	 * template copies its settings, so the copy stays editable in the classic form.
+	 *
+	 * @param int $template_id Template ID.
+	 *
+	 * @return int|\WP_Error New template ID.
+	 */
+	public static function duplicate( $template_id ) {
+		$template = aimg_get_template( $template_id );
+
+		if ( ! $template ) {
+			return new \WP_Error( 'aimg_template_not_found', __( 'Template not found.', 'artificial-image-generator' ), array( 'status' => 404 ) );
+		}
+
+		$copy = wp_insert_post(
+			array(
+				'post_type'   => 'aimg_template',
+				/* translators: %s: template title */
+				'post_title'  => sprintf( __( '%s (copy)', 'artificial-image-generator' ), aimg_plain_text( $template->post_title ) ),
+				'post_status' => 'draft',
+			),
+			true
+		);
+
+		if ( is_wp_error( $copy ) ) {
+			return $copy;
+		}
+
+		if ( self::has_document( $template_id ) ) {
+			self::save_document( $copy, self::get_document( $template_id ) );
+		} else {
+			foreach ( array( '_aimg_bg_colors', '_aimg_width', '_aimg_height', '_aimg_title_font_size', '_aimg_is_overlay_image', '_aimg_overlay_images', '_aimg_overlay_position' ) as $key ) {
+				$value = get_post_meta( $template_id, $key, true );
+				if ( '' !== $value ) {
+					update_post_meta( $copy, $key, wp_slash( $value ) );
+				}
+			}
+		}
+
+		self::update_preview( $copy );
+
+		return (int) $copy;
+	}
+
+	/**
+	 * A template as a portable JSON-ready array.
+	 *
+	 * @param int $template_id Template ID.
+	 *
+	 * @return array { aimgTemplate: 2, title, document }
+	 */
+	public static function export( $template_id ) {
+		return array(
+			'aimgTemplate' => Schema::VERSION,
+			'title'        => aimg_plain_text( get_post_field( 'post_title', $template_id ) ),
+			'document'     => self::get_document( $template_id ),
+		);
+	}
+
+	/**
 	 * Render a template's preview image with its own title, replacing the previous one.
 	 *
 	 * @param int $template_id Template ID.

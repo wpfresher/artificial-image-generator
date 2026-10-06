@@ -119,8 +119,17 @@ class Admin {
 		} elseif ( $edit ) {
 			include __DIR__ . '/views/edit-img-template.php';
 		} else {
-			$list_table = new TemplatesTable();
-			$list_table->prepare_items();
+			$search    = isset( $_GET['s'] ) ? sanitize_text_field( wp_unslash( $_GET['s'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only search.
+			$templates = array_filter(
+				aimg_get_templates(
+					array(
+						'post_status' => array( 'publish', 'draft' ),
+						's'           => $search,
+						'orderby'     => 'date',
+						'order'       => 'DESC',
+					)
+				)
+			);
 			include __DIR__ . '/views/img-templates.php';
 		}
 	}
@@ -216,6 +225,32 @@ class Admin {
 	}
 
 	/**
+	 * Hex colors from the theme's palette (theme.json), for color swatches.
+	 *
+	 * @since 1.7.0
+	 * @return string[]
+	 */
+	private static function theme_palette() {
+		if ( ! function_exists( 'wp_get_global_settings' ) ) {
+			return array();
+		}
+
+		$palette = wp_get_global_settings( array( 'color', 'palette' ) );
+		$colors  = array();
+
+		foreach ( array( 'custom', 'theme', 'default' ) as $origin ) {
+			foreach ( isset( $palette[ $origin ] ) ? (array) $palette[ $origin ] : array() as $entry ) {
+				$color = isset( $entry['color'] ) ? \ArtificialImageGenerator\Templates\Schema::color( $entry['color'] ) : '';
+				if ( $color && ! in_array( $color, $colors, true ) ) {
+					$colors[] = $color;
+				}
+			}
+		}
+
+		return array_slice( $colors, 0, 16 );
+	}
+
+	/**
 	 * Enqueue the Template Studio and the data it starts with.
 	 *
 	 * @since 1.7.0
@@ -251,6 +286,18 @@ class Admin {
 			'settings'      => array(
 				'bgColor'   => (string) aimg_get_settings( 'default_bg_color', '#008000' ),
 				'textColor' => (string) aimg_get_settings( 'default_text_color', '#ffffff' ),
+				'palette'   => self::theme_palette(),
+			),
+			'starters'      => array_map(
+				function ( $id, $starter ) {
+					return array(
+						'id'       => $id,
+						'label'    => $starter[0],
+						'document' => $starter[1],
+					);
+				},
+				array_keys( \ArtificialImageGenerator\Templates\Starters::all() ),
+				\ArtificialImageGenerator\Templates\Starters::all()
 			),
 			'listUrl'       => admin_url( 'admin.php?page=image-generator' ),
 			'editUrl'       => admin_url( 'admin.php?page=image-generator&edit=' ),

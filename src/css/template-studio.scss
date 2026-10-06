@@ -298,3 +298,47 @@ html:has(#aimg-template-studio:not([hidden])) {
 	align-items: center;
 	margin: 0;
 }
+
+.aimg-studio__gallery {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+}
+
+.aimg-studio__gallery-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+	gap: 16px;
+	margin: 0;
+	padding: 16px;
+}
+
+.aimg-studio__starter {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	width: 100%;
+	padding: 0;
+	font-weight: 600;
+	text-align: left;
+	background: none;
+	border: 0;
+	cursor: pointer;
+
+	img,
+	.aimg-studio__starter-wait {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		aspect-ratio: 1200 / 630;
+		background: #f0f0f1;
+		border: 1px solid #dcdcde;
+		border-radius: 4px;
+	}
+
+	&:hover img,
+	&:focus img {
+		outline: 3px solid #3858e9;
+	}
+}

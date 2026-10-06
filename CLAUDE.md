@@ -135,7 +135,7 @@ check in `_wp_relative_upload_path()` and WordPress stores an unusable absolute 
 
 Webpack is configured in `webpack.config.js` extending `@wordpress/scripts`:
 - **Entry:** `src/css/admin.scss` → `assets/css/admin.css` (+ RTL), `src/js/admin.js` → `assets/js/admin.js`
-- **Fonts:** `CopyWebpackPlugin` copies `src/fonts/` → `assets/fonts/`. Bundled fonts (static TTFs from Google Fonts with extended subsets, OFL/Apache licences in `src/fonts/licenses/`) are listed in `RenderingFonts::bundled()`; uploads go to `uploads/aimg-fonts/` (option `aimg_uploaded_fonts`, checked by file signature and a FreeType test render). Variable fonts cannot pick a weight in GD — bundle static instances only
+- **Fonts:** `CopyWebpackPlugin` copies `src/fonts/` → `assets/fonts/`. Bundled fonts (static TTFs from Google Fonts with extended subsets, OFL/Apache licences in `src/fonts/licenses/`) are listed in `Rendering\Fonts::bundled()`; uploads go to `uploads/aimg-fonts/` (option `aimg_uploaded_fonts`, checked by file signature and a FreeType test render). Variable fonts cannot pick a weight in GD — bundle static instances only
 - `RemoveEmptyScriptsPlugin` strips empty `.js` stubs from CSS-only entries
 - **Template Studio** (`src/js/template-studio/` → `assets/js/template-studio.js`, plus
   `src/css/template-studio.scss`): loaded on the template add/edit screens with data inlined as

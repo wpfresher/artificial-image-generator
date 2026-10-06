@@ -103,6 +103,29 @@ class RestController {
 
 		register_rest_route(
 			$route_namespace,
+			'/templates/(?P<id>\d+)/duplicate',
+			array(
+				'methods'             => \WP_REST_Server::CREATABLE,
+				'callback'            => array( $this, 'duplicate_item' ),
+				'permission_callback' => array( $this, 'check_manage_permission' ),
+			)
+		);
+
+		register_rest_route(
+			$route_namespace,
+			'/templates/sanitize',
+			array(
+				'methods'             => \WP_REST_Server::CREATABLE,
+				'callback'            => array( $this, 'sanitize_document' ),
+				'permission_callback' => array( $this, 'check_manage_permission' ),
+				'args'                => array(
+					'document' => array_merge( $document, array( 'required' => true ) ),
+				),
+			)
+		);
+
+		register_rest_route(
+			$route_namespace,
 			'/templates/preview',
 			array(
 				'methods'             => \WP_REST_Server::CREATABLE,
@@ -394,6 +417,43 @@ class RestController {
 		Repository::update_preview( $template->ID );
 
 		return rest_ensure_response( $this->prepare( get_post( $template->ID ) ) );
+	}
+
+	/**
+	 * Clean a document without saving it, e.g. one imported from a file.
+	 *
+	 * @param \WP_REST_Request $request Request.
+	 *
+	 * @return \WP_REST_Response
+	 */
+	public function sanitize_document( \WP_REST_Request $request ) {
+		return rest_ensure_response( array( 'document' => Schema::sanitize( $request->get_param( 'document' ) ) ) );
+	}
+
+	/**
+	 * Copy a template as a draft.
+	 *
+	 * @param \WP_REST_Request $request Request.
+	 *
+	 * @return \WP_REST_Response|\WP_Error
+	 */
+	public function duplicate_item( \WP_REST_Request $request ) {
+		$template = $this->find( $request );
+
+		if ( is_wp_error( $template ) ) {
+			return $template;
+		}
+
+		$copy = Repository::duplicate( $template->ID );
+
+		if ( is_wp_error( $copy ) ) {
+			return $copy;
+		}
+
+		$response = rest_ensure_response( $this->prepare( get_post( $copy ) ) );
+		$response->set_status( 201 );
+
+		return $response;
 	}
 
 	/**

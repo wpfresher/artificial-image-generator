@@ -22,6 +22,9 @@ export const options = ( map ) =>
 
 export function ColorField( { label, value, onChange, swatches = [] } ) {
 	const [ draft, setDraft ] = useState( value );
+	const palette =
+		( ( window.aimgStudio || {} ).settings || {} ).palette || [];
+	swatches = [ ...new Set( [ ...swatches, ...palette ] ) ];
 	useEffect( () => setDraft( value ), [ value ] );
 
 	return el(

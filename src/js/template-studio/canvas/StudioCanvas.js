@@ -5,33 +5,10 @@
 import Konva from './konva';
 import { BOXED, drawLayer } from './draw';
 import { attachmentUrl } from '../api';
+import { ensureFont, fontFamily } from './fonts';
 
 const { createElement: el, useEffect, useRef, useState } = wp.element;
 const { __ } = wp.i18n;
-
-const fontFamily = ( id ) => `aimg-${ id }`;
-const fontState = new Map();
-
-/**
- * Load a font the first time a layer uses it.
- *
- * @param {Object}   font     Font { id, url }.
- * @param {Function} onLoaded Called once the font can be drawn.
- */
-function ensureFont( font, onLoaded ) {
-	if ( ! font || ! font.url || fontState.has( font.id ) ) {
-		return;
-	}
-	fontState.set( font.id, 'loading' );
-	new window.FontFace( fontFamily( font.id ), `url(${ font.url })` )
-		.load()
-		.then( ( loaded ) => {
-			document.fonts.add( loaded );
-			fontState.set( font.id, 'ready' );
-			onLoaded();
-		} )
-		.catch( () => fontState.set( font.id, 'failed' ) );
-}
 
 export default function StudioCanvas( {
 	doc,

@@ -36,6 +36,13 @@ export function uploadFont( file ) {
 export const deleteFont = ( id ) =>
 	apiFetch( { path: `/aimg/v1/fonts/${ id }`, method: 'DELETE' } );
 
+export const sanitizeDocument = ( document ) =>
+	apiFetch( {
+		path: '/aimg/v1/templates/sanitize',
+		method: 'POST',
+		data: { document },
+	} );
+
 const mediaCache = new Map();
 
 /**

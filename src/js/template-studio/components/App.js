@@ -8,13 +8,19 @@ import LayersPanel from './LayersPanel';
 import Inspector from './Inspector';
 import PreviewData from './PreviewData';
 import useShortcuts from '../shortcuts';
+import StarterGallery from './StarterGallery';
+import TemplateMenu from './TemplateMenu';
 
-const { createElement: el, useEffect, useMemo } = wp.element;
+const { createElement: el, useEffect, useMemo, useState } = wp.element;
 const { Button, Notice, SelectControl, Spinner, TextControl } = wp.components;
 const { useSelect, useDispatch } = wp.data;
 const { __, sprintf } = wp.i18n;
 
 function Toolbar( { data, onSave, onPreview, onClassic } ) {
+	const document = useSelect(
+		( select ) => select( STORE ).getDocument(),
+		[]
+	);
 	const state = useSelect( ( select ) => select( STORE ).getState(), [] );
 	const { setTitle, setStatus, undo, redo } = useDispatch( STORE );
 	const { canUndo, canRedo } = useSelect(
@@ -75,6 +81,7 @@ function Toolbar( { data, onSave, onPreview, onClassic } ) {
 			disabled: ! canRedo,
 			onClick: redo,
 		} ),
+		el( TemplateMenu, { data, document } ),
 		onClassic &&
 			el(
 				Button,
@@ -152,6 +159,10 @@ export default function App( { data, onClassic } ) {
 	const state = useSelect( ( select ) => select( STORE ).getState(), [] );
 	const { load, select, updateLayer, setSaving, setNotice, setPreview } =
 		useDispatch( STORE );
+
+	const [ gallery, setGallery ] = useState(
+		() => ! state.templateId && ( data.starters || [] ).length > 0
+	);
 
 	const tags = useMemo(
 		() => state.sample.tags || data.sampleTags,
@@ -274,39 +285,42 @@ export default function App( { data, onClassic } ) {
 				'artificial-image-generator'
 			)
 		),
-		el(
-			'div',
-			{ className: 'aimg-studio__body' },
-			el( LayersPanel, { data } ),
+		gallery &&
+			el( StarterGallery, { data, onDone: () => setGallery( false ) } ),
+		! gallery &&
 			el(
 				'div',
-				{ className: 'aimg-studio__canvas' },
-				el( PreviewData, { data } ),
-				el( StudioCanvas, {
-					doc: state.document,
-					selectedId: state.selectedId,
-					onSelect: select,
-					onChangeLayer: updateLayer,
-					data,
-					tags,
-					images,
-					fonts: state.fonts,
-				} ),
+				{ className: 'aimg-studio__body' },
+				el( LayersPanel, { data } ),
 				el(
-					'p',
-					{ className: 'description' },
-					__(
-						'The canvas closely matches the final image. Use Exact preview to see it rendered by your server.',
-						'artificial-image-generator'
+					'div',
+					{ className: 'aimg-studio__canvas' },
+					el( PreviewData, { data } ),
+					el( StudioCanvas, {
+						doc: state.document,
+						selectedId: state.selectedId,
+						onSelect: select,
+						onChangeLayer: updateLayer,
+						data,
+						tags,
+						images,
+						fonts: state.fonts,
+					} ),
+					el(
+						'p',
+						{ className: 'description' },
+						__(
+							'The canvas closely matches the final image. Use Exact preview to see it rendered by your server.',
+							'artificial-image-generator'
+						)
 					)
+				),
+				el(
+					'div',
+					{ className: 'aimg-studio__side' },
+					el( Inspector, { data } ),
+					el( PreviewPanel )
 				)
-			),
-			el(
-				'div',
-				{ className: 'aimg-studio__side' },
-				el( Inspector, { data } ),
-				el( PreviewPanel )
 			)
-		)
 	);
 }
