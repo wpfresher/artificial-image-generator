@@ -34,6 +34,7 @@ function aimg_uninstall_site() {
 		as_unschedule_all_actions( 'aimg_generate_featured_image' );
 	}
 	delete_post_meta_by_key( '_aimg_generation_job' );
+	delete_metadata( 'user', 0, 'aimg_review_notice', '', true );
 
 	$settings    = get_option( 'aimg_settings', array() );
 	$remove_data = is_array( $settings ) && isset( $settings['remove_data'] ) ? $settings['remove_data'] : 'no';
