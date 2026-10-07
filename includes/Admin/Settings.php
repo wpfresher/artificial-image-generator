@@ -302,6 +302,8 @@ class Settings {
 			'low'    => __( 'Low (cheapest)', 'artificial-image-generator' ),
 			'medium' => __( 'Medium', 'artificial-image-generator' ),
 			'high'   => __( 'High', 'artificial-image-generator' ),
+			'xhigh'  => __( 'Extra high', 'artificial-image-generator' ),
+			'max'    => __( 'Maximum (most expensive)', 'artificial-image-generator' ),
 		);
 	}
 
@@ -445,7 +447,7 @@ class Settings {
 	 * @return void
 	 */
 	public function ai_quality_field() {
-		$this->select_field( 'ai_quality', self::get_qualities(), 'auto', __( 'Higher quality costs more.', 'artificial-image-generator' ) );
+		$this->select_field( 'ai_quality', self::get_qualities(), 'auto', __( 'Higher quality costs more. Extra high and Maximum need GPT Image 2.5; GPT Image 2 uses High instead.', 'artificial-image-generator' ) );
 	}
 
 	/**

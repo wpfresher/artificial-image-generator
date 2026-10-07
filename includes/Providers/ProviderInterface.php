@@ -9,7 +9,8 @@ defined( 'ABSPATH' ) || exit; // Exit if accessed directly.
  *
  * Sizes and qualities use provider-neutral keys so settings survive switching
  * providers: sizes are `square`, `landscape` and `portrait`; qualities are
- * `auto`, `low`, `medium` and `high`. Each provider maps them to its own values.
+ * `auto`, `low`, `medium`, `high`, `xhigh` and `max`. Each provider maps them to its own values,
+ * using its closest level when a model has no exact match.
  *
  * @since 1.6.0
  * @package ArtificialImageGenerator
@@ -69,7 +70,7 @@ interface ProviderInterface {
 	 *
 	 *     @type string $model   Model ID.
 	 *     @type string $size    square, landscape or portrait.
-	 *     @type string $quality auto, low, medium or high.
+	 *     @type string $quality auto, low, medium, high, xhigh or max.
 	 *     @type int    $n       Number of images.
 	 * }
 	 *

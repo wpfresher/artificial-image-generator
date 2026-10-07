@@ -85,6 +85,27 @@ class Test_Providers extends AIMG_TestCase {
 		$this->assertSame( '1024x1536', $this->body( 'gpt-image-2', array( 'size' => 'portrait' ) )['size'] );
 		$this->assertSame( 'high', $this->body( 'gpt-image-2.5-flare', array( 'quality' => 'high' ) )['quality'] );
 		$this->assertArrayNotHasKey( 'quality', $this->body( 'gpt-image-2.5-flare', array( 'quality' => 'auto' ) ) );
+		$this->assertSame( 'xhigh', $this->body( 'gpt-image-2.5-flare', array( 'quality' => 'xhigh' ) )['quality'] );
+		$this->assertSame( 'max', $this->body( 'gpt-image-2.5-sunburst', array( 'quality' => 'max' ) )['quality'] );
+		$this->assertSame( 'high', $this->body( 'gpt-image-2', array( 'quality' => 'max' ) )['quality'], 'GPT Image 2 has no xhigh/max.' );
+		$this->assertArrayNotHasKey( 'quality', $this->body( 'gpt-image-2.5-flare', array( 'quality' => 'ultra' ) ) );
+	}
+
+	public function test_the_editor_can_ask_for_maximum_quality() {
+		$this->set_settings( array( 'api_key' => 'sk-test' ) );
+		$this->stub_openai();
+
+		$response = $this->rest(
+			'POST',
+			'/aimg/v1/generate',
+			array(
+				'prompt'  => 'A lighthouse',
+				'quality' => 'max',
+			)
+		);
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( 'max', $this->openai_bodies[0]['quality'] );
 	}
 
 	public function test_limits() {

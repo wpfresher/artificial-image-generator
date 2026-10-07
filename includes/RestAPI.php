@@ -68,7 +68,7 @@ class RestAPI {
 					'quality'     => array(
 						'type'     => 'string',
 						'required' => false,
-						'enum'     => array( 'auto', 'low', 'medium', 'high' ),
+						'enum'     => array_keys( Admin\Settings::get_qualities() ),
 					),
 					'n'           => array(
 						'type'     => 'integer',

@@ -24,6 +24,13 @@ class OpenAI implements ProviderInterface {
 	);
 
 	/**
+	 * Models that accept the `xhigh` and `max` qualities; others get `high`.
+	 *
+	 * @var string[]
+	 */
+	const TOP_QUALITY_MODELS = array( 'gpt-image-2.5-flare', 'gpt-image-2.5-sunburst' );
+
+	/**
 	 * Longest prompt the Images API accepts.
 	 *
 	 * @var int
@@ -121,8 +128,13 @@ class OpenAI implements ProviderInterface {
 			'size'   => isset( self::SIZES[ $args['size'] ] ) ? self::SIZES[ $args['size'] ] : self::SIZES['square'],
 		);
 
-		if ( in_array( $args['quality'], array( 'low', 'medium', 'high' ), true ) ) {
-			$body['quality'] = $args['quality'];
+		$quality = $args['quality'];
+		if ( in_array( $quality, array( 'xhigh', 'max' ), true ) && ! in_array( $model, self::TOP_QUALITY_MODELS, true ) ) {
+			$quality = 'high';
+		}
+
+		if ( in_array( $quality, array( 'low', 'medium', 'high', 'xhigh', 'max' ), true ) ) {
+			$body['quality'] = $quality;
 		}
 
 		return $body;
@@ -189,11 +201,13 @@ class OpenAI implements ProviderInterface {
 				/**
 				 * Filter the timeout, in seconds, for the image generation request.
 				 *
-				 * @param int $timeout Timeout in seconds.
+				 * @param int    $timeout Timeout in seconds. 180 since 1.7.1 (was 120).
+				 * @param string $model   Model ID (since 1.7.1).
+				 * @param string $quality Quality key (since 1.7.1).
 				 *
 				 * @since 1.5.4
 				 */
-				'timeout' => (int) apply_filters( 'aimg_generate_timeout', 120 ),
+				'timeout' => (int) apply_filters( 'aimg_generate_timeout', 180, $model, $args['quality'] ),
 				'headers' => array(
 					'Authorization' => 'Bearer ' . $api_key,
 					'Content-Type'  => 'application/json',

@@ -278,7 +278,7 @@ class Generator {
 	 *     Optional.
 	 *
 	 *     @type string $size    square, landscape or portrait. Defaults to the `ai_size` setting.
-	 *     @type string $quality auto, low, medium or high. Defaults to the `ai_quality` setting.
+	 *     @type string $quality auto, low, medium, high, xhigh or max. Defaults to the `ai_quality` setting.
 	 *     @type int    $n       Number of images. Default 1.
 	 *     @type string $title   Attachment title and alt text. Defaults to the prompt.
 	 *     @type int    $parent  Parent post ID.
