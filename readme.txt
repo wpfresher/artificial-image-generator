@@ -8,7 +8,7 @@ Stable tag: 1.7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Featured image generator: automatically create post thumbnails on publish from your own templates or with AI, or generate images in the block editor.
+AI image generator for WordPress. Auto-create featured images, post thumbnails & post images with templates or custom AI prompts.
 
 == Description ==
 
