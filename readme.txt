@@ -276,6 +276,8 @@ AI image generation calls a third-party API (**OpenAI** by default, `https://api
 * Enhance: The Template Studio is now the only template editor. Templates made before 1.7.0 open in the Studio and look exactly the same; saving them there keeps their old settings too, so downgrading still works.
 * Enhance: Duplicating an older template now creates a Studio copy.
 * Removed: The classic template form and its save handler.
+* Dev: Add-ons can add Template Studio layer types with the JS filter `aimg.studio.layerTypes` (scripts enqueued on the new `aimg_enqueue_template_studio` action) together with `aimg_template_layers`.
+* Enhance: Layers of a type whose plugin is not active are kept in the template instead of being removed, and are shown as unavailable.
 * Deprecated: `aimg_generate_preview()`; use `ArtificialImageGenerator\Templates\Repository::update_preview()`. It will be removed in 1.8.0.
 
 = 1.7.0 ( 07th October 2026 ) =

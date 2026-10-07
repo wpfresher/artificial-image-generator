@@ -3,7 +3,7 @@
  * rotate on the selected layer into store updates.
  */
 import Konva from './konva';
-import { BOXED, drawLayer } from './draw';
+import { drawLayer, isBoxed } from '../registry';
 import { attachmentUrl } from '../api';
 import { ensureFont, fontFamily } from './fonts';
 
@@ -257,7 +257,7 @@ export default function StudioCanvas( {
 				return;
 			}
 
-			const boxed = BOXED.includes( layer.type );
+			const boxed = isBoxed( layer.type );
 			node.on( 'mousedown touchstart', ( event ) => {
 				event.cancelBubble = true;
 				onSelect( layer.id );
@@ -332,7 +332,7 @@ export default function StudioCanvas( {
 			const layer =
 				current.doc &&
 				current.doc.layers.find( ( l ) => l.id === current.selectedId );
-			if ( ! layer || ! BOXED.includes( layer.type ) ) {
+			if ( ! layer || ! isBoxed( layer.type ) ) {
 				return;
 			}
 			event.preventDefault();

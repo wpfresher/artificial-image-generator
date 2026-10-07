@@ -70,7 +70,7 @@ class Test_Template_Documents extends AIMG_TestCase {
 					),
 					'layers' => array_merge(
 						array(
-							array( 'type' => 'script' ),
+							array( 'type' => '<script>' ),
 							'not a layer',
 							array(
 								'type'        => 'image',
@@ -97,7 +97,7 @@ class Test_Template_Documents extends AIMG_TestCase {
 			)
 		);
 
-		$this->assertCount( Schema::MAX_LAYERS - 2, $document['layers'], 'Unknown entries are dropped and the rest capped.' );
+		$this->assertCount( Schema::MAX_LAYERS - 2, $document['layers'], 'Invalid entries are dropped and the rest capped.' );
 
 		$image = $document['layers'][0];
 		$this->assertSame( array( $png ), $image['attachments'], 'Only real image attachments, once.' );
@@ -122,6 +122,82 @@ class Test_Template_Documents extends AIMG_TestCase {
 		);
 
 		$this->assertArrayNotHasKey( 'bogus', Schema::layer_types(), 'Only LayerInterface classes are accepted.' );
+	}
+
+	/**
+	 * A document with a background and one square layer.
+	 *
+	 * @return array
+	 */
+	private function square_document() {
+		return array(
+			'canvas' => array(
+				'width'  => 40,
+				'height' => 40,
+			),
+			'layers' => array(
+				array(
+					'type' => 'background',
+					'fill' => array(
+						'kind'  => 'solid',
+						'color' => '#000000',
+					),
+				),
+				array(
+					'type'  => 'square',
+					'id'    => 'sq',
+					'size'  => 8,
+					'color' => '#ff0000',
+				),
+			),
+		);
+	}
+
+	public function test_registered_layer_types_are_sanitized_and_drawn() {
+		$register = function ( $types ) {
+			$types['square'] = 'AIMG_Test_Square_Layer';
+			return $types;
+		};
+		add_filter( 'aimg_template_layers', $register );
+
+		$document = Schema::sanitize( $this->square_document() );
+		$image    = GdRenderer::render( $document );
+		$types    = ArtificialImageGenerator\Rendering\Capabilities::all()['layerTypes'];
+
+		remove_filter( 'aimg_template_layers', $register );
+
+		$this->assertContains( 'square', $types, 'The Studio is told the server can draw it.' );
+		$this->assertSame( 8, $document['layers'][1]['size'] );
+		$this->assertSame( 0xff0000, imagecolorat( $image, 2, 2 ) & 0xffffff );
+		$this->assertSame( 0x000000, imagecolorat( $image, 20, 20 ) & 0xffffff );
+	}
+
+	public function test_layers_from_inactive_plugins_are_kept_but_not_drawn() {
+		$raw                        = $this->square_document();
+		$raw['layers'][1]['label']  = '<b>Sale</b>';
+		$raw['layers'][1]['Bad k!'] = 1;
+		$raw['layers'][1]['nested'] = array(
+			'maxLines' => 3,
+			'deep'     => array( array( array( array( array( 'x' ) ) ) ) ),
+		);
+		$raw['layers'][1]['object'] = new stdClass();
+
+		$document = Schema::sanitize( wp_json_encode( $raw ) );
+		$square   = $document['layers'][1];
+
+		$this->assertSame( 'square', $square['type'] );
+		$this->assertSame( 'sq', $square['id'] );
+		$this->assertTrue( $square['visible'] );
+		$this->assertSame( 8, $square['size'] );
+		$this->assertSame( '#ff0000', $square['color'] );
+		$this->assertSame( 'Sale', $square['label'], 'Strings are cleaned.' );
+		$this->assertSame( 1, $square['Badk'], 'Keys are cleaned, case kept.' );
+		$this->assertSame( 3, $square['nested']['maxLines'] );
+		$this->assertSame( array(), $square['nested']['deep'][0][0], 'Nesting is limited.' );
+		$this->assertSame( $document, Schema::sanitize( wp_json_encode( $document ) ), 'Saving again changes nothing.' );
+
+		$image = GdRenderer::render( $document );
+		$this->assertSame( 0x000000, imagecolorat( $image, 2, 2 ) & 0xffffff, 'Not drawn.' );
 	}
 
 	public function test_fit_shrinks_text_into_the_box() {

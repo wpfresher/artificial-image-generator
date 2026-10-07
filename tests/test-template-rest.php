@@ -125,7 +125,7 @@ class Test_Template_Rest extends AIMG_TestCase {
 				'document' => array(
 					'canvas' => array( 'width' => 99999 ),
 					'layers' => array(
-						array( 'type' => 'php' ),
+						array( 'type' => '../php' ),
 						array(
 							'type'   => 'image',
 							'_files' => array( ABSPATH . 'wp-config.php' ),

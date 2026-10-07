@@ -113,7 +113,7 @@ class Test_Template_Library extends AIMG_TestCase {
 			array(
 				'document' => array(
 					'layers' => array(
-						array( 'type' => 'script' ),
+						array( 'type' => '<script>' ),
 						array( 'type' => 'text' ),
 					),
 				),

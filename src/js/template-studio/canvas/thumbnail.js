@@ -2,7 +2,7 @@
  * Small images of documents, e.g. for the starter gallery.
  */
 import Konva from './konva';
-import { drawLayer } from './draw';
+import { drawLayer } from '../registry';
 import { fontFamily, loadFont } from './fonts';
 
 /**

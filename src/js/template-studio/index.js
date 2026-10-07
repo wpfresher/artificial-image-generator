@@ -1,21 +1,16 @@
 /**
  * Template Studio entry. The mount point holds a server-rendered message that
- * stays visible if the Studio cannot start.
+ * stays visible if the Studio cannot start. Mounting waits for domReady so
+ * scripts loaded after this one can still add layer types (see registry.js).
  */
 import { STORE } from './store';
 import App from './components/App';
 import ErrorBoundary from './components/ErrorBoundary';
 
-( function () {
+function mount() {
 	const root = document.getElementById( 'aimg-template-studio' );
 
-	if (
-		! root ||
-		! window.aimgStudio ||
-		! window.wp ||
-		! wp.element ||
-		! wp.components
-	) {
+	if ( ! root || ! window.aimgStudio || ! wp.element || ! wp.components ) {
 		return;
 	}
 
@@ -39,4 +34,8 @@ import ErrorBoundary from './components/ErrorBoundary';
 	} else {
 		wp.element.render( app, root );
 	}
-} )();
+}
+
+if ( window.wp && wp.domReady ) {
+	wp.domReady( mount );
+}
