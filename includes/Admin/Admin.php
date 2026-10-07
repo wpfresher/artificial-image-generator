@@ -212,14 +212,10 @@ class Admin {
 			return;
 		}
 
-		// Enqueue styles and scripts.
 		wp_enqueue_style( 'aimg-admin', AIMG_URL . 'assets/css/admin.css', array(), AIMG_VERSION );
 
-		// Enqueue media uploader scripts.
-		wp_enqueue_media();
-		wp_enqueue_script( 'aimg-admin', AIMG_URL . 'assets/js/admin.js', array( 'jquery' ), AIMG_VERSION, true );
-
 		if ( self::is_add_screen() || self::is_edit_screen() ) {
+			wp_enqueue_media();
 			$this->enqueue_studio();
 		}
 	}

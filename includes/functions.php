@@ -114,7 +114,9 @@ function aimg_get_js_data() {
 }
 
 /**
- * Generate a thumbnail image for preview on settings page.
+ * Generate a template preview from 1.x settings.
+ *
+ * @deprecated 1.7.1 Use \ArtificialImageGenerator\Templates\Repository::update_preview(). Removed in 1.8.0.
  *
  * @param int    $post_id  Post ID for which the preview is being generated.
  * @param string $colors   Comma separated hex colors.
@@ -125,6 +127,8 @@ function aimg_get_js_data() {
  * @return string|false Image URL or false on failure.
  */
 function aimg_generate_preview( $post_id, $colors, $width, $height, $overlays = array() ) {
+	_deprecated_function( __FUNCTION__, '1.7.1', 'ArtificialImageGenerator\Templates\Repository::update_preview()' );
+
 	if ( empty( $post_id ) || empty( $colors ) || empty( $width ) || empty( $height ) ) {
 		return false;
 	}

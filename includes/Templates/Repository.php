@@ -69,8 +69,8 @@ class Repository {
 	}
 
 	/**
-	 * Copy a template as a draft. A Studio template copies its document; a 1.x
-	 * template copies its settings, so the copy stays editable in the classic form.
+	 * Copy a template as a draft. The copy always gets a v2 document; a 1.x
+	 * template's settings are copied too, for downgrades.
 	 *
 	 * @param int $template_id Template ID.
 	 *
@@ -97,9 +97,7 @@ class Repository {
 			return $copy;
 		}
 
-		if ( self::has_document( $template_id ) ) {
-			self::save_document( $copy, self::get_document( $template_id ) );
-		} else {
+		if ( ! self::has_document( $template_id ) ) {
 			foreach ( array( '_aimg_bg_colors', '_aimg_width', '_aimg_height', '_aimg_title_font_size', '_aimg_is_overlay_image', '_aimg_overlay_images', '_aimg_overlay_position' ) as $key ) {
 				$value = get_post_meta( $template_id, $key, true );
 				if ( '' !== $value ) {
@@ -107,6 +105,8 @@ class Repository {
 				}
 			}
 		}
+
+		self::save_document( $copy, self::get_document( $template_id ) );
 
 		self::update_preview( $copy );
 

@@ -272,6 +272,12 @@ AI image generation calls a third-party API (**OpenAI** by default, `https://api
 6. Plugin settings — defaults and AI API key configuration.
 
 == Changelog ==
+= 1.7.1 =
+* Enhance: The Template Studio is now the only template editor. Templates made before 1.7.0 open in the Studio and look exactly the same; saving them there keeps their old settings too, so downgrading still works.
+* Enhance: Duplicating an older template now creates a Studio copy.
+* Removed: The classic template form and its save handler.
+* Deprecated: `aimg_generate_preview()`; use `ArtificialImageGenerator\Templates\Repository::update_preview()`. It will be removed in 1.8.0.
+
 = 1.7.0 ( 07th October 2026 ) =
 * New: **Visual Template Studio.** Design templates on a canvas with layers you can drag, resize and rotate, with snapping guides, undo/redo and keyboard shortcuts.
 * New: Layer types for backgrounds (color, random palette, gradients, images, the post's featured or first image), images (rounded or circle masks, brightness, contrast, blur, black and white, duotone), overlays and gradient fades, shapes, patterns, frames and text.
@@ -367,6 +373,9 @@ AI image generation calls a third-party API (**OpenAI** by default, `https://api
 * Initial release.
 
 == Upgrade Notice ==
+
+= 1.7.1 =
+The classic template form is replaced by the Template Studio. Your templates and images are not changed.
 
 = 1.7.0 =
 Adds the visual Template Studio. Your existing templates and images are not changed; a template switches to the Studio format only when you save it in the Studio.

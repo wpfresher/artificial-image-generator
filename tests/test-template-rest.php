@@ -179,32 +179,6 @@ class Test_Template_Rest extends AIMG_TestCase {
 		$this->assertSame( 200, $this->rest( 'GET', '/aimg/v1/templates/' . $template )->get_status() );
 	}
 
-	public function test_the_classic_form_does_not_overwrite_studio_templates() {
-		$id = $this->rest(
-			'POST',
-			'/aimg/v1/templates',
-			array(
-				'title'    => 'Studio design',
-				'document' => $this->document(),
-			)
-		)->get_data()['id'];
-
-		$this->submit_template_form(
-			array(
-				'template_id'     => $id,
-				'title'           => 'Overwritten',
-				'bg_colors'       => '#000000',
-				'width'           => 800,
-				'height'          => 400,
-				'title_font_size' => 30,
-			)
-		);
-
-		$this->assertSame( 'Studio design', get_post( $id )->post_title );
-		$this->assertSame( '300', get_post_meta( $id, '_aimg_width', true ) );
-		$this->assertSame( '', get_post_meta( $id, '_aimg_bg_colors', true ) );
-	}
-
 	public function test_ids_that_are_not_templates_are_not_found() {
 		$post = self::factory()->post->create();
 

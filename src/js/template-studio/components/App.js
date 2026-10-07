@@ -16,7 +16,7 @@ const { Button, Notice, SelectControl, Spinner, TextControl } = wp.components;
 const { useSelect, useDispatch } = wp.data;
 const { __, sprintf } = wp.i18n;
 
-function Toolbar( { data, onSave, onPreview, onClassic } ) {
+function Toolbar( { data, onSave, onPreview } ) {
 	const document = useSelect(
 		( select ) => select( STORE ).getDocument(),
 		[]
@@ -82,12 +82,6 @@ function Toolbar( { data, onSave, onPreview, onClassic } ) {
 			onClick: redo,
 		} ),
 		el( TemplateMenu, { data, document } ),
-		onClassic &&
-			el(
-				Button,
-				{ variant: 'link', onClick: onClassic },
-				__( 'Use the classic form', 'artificial-image-generator' )
-			),
 		el(
 			Button,
 			{
@@ -155,7 +149,7 @@ function PreviewPanel() {
 	);
 }
 
-export default function App( { data, onClassic } ) {
+export default function App( { data } ) {
 	const state = useSelect( ( select ) => select( STORE ).getState(), [] );
 	const { load, select, updateLayer, setSaving, setNotice, setPreview } =
 		useDispatch( STORE );
@@ -198,7 +192,6 @@ export default function App( { data, onClassic } ) {
 					templateId: template.id,
 					title: template.title,
 					status: template.status,
-					hasDocument: template.hasDocument,
 					document: template.document,
 				} );
 				select( selected );
@@ -256,7 +249,6 @@ export default function App( { data, onClassic } ) {
 			data,
 			onSave: save,
 			onPreview: preview,
-			onClassic: state.hasDocument ? null : onClassic,
 		} ),
 		state.notice &&
 			el(
@@ -267,21 +259,11 @@ export default function App( { data, onClassic } ) {
 				},
 				state.notice.text
 			),
-		state.templateId > 0 &&
-			! state.hasDocument &&
-			el(
-				Notice,
-				{ status: 'info', isDismissible: false },
-				__(
-					'This template was made with the classic form. Saving it here switches it to the Template Studio; it looks the same until you change it, but the classic form can no longer edit it.',
-					'artificial-image-generator'
-				)
-			),
 		el(
 			'div',
 			{ className: 'aimg-studio__narrow' },
 			__(
-				'The Template Studio needs a wider window. Use a larger screen, or the classic form.',
+				'The Template Studio needs a wider window. Use a larger screen.',
 				'artificial-image-generator'
 			)
 		),

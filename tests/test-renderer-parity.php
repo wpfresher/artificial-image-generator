@@ -8,6 +8,7 @@
 use ArtificialImageGenerator\Rendering\GdRenderer;
 use ArtificialImageGenerator\Rendering\TextLayout;
 use ArtificialImageGenerator\Templates\Migration;
+use ArtificialImageGenerator\Templates\Repository;
 
 /**
  * @covers \ArtificialImageGenerator\Rendering\GdRenderer
@@ -345,6 +346,39 @@ class Test_Renderer_Parity extends AIMG_TestCase {
 			$this->files[] = $new;
 
 			$this->assertTrue( file_get_contents( $legacy ) === file_get_contents( $new ), 'Seed ' . $seed ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+		}
+	}
+
+	public function test_saving_or_duplicating_a_1_x_template_draws_the_same() {
+		$template = $this->template(
+			array(
+				'bg_colors'       => '#aa0000,#00aa00,#0000aa',
+				'width'           => '1200',
+				'height'          => '630',
+				'title_font_size' => '48',
+			)
+		);
+		$title    = 'Opened and saved in the Studio';
+		$args     = ArtificialImageGenerator\Generator::get_render_args( $template, $title );
+
+		$copy = Repository::duplicate( $template );
+		$this->rest( 'PUT', '/aimg/v1/templates/' . $template, array( 'document' => Repository::get_document( $template ) ) );
+		$this->assertTrue( Repository::has_document( $template ) );
+
+		foreach ( array( $template, $copy ) as $id ) {
+			$document = Repository::get_document( $id );
+
+			foreach ( array( 21, 22, 23 ) as $seed ) {
+				mt_srand( $seed ); // phpcs:ignore WordPress.WP.AlternativeFunctions.rand_seeding_mt_srand
+				$legacy        = aimg_legacy_generate_thumbnail( $args );
+				$this->files[] = $legacy;
+
+				mt_srand( $seed ); // phpcs:ignore WordPress.WP.AlternativeFunctions.rand_seeding_mt_srand
+				$new           = GdRenderer::save( GdRenderer::render( $document, array( 'title' => $title ) ), $document, 'aimg-parity-saved' );
+				$this->files[] = $new;
+
+				$this->assertTrue( file_get_contents( $legacy ) === file_get_contents( $new ), 'Template ' . $id . ', seed ' . $seed ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+			}
 		}
 	}
 

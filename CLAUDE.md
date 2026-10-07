@@ -59,10 +59,10 @@ for asset-only rebuilds during development use `npx wp-scripts build --webpack-s
 | `Providers\*` | `includes/Providers/` | `ProviderInterface`, `Result`, `OpenAI`, `Registry` (`aimg_providers` filter) |
 | `GenerateImages` | `includes/GenerateImages.php` | Hooks `wp_after_insert_post`; auto-generates featured images when none exists (per-post opt-out `_aimg_disable_auto`) |
 | `RestAPI` | `includes/RestAPI.php` | `aimg/v1/generate`, `/templates`, `/templates/{id}/preview`, `/prompt`, `/status/{post}`, `/featured/{post}` |
-| `Templates\RestController` | `includes/Templates/RestController.php` | Template CRUD (`POST /templates`, `GET/PUT/PATCH/DELETE /templates/{id}`), `POST /templates/preview` (unsaved document → data URI, 60/min per user), `GET /capabilities`; capability filter `aimg_manage_templates_capability` (default `manage_options`). The classic form refuses templates that have a v2 document |
+| `Templates\RestController` | `includes/Templates/RestController.php` | Template CRUD (`POST /templates`, `GET/PUT/PATCH/DELETE /templates/{id}`), `POST /templates/preview` (unsaved document → data URI, 60/min per user), `GET /capabilities`; capability filter `aimg_manage_templates_capability` (default `manage_options`) |
 | `Admin\Admin` | `includes/Admin/Admin.php` | Admin menu, page routing (list / add / edit), script enqueuing |
 | `Admin\Settings` | `includes/Admin/Settings.php` | Settings page UI and option validation |
-| `Admin\Actions` | `includes/Admin/Actions.php` | Processes template CRUD via `admin_post_aimg_update_template` |
+| `Admin\Actions` | `includes/Admin/Actions.php` | Template list actions (duplicate, set default, export, delete) via `admin_post_aimg_template_action` |
 | `Admin\Editor` | `includes/Admin/Editor.php` | Enqueues the block editor integration |
 | `Admin\MediaLibrary` | `includes/Admin/MediaLibrary.php` | Enqueues the generator modal on `upload.php` / `media-new.php` |
 | `Admin\ListTables\TemplatesTable` | `includes/Admin/ListTables/TemplatesTable.php` | Since 1.7.0 only used for bulk-delete handling; the list is a card grid (`views/img-templates.php`, actions via `Admin\Actions::template_action()`) |
@@ -78,7 +78,10 @@ for asset-only rebuilds during development use `npx wp-scripts build --webpack-s
 
 ### Data Model
 
-Templates are stored as the hidden CPT `aimg_template`. Configuration lives in post meta on each
+Templates are stored as the hidden CPT `aimg_template`. A template saved in the Template Studio holds a
+v2 document in `_aimg_template_data` (`Templates\Repository`). The Studio is the only editor (the
+classic form was removed in 1.7.1); 1.x templates without a document are still read from their 1.x meta
+until they are migrated (planned for 1.8.0), and that meta is kept for downgrades. The 1.x meta on each
 template post: `_aimg_bg_colors` (comma separated list, one picked at random per render),
 `_aimg_width`, `_aimg_height`, `_aimg_title_font_size`, `_aimg_is_overlay_image`,
 `_aimg_overlay_images` (JSON array of attachment IDs), `_aimg_overlay_position`, and
@@ -125,7 +128,7 @@ only the model changed. Models in `Providers\OpenAI::get_models()` must be curre
 deprecations page (https://developers.openai.com/api/docs/deprecations); saved models that are no longer
 listed fall back to `get_default_model()` at runtime.
 
-`aimg_generate_preview()` runs the same pipeline on-demand for the template editor preview, and
+`Templates\Repository::update_preview()` renders a template's list preview with its own title, and
 deletes the preview file it replaces.
 
 **Windows note:** file paths handed to `wp_insert_attachment()` must come from `aimg_uploads_path()`.
@@ -135,14 +138,14 @@ check in `_wp_relative_upload_path()` and WordPress stores an unusable absolute 
 ### Build Pipeline
 
 Webpack is configured in `webpack.config.js` extending `@wordpress/scripts`:
-- **Entry:** `src/css/admin.scss` → `assets/css/admin.css` (+ RTL), `src/js/admin.js` → `assets/js/admin.js`
+- **Entry:** `src/css/admin.scss` → `assets/css/admin.css` (+ RTL)
 - **Fonts:** `CopyWebpackPlugin` copies `src/fonts/` → `assets/fonts/`. Bundled fonts (static TTFs from Google Fonts with extended subsets, OFL/Apache licences in `src/fonts/licenses/`) are listed in `Rendering\Fonts::bundled()`; uploads go to `uploads/aimg-fonts/` (option `aimg_uploaded_fonts`, checked by file signature and a FreeType test render). Variable fonts cannot pick a weight in GD — bundle static instances only
 - `RemoveEmptyScriptsPlugin` strips empty `.js` stubs from CSS-only entries
 - **Template Studio** (`src/js/template-studio/` → `assets/js/template-studio.js`, plus
   `src/css/template-studio.scss`): loaded on the template add/edit screens with data inlined as
   `window.aimgStudio` (`Admin::enqueue_studio()`). Uses the `wp.*` globals plus bundled **Konva**
   (not react-konva: react-konva is pinned to one React major, WordPress ships 17–19). It mounts on
-  `#aimg-template-studio` and hides `#aimg-classic-form` only after mounting (fallback).
+  `#aimg-template-studio`, replacing a server-rendered "Loading…" notice that stays if it cannot start.
   `canvas/text-layout.js` and `canvas/draw.js` mirror the PHP renderer; keep them in step.
 
 The `assets/` directory is **built output** — do not edit files there directly.
@@ -153,7 +156,8 @@ The `assets/` directory is **built output** — do not edit files there directly
   - **Image Templates** — list, add, and edit templates; bulk delete; search by title
   - **Settings** — default BG/text colors; toggle auto-generation for posts and pages
 
-Form submissions use the `admin_post_aimg_update_template` action with nonce verification.
+Templates are saved through the REST API (`Templates\RestController`); list actions use
+`admin_post_aimg_template_action` with per-action nonces.
 
 ### Key Helper Functions (`includes/functions.php`)
 
@@ -163,7 +167,7 @@ Form submissions use the `admin_post_aimg_update_template` action with nonce ver
 - `aimg_get_js_data()` — REST endpoints, nonce and settings passed to the editor scripts
 - `aimg_generate_thumbnail($args)` — GD image generation (background → overlay → scrim → text).
   Takes `template_id`; the legacy `post_id` key is still accepted
-- `aimg_generate_preview()` — template editor preview (same pipeline, immediate output)
+- `aimg_generate_preview()` — deprecated in 1.7.1 (use `Repository::update_preview()`), removed in 1.8.0
 - `aimg_uploads_path($path)` — rewrite an uploads path into the separator style WordPress expects
 - `aimg_upload_url($path)` — URL of a file inside uploads ('' outside it)
 - `aimg_delete_upload_by_url($url)` — delete a file inside uploads, given its URL

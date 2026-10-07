@@ -1,8 +1,6 @@
 /**
- * Template Studio entry: mounts the editor over the classic template form.
- *
- * The classic form stays in the page and is only hidden once the Studio has
- * mounted, so it remains usable if anything here fails to load.
+ * Template Studio entry. The mount point holds a server-rendered message that
+ * stays visible if the Studio cannot start.
  */
 import { STORE } from './store';
 import App from './components/App';
@@ -21,7 +19,6 @@ import ErrorBoundary from './components/ErrorBoundary';
 		return;
 	}
 
-	const classic = document.getElementById( 'aimg-classic-form' );
 	const data = window.aimgStudio;
 
 	const { createElement: el } = wp.element;
@@ -32,35 +29,14 @@ import ErrorBoundary from './components/ErrorBoundary';
 		templateId: template ? template.id : 0,
 		title: template ? template.title : '',
 		status: template ? template.status : 'publish',
-		hasDocument: template ? template.hasDocument : false,
 		document: template ? template.document : data.starter,
 	} );
 
-	const showClassic = () => {
-		root.hidden = true;
-		if ( classic ) {
-			classic.hidden = false;
-		}
-	};
+	const app = el( ErrorBoundary, null, el( App, { data } ) );
 
-	const onClassic = classic ? showClassic : null;
-	const app = el(
-		ErrorBoundary,
-		{ onClassic },
-		el( App, { data, onClassic } )
-	);
-
-	try {
-		if ( wp.element.createRoot ) {
-			wp.element.createRoot( root ).render( app );
-		} else {
-			wp.element.render( app, root );
-		}
-		root.hidden = false;
-		if ( classic ) {
-			classic.hidden = true;
-		}
-	} catch {
-		showClassic();
+	if ( wp.element.createRoot ) {
+		wp.element.createRoot( root ).render( app );
+	} else {
+		wp.element.render( app, root );
 	}
 } )();
