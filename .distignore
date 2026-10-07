@@ -21,8 +21,6 @@ postcss.config.js
 babel.config.js
 package.json
 package-lock.json
-gruntfile.js
-Gruntfile.js
 webpack.config.js
 yarn.lock
 bower.json

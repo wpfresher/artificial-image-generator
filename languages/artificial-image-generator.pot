@@ -2,14 +2,14 @@
 # This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Image Generator 1.5.3\n"
+"Project-Id-Version: Image Generator 1.7.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/artificial-image-generator\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-05T14:00:10+00:00\n"
+"POT-Creation-Date: 2026-10-07T16:50:03+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: artificial-image-generator\n"
@@ -18,9 +18,9 @@ msgstr ""
 #: artificial-image-generator.php
 #: includes/Admin/Admin.php:35
 #: includes/Admin/Admin.php:36
-#: includes/Admin/Settings.php:59
-#: includes/Admin/views/add-img-template.php:16
-#: includes/Admin/views/edit-img-template.php:17
+#: includes/Admin/Settings.php:65
+#: includes/Admin/views/add-img-template.php:17
+#: includes/Admin/views/edit-img-template.php:18
 msgid "Image Generator"
 msgstr ""
 
@@ -44,29 +44,50 @@ msgstr ""
 msgid "https://beautifulplugins.com"
 msgstr ""
 
-#: includes/Admin/Actions.php:35
+#: includes/Admin/Actions.php:62
+#: includes/Admin/Actions.php:120
 msgid "You do not have permission to process this action"
 msgstr ""
 
-#: includes/Admin/Actions.php:47
+#: includes/Admin/Actions.php:73
+msgid "Template duplicated as a draft."
+msgstr ""
+
+#: includes/Admin/Actions.php:84
+msgid "Automatic featured images now use this template."
+msgstr ""
+
+#: includes/Admin/Actions.php:85
+msgid "Automatic featured images now use a random template."
+msgstr ""
+
+#: includes/Admin/Actions.php:101
+msgid "Template deleted."
+msgstr ""
+
+#: includes/Admin/Actions.php:133
 msgid "The image template you are trying to update does not exist."
 msgstr ""
 
-#: includes/Admin/Actions.php:53
+#: includes/Admin/Actions.php:140
+msgid "This template was designed in the Template Studio and cannot be edited with this form."
+msgstr ""
+
+#: includes/Admin/Actions.php:146
 msgid "The title field is required."
 msgstr ""
 
-#: includes/Admin/Actions.php:112
+#: includes/Admin/Actions.php:206
 msgid "Image template updated successfully."
 msgstr ""
 
-#: includes/Admin/Actions.php:114
+#: includes/Admin/Actions.php:208
 msgid "Image template added successfully."
 msgstr ""
 
 #: includes/Admin/Admin.php:46
 #: includes/Admin/Admin.php:47
-#: includes/Admin/views/img-templates.php:16
+#: includes/Admin/views/img-templates.php:22
 msgid "Image Templates"
 msgstr ""
 
@@ -74,15 +95,41 @@ msgstr ""
 msgid "Image templates per page"
 msgstr ""
 
-#: includes/Admin/Admin.php:157
+#: includes/Admin/Admin.php:166
 msgid "You do not have permission to perform this action."
 msgstr ""
 
 #. translators: %s: number of accounts.
-#: includes/Admin/Admin.php:182
+#: includes/Admin/Admin.php:190
 #, php-format
 msgid "%s item(s) deleted successfully."
 msgstr ""
+
+#: includes/Admin/Admin.php:309
+msgid "How to grow tomatoes on a small balcony"
+msgstr ""
+
+#: includes/Admin/Admin.php:310
+msgid "A simple guide to pots, soil, sun and watering for a big summer harvest."
+msgstr ""
+
+#: includes/Admin/Admin.php:311
+msgid "Gardening"
+msgstr ""
+
+#: includes/Admin/Admin.php:312
+msgid "Tomatoes, Balcony"
+msgstr ""
+
+#. translators: %d: minutes
+#. translators: %d: minutes needed to read the post
+#: includes/Admin/Admin.php:317
+#: includes/Templates/MergeTags.php:66
+#, php-format
+msgid "%d min read"
+msgid_plural "%d min read"
+msgstr[0] ""
+msgstr[1] ""
 
 #: includes/Admin/ListTables/TemplatesTable.php:90
 msgid "No templates found."
@@ -93,472 +140,948 @@ msgid "Name"
 msgstr ""
 
 #: includes/Admin/ListTables/TemplatesTable.php:104
-#: includes/Admin/views/add-img-template.php:120
-#: includes/Admin/views/edit-img-template.php:140
-#: includes/Admin/views/edit-img-template.php:144
+#: includes/Admin/views/add-img-template.php:121
+#: includes/Admin/views/edit-img-template.php:146
+#: includes/Admin/views/edit-img-template.php:150
 msgid "Preview Image"
 msgstr ""
 
 #: includes/Admin/ListTables/TemplatesTable.php:105
+#: includes/Templates/MergeTags.php:37
 msgid "Date"
 msgstr ""
 
-#. translators: %d: key id.
+#. translators: %d: template ID.
 #: includes/Admin/ListTables/TemplatesTable.php:163
 #, php-format
 msgid "ID: %d"
 msgstr ""
 
 #: includes/Admin/ListTables/TemplatesTable.php:164
+#: includes/Admin/views/img-templates.php:95
 msgid "Edit"
 msgstr ""
 
 #: includes/Admin/ListTables/TemplatesTable.php:165
 #: includes/Admin/ListTables/TemplatesTable.php:178
+#: includes/Admin/views/img-templates.php:38
+#: includes/Admin/views/img-templates.php:103
 msgid "Delete"
 msgstr ""
 
-#: includes/Admin/Settings.php:35
-#: includes/Admin/Settings.php:36
-#: includes/Admin/Settings.php:58
+#: includes/Admin/Settings.php:41
+#: includes/Admin/Settings.php:42
+#: includes/Admin/Settings.php:64
 msgid "Settings"
 msgstr ""
 
-#: includes/Admin/Settings.php:52
+#: includes/Admin/Settings.php:58
 msgid "You do not have sufficient permissions to access this page."
 msgstr ""
 
-#: includes/Admin/Settings.php:61
+#: includes/Admin/Settings.php:67
 msgid "Configure the settings for the Image Generator plugin."
 msgstr ""
 
-#: includes/Admin/Settings.php:85
+#: includes/Admin/Settings.php:92
 msgid "General Settings"
 msgstr ""
 
-#: includes/Admin/Settings.php:93
+#: includes/Admin/Settings.php:100
 msgid "Default Background Color"
 msgstr ""
 
-#: includes/Admin/Settings.php:102
+#: includes/Admin/Settings.php:109
 msgid "Default Text Color"
 msgstr ""
 
-#: includes/Admin/Settings.php:111
-#: includes/Admin/Settings.php:289
-msgid "Enable Post Thumbnails"
-msgstr ""
-
-#: includes/Admin/Settings.php:120
-#: includes/Admin/Settings.php:306
-msgid "Enable Page Thumbnails"
-msgstr ""
-
-#: includes/Admin/Settings.php:129
+#: includes/Admin/Settings.php:118
 msgid "Remove Data on Uninstall"
 msgstr ""
 
-#: includes/Admin/Settings.php:138
-msgid "AI Service"
+#: includes/Admin/Settings.php:126
+msgid "Automatic Featured Images"
 msgstr ""
 
-#: includes/Admin/Settings.php:146
-msgid "API Key"
+#: includes/Admin/Settings.php:134
+#: includes/Admin/Settings.php:564
+msgid "Enable Post Thumbnails"
+msgstr ""
+
+#: includes/Admin/Settings.php:143
+#: includes/Admin/Settings.php:581
+msgid "Enable Page Thumbnails"
+msgstr ""
+
+#: includes/Admin/Settings.php:150
+msgid "Generate With"
+msgstr ""
+
+#: includes/Admin/Settings.php:151
+msgid "Image Template"
+msgstr ""
+
+#: includes/Admin/Settings.php:152
+msgid "AI Image Shape"
+msgstr ""
+
+#: includes/Admin/Settings.php:153
+msgid "AI Prompt"
+msgstr ""
+
+#: includes/Admin/Settings.php:154
+msgid "AI Style"
 msgstr ""
 
 #: includes/Admin/Settings.php:155
-msgid "Image Model"
+msgid "AI Instructions"
 msgstr ""
 
-#: includes/Admin/Settings.php:170
-msgid "GPT Image 1 (recommended)"
-msgstr ""
-
-#: includes/Admin/Settings.php:171
-msgid "GPT Image 1 Mini (lower cost)"
-msgstr ""
-
-#: includes/Admin/Settings.php:172
-msgid "DALL·E 3 (legacy)"
+#: includes/Admin/Settings.php:165
+msgid "AI Service"
 msgstr ""
 
 #: includes/Admin/Settings.php:173
-msgid "DALL·E 2 (legacy)"
+msgid "API Key"
 msgstr ""
 
-#: includes/Admin/Settings.php:184
-msgid "Configure the AI image generation service used by the block editor. The API key is used when generating images from a custom prompt."
+#: includes/Admin/Settings.php:182
+msgid "Image Model"
 msgstr ""
 
-#: includes/Admin/Settings.php:211
+#: includes/Admin/Settings.php:190
+msgid "Default Image Shape"
+msgstr ""
+
+#: includes/Admin/Settings.php:198
+msgid "Image Quality"
+msgstr ""
+
+#: includes/Admin/Settings.php:206
+msgid "Who Can Generate AI Images"
+msgstr ""
+
+#: includes/Admin/Settings.php:214
+msgid "Hourly Limit per User"
+msgstr ""
+
+#: includes/Admin/Settings.php:230
+msgid "Authors and above"
+msgstr ""
+
+#: includes/Admin/Settings.php:231
+msgid "Editors and above"
+msgstr ""
+
+#: includes/Admin/Settings.php:232
+msgid "Administrators only"
+msgstr ""
+
+#: includes/Admin/Settings.php:240
+msgid "AI images are paid for with your API key. Templates stay available to everyone who can upload files."
+msgstr ""
+
+#: includes/Admin/Settings.php:254
+msgid "Maximum AI images each user can generate per hour. Set to 0 for no limit."
+msgstr ""
+
+#: includes/Admin/Settings.php:276
+msgid "The AI service used for prompts in the editor and the Media Library, and for automatic AI featured images."
+msgstr ""
+
+#: includes/Admin/Settings.php:287
+msgid "Square"
+msgstr ""
+
+#: includes/Admin/Settings.php:288
+msgid "Landscape"
+msgstr ""
+
+#: includes/Admin/Settings.php:289
+msgid "Portrait"
+msgstr ""
+
+#: includes/Admin/Settings.php:301
+msgid "Automatic"
+msgstr ""
+
+#: includes/Admin/Settings.php:302
+msgid "Low (cheapest)"
+msgstr ""
+
+#: includes/Admin/Settings.php:303
+msgid "Medium"
+msgstr ""
+
+#: includes/Admin/Settings.php:304
+msgid "High"
+msgstr ""
+
+#: includes/Admin/Settings.php:339
+msgid "When a post or page is saved without a featured image, one is generated for it."
+msgstr ""
+
+#: includes/Admin/Settings.php:353
+msgid "AI images are created in the background once a post is published or scheduled, and use your API key. Templates are free and instant."
+msgstr ""
+
+#: includes/Admin/Settings.php:364
+msgid "A random template"
+msgstr ""
+
+#. translators: %s: list of merge tags
+#: includes/Admin/Settings.php:399
+#, php-format
+msgid "Leave empty to use the default shown. Available tags: %s"
+msgstr ""
+
+#: includes/Admin/Settings.php:414
+msgid "Added to the prompt of automatic AI images."
+msgstr ""
+
+#: includes/Admin/Settings.php:427
+msgid "Added to the end of every automatic AI prompt. AI models often draw garbled text, so the default asks for none."
+msgstr ""
+
+#: includes/Admin/Settings.php:438
+msgid "Used for prompts in the editor and the Media Library; it can be changed per image there."
+msgstr ""
+
+#: includes/Admin/Settings.php:448
+msgid "Higher quality costs more."
+msgstr ""
+
+#: includes/Admin/Settings.php:477
+msgid "Remove the saved API key"
+msgstr ""
+
+#: includes/Admin/Settings.php:484
 msgid "Your API key is currently defined via the AIMG_API_KEY PHP constant and cannot be edited here."
 msgstr ""
 
-#: includes/Admin/Settings.php:213
-msgid "Enter your image generation API key (e.g. an OpenAI key for DALL·E). For maximum security you can instead define the AIMG_API_KEY constant in wp-config.php."
+#: includes/Admin/Settings.php:486
+msgid "An API key is saved. Leave the field empty to keep it, or enter a new key to replace it."
 msgstr ""
 
-#: includes/Admin/Settings.php:235
-msgid "The OpenAI model used for prompt-based generation. GPT Image 1 is available to all current API accounts; the DALL·E models are legacy and newer accounts may not have access to them."
+#: includes/Admin/Settings.php:488
+msgid "Enter your image generation API key (an OpenAI API key). For maximum security you can instead define the AIMG_API_KEY constant in wp-config.php."
 msgstr ""
 
-#: includes/Admin/Settings.php:247
+#: includes/Admin/Settings.php:510
+msgid "The OpenAI model used for AI images. GPT Image 2.5 Flare is fast and suited to everyday images; Sunburst is OpenAI's most capable model. Retired models (GPT Image 1 and DALL·E) are switched to GPT Image 2.5 Flare automatically."
+msgstr ""
+
+#: includes/Admin/Settings.php:522
 msgid "Configure the Image Generator general settings."
 msgstr ""
 
-#: includes/Admin/Settings.php:259
+#: includes/Admin/Settings.php:534
 msgid "#008000"
 msgstr ""
 
-#: includes/Admin/Settings.php:260
+#: includes/Admin/Settings.php:535
 msgid "Enter the default background color for the thumbnails. This will be used as a fallback color if no specific color is set."
 msgstr ""
 
-#: includes/Admin/Settings.php:273
+#: includes/Admin/Settings.php:548
 msgid "#ffffff"
 msgstr ""
 
-#: includes/Admin/Settings.php:274
+#: includes/Admin/Settings.php:549
 msgid "Enter the default text color for the thumbnails. This will be used as a fallback color if no specific color is set."
 msgstr ""
 
-#: includes/Admin/Settings.php:291
-msgid "Check this box to enable automatic generation of post thumbnails when a post is saved. This will create a thumbnail image based on the post title, using the random background colors and overlay images if configured."
+#: includes/Admin/Settings.php:566
+msgid "Generate a featured image when a post is saved without one, using the method chosen below."
 msgstr ""
 
-#: includes/Admin/Settings.php:308
-msgid "Check this box to enable automatic generation of page thumbnails when a page is saved. This will create a thumbnail image based on the page title, using the random background colors and overlay images if configured."
+#: includes/Admin/Settings.php:583
+msgid "Generate a featured image when a page is saved without one, using the method chosen below."
 msgstr ""
 
-#: includes/Admin/Settings.php:323
+#: includes/Admin/Settings.php:598
 msgid "Delete templates and settings when the plugin is deleted"
 msgstr ""
 
-#: includes/Admin/Settings.php:325
+#: includes/Admin/Settings.php:600
 msgid "Leave this unchecked to keep your image templates if you delete and later reinstall the plugin. Images already added to the Media Library are never removed."
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:15
+#: includes/Admin/views/add-img-template.php:16
 msgid "Add New Image Template"
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:18
-#: includes/Admin/views/edit-img-template.php:19
+#: includes/Admin/views/add-img-template.php:19
+#: includes/Admin/views/edit-img-template.php:20
 msgid "Configure the template options to generate images."
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:26
-#: includes/Admin/views/edit-img-template.php:27
+#: includes/Admin/views/add-img-template.php:27
+#: includes/Admin/views/edit-img-template.php:33
 msgid "Title"
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:29
-#: includes/Admin/views/edit-img-template.php:30
+#: includes/Admin/views/add-img-template.php:30
+#: includes/Admin/views/edit-img-template.php:36
 msgid "Awesome image template"
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:30
-#: includes/Admin/views/edit-img-template.php:31
+#: includes/Admin/views/add-img-template.php:31
+#: includes/Admin/views/edit-img-template.php:37
 msgid "Enter the title for the image template."
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:35
-#: includes/Admin/views/edit-img-template.php:36
+#: includes/Admin/views/add-img-template.php:36
+#: includes/Admin/views/edit-img-template.php:42
 msgid "Background Colors"
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:38
-#: includes/Admin/views/edit-img-template.php:39
+#: includes/Admin/views/add-img-template.php:39
+#: includes/Admin/views/edit-img-template.php:45
 msgid "e.g. #e74c3c, #2ecc71, #9b59b6"
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:39
-#: includes/Admin/views/edit-img-template.php:40
+#: includes/Admin/views/add-img-template.php:40
+#: includes/Admin/views/edit-img-template.php:46
 msgid "Enter the background colors for the thumbnails. Use comma to separate multiple colors."
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:44
-#: includes/Admin/views/edit-img-template.php:45
+#: includes/Admin/views/add-img-template.php:45
+#: includes/Admin/views/edit-img-template.php:51
 msgid "Width"
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:47
-#: includes/Admin/views/edit-img-template.php:48
+#: includes/Admin/views/add-img-template.php:48
+#: includes/Admin/views/edit-img-template.php:54
 msgid "1200"
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:48
-#: includes/Admin/views/edit-img-template.php:49
+#: includes/Admin/views/add-img-template.php:49
+#: includes/Admin/views/edit-img-template.php:55
 msgid "Enter the width for the thumbnails in pixels."
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:53
-#: includes/Admin/views/edit-img-template.php:54
+#: includes/Admin/views/add-img-template.php:54
+#: includes/Admin/views/edit-img-template.php:60
 msgid "Height"
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:56
-#: includes/Admin/views/edit-img-template.php:57
+#: includes/Admin/views/add-img-template.php:57
+#: includes/Admin/views/edit-img-template.php:63
 msgid "800"
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:57
-#: includes/Admin/views/edit-img-template.php:58
+#: includes/Admin/views/add-img-template.php:58
+#: includes/Admin/views/edit-img-template.php:64
 msgid "Enter the height for the thumbnails in pixels."
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:62
-#: includes/Admin/views/edit-img-template.php:63
+#: includes/Admin/views/add-img-template.php:63
+#: includes/Admin/views/edit-img-template.php:69
 msgid "Title Font Size"
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:65
-#: includes/Admin/views/edit-img-template.php:66
+#: includes/Admin/views/add-img-template.php:66
+#: includes/Admin/views/edit-img-template.php:72
 msgid "40"
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:66
-#: includes/Admin/views/edit-img-template.php:67
-msgid "Enter the font size for the title in pixels."
+#: includes/Admin/views/add-img-template.php:67
+#: includes/Admin/views/edit-img-template.php:73
+msgid "Enter the font size for the title in pixel."
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:71
-#: includes/Admin/views/edit-img-template.php:72
+#: includes/Admin/views/add-img-template.php:72
+#: includes/Admin/views/edit-img-template.php:78
 msgid "Enable Overlay Images"
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:76
-#: includes/Admin/views/edit-img-template.php:77
+#: includes/Admin/views/add-img-template.php:77
+#: includes/Admin/views/edit-img-template.php:83
 msgid "Enable"
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:78
-#: includes/Admin/views/edit-img-template.php:79
+#: includes/Admin/views/add-img-template.php:79
+#: includes/Admin/views/edit-img-template.php:85
 msgid "Check this box to enable overlay images in the thumbnails."
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:84
-#: includes/Admin/views/edit-img-template.php:85
+#: includes/Admin/views/add-img-template.php:85
+#: includes/Admin/views/edit-img-template.php:91
 msgid "Overlay Images"
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:89
-#: includes/Admin/views/edit-img-template.php:108
+#: includes/Admin/views/add-img-template.php:90
+#: includes/Admin/views/edit-img-template.php:114
 msgid "Select Images"
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:91
-#: includes/Admin/views/edit-img-template.php:110
+#: includes/Admin/views/add-img-template.php:92
+#: includes/Admin/views/edit-img-template.php:116
 msgid "Select one or more transparent PNG images to use as overlay images in the thumbnails. Randomly one will be selected while generating the thumbnail."
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:97
-#: includes/Admin/views/edit-img-template.php:116
+#: includes/Admin/views/add-img-template.php:98
+#: includes/Admin/views/edit-img-template.php:122
 msgid "Overlay Image Position"
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:101
-#: includes/Admin/views/edit-img-template.php:121
+#: includes/Admin/views/add-img-template.php:102
+#: includes/Admin/views/edit-img-template.php:127
 msgid "Top Left"
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:102
-#: includes/Admin/views/edit-img-template.php:122
+#: includes/Admin/views/add-img-template.php:103
+#: includes/Admin/views/edit-img-template.php:128
 msgid "Top Center"
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:103
-#: includes/Admin/views/edit-img-template.php:123
+#: includes/Admin/views/add-img-template.php:104
+#: includes/Admin/views/edit-img-template.php:129
 msgid "Top Right"
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:104
-#: includes/Admin/views/edit-img-template.php:124
+#: includes/Admin/views/add-img-template.php:105
+#: includes/Admin/views/edit-img-template.php:130
 msgid "Left Center"
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:105
-#: includes/Admin/views/edit-img-template.php:125
+#: includes/Admin/views/add-img-template.php:106
+#: includes/Admin/views/edit-img-template.php:131
 msgid "Center Center"
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:106
-#: includes/Admin/views/edit-img-template.php:126
+#: includes/Admin/views/add-img-template.php:107
+#: includes/Admin/views/edit-img-template.php:132
 msgid "Right Center"
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:107
-#: includes/Admin/views/edit-img-template.php:127
+#: includes/Admin/views/add-img-template.php:108
+#: includes/Admin/views/edit-img-template.php:133
 msgid "Bottom Left"
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:108
-#: includes/Admin/views/edit-img-template.php:128
+#: includes/Admin/views/add-img-template.php:109
+#: includes/Admin/views/edit-img-template.php:134
 msgid "Bottom Center"
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:109
-#: includes/Admin/views/edit-img-template.php:129
+#: includes/Admin/views/add-img-template.php:110
+#: includes/Admin/views/edit-img-template.php:135
 msgid "Bottom Right"
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:111
-#: includes/Admin/views/edit-img-template.php:131
+#: includes/Admin/views/add-img-template.php:112
+#: includes/Admin/views/edit-img-template.php:137
 msgid "Select the position for the overlay images in the thumbnails. The overlay image will be positioned based on this selection. Default is \"Center Center\"."
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:121
-#: includes/Admin/views/edit-img-template.php:148
+#: includes/Admin/views/add-img-template.php:122
+#: includes/Admin/views/edit-img-template.php:154
 msgid "Preview could not be generated. Save changes to generate a preview."
 msgstr ""
 
-#: includes/Admin/views/edit-img-template.php:16
-#: includes/PostTypes.php:40
+#: includes/Admin/views/edit-img-template.php:17
+#: includes/PostTypes.php:58
 msgid "Edit Image Template"
 msgstr ""
 
-#: includes/Admin/views/edit-img-template.php:98
-msgid "Overlay Image"
-msgstr ""
-
-#: includes/Admin/views/edit-img-template.php:99
-msgid "X"
+#: includes/Admin/views/edit-img-template.php:23
+msgid "This template was designed in the Template Studio. Its settings are not shown in this form and cannot be changed here; the preview shows how it looks."
 msgstr ""
 
 #: includes/Admin/views/edit-img-template.php:104
+msgid "Overlay Image"
+msgstr ""
+
+#: includes/Admin/views/edit-img-template.php:105
+msgid "X"
+msgstr ""
+
+#: includes/Admin/views/edit-img-template.php:110
 msgid "No overlay images selected."
 msgstr ""
 
-#: includes/Admin/views/edit-img-template.php:146
+#: includes/Admin/views/edit-img-template.php:152
 msgid "This is a preview of how the image will look like based on the current settings. Save changes to generate a new preview."
 msgstr ""
 
-#: includes/Admin/views/img-templates.php:18
+#: includes/Admin/views/img-templates.php:24
 msgid "Add New"
 msgstr ""
 
-#: includes/Admin/views/img-templates.php:25
+#: includes/Admin/views/img-templates.php:35
+#: includes/Admin/views/img-templates.php:37
+msgid "Bulk actions"
+msgstr ""
+
+#: includes/Admin/views/img-templates.php:40
+msgid "Apply"
+msgstr ""
+
+#: includes/Admin/views/img-templates.php:43
+msgid "Search templates"
+msgstr ""
+
+#: includes/Admin/views/img-templates.php:45
 msgid "Search"
 msgstr ""
 
-#: includes/Generator.php:186
+#: includes/Admin/views/img-templates.php:51
+msgid "No templates match your search."
+msgstr ""
+
+#: includes/Admin/views/img-templates.php:51
+msgid "No templates yet. Create one to make on-brand featured images."
+msgstr ""
+
+#: includes/Admin/views/img-templates.php:52
+msgid "Create a template"
+msgstr ""
+
+#: includes/Admin/views/img-templates.php:71
+msgid "No preview yet"
+msgstr ""
+
+#: includes/Admin/views/img-templates.php:79
+msgid "(no title)"
+msgstr ""
+
+#: includes/Admin/views/img-templates.php:82
+msgid "Draft"
+msgstr ""
+
+#: includes/Admin/views/img-templates.php:85
+msgid "Default"
+msgstr ""
+
+#: includes/Admin/views/img-templates.php:88
+msgid "Studio"
+msgstr ""
+
+#: includes/Admin/views/img-templates.php:96
+msgid "Duplicate"
+msgstr ""
+
+#: includes/Admin/views/img-templates.php:98
+msgid "Use a random template"
+msgstr ""
+
+#: includes/Admin/views/img-templates.php:100
+msgid "Set as default"
+msgstr ""
+
+#: includes/Admin/views/img-templates.php:102
+msgid "Export"
+msgstr ""
+
+#: includes/Admin/views/img-templates.php:103
+msgid "Delete this template? Images already made with it stay in the Media Library."
+msgstr ""
+
+#. translators: %d: number of AI images the user can still generate this hour
+#: includes/functions.php:387
+#, php-format
+msgid "You can generate %d more AI image this hour. Request fewer images."
+msgid_plural "You can generate %d more AI images this hour. Request fewer images."
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: 1: hourly limit, 2: minutes until the limit resets
+#: includes/functions.php:403
+#, php-format
+msgid "You have reached the limit of %1$d AI image per hour. Try again in %2$d minutes."
+msgid_plural "You have reached the limit of %1$d AI images per hour. Try again in %2$d minutes."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/Generator.php:56
+msgid "Image template"
+msgstr ""
+
+#: includes/Generator.php:57
+msgid "AI image"
+msgstr ""
+
+#: includes/Generator.php:58
+msgid "Image template, AI if no template is available"
+msgstr ""
+
+#: includes/Generator.php:59
+msgid "AI image, template if AI fails"
+msgstr ""
+
+#: includes/Generator.php:211
+msgid "There is no published image template to use."
+msgstr ""
+
+#: includes/Generator.php:217
+#: includes/RestAPI.php:516
+msgid "Failed to generate image from template."
+msgstr ""
+
+#: includes/Generator.php:248
+#: includes/Providers/OpenAI.php:145
+#: includes/RestAPI.php:303
+#: includes/RestAPI.php:563
+msgid "No API key configured. Please add your API key on the Image Generator settings page."
+msgstr ""
+
+#: includes/Generator.php:307
+msgid "No AI image provider is available."
+msgstr ""
+
+#: includes/Generator.php:368
+msgid "The image returned by the API could not be decoded."
+msgstr ""
+
+#: includes/Generator.php:379
+msgid "Could not write the generated image to a temporary file."
+msgstr ""
+
+#: includes/Generator.php:651
 msgid "The generated image could not be found on disk."
 msgstr ""
 
-#: includes/PostTypes.php:33
+#: includes/PostTypes.php:51
 msgctxt "post type general name"
 msgid "Image Templates"
 msgstr ""
 
-#: includes/PostTypes.php:34
+#: includes/PostTypes.php:52
 msgctxt "post type singular name"
 msgid "Image Template"
 msgstr ""
 
-#: includes/PostTypes.php:35
+#: includes/PostTypes.php:53
 msgctxt "admin menu"
 msgid "Image Templates"
 msgstr ""
 
-#: includes/PostTypes.php:36
+#: includes/PostTypes.php:54
 msgctxt "add new on admin bar"
 msgid "Image Templates"
 msgstr ""
 
-#: includes/PostTypes.php:37
+#: includes/PostTypes.php:55
 msgctxt "ticket"
 msgid "Add New"
 msgstr ""
 
-#: includes/PostTypes.php:38
+#: includes/PostTypes.php:56
 msgid "Add New Images Template"
 msgstr ""
 
-#: includes/PostTypes.php:39
+#: includes/PostTypes.php:57
 msgid "New Images Template"
 msgstr ""
 
-#: includes/PostTypes.php:41
+#: includes/PostTypes.php:59
 msgid "View Image Template"
 msgstr ""
 
-#: includes/PostTypes.php:42
+#: includes/PostTypes.php:60
 msgid "All Image Templates"
 msgstr ""
 
-#: includes/PostTypes.php:43
+#: includes/PostTypes.php:61
 msgid "Search Image Templates"
 msgstr ""
 
-#: includes/PostTypes.php:44
+#: includes/PostTypes.php:62
 msgid "Parent Image Templates:"
 msgstr ""
 
-#: includes/PostTypes.php:45
+#: includes/PostTypes.php:63
 msgid "No image templates found."
 msgstr ""
 
-#: includes/PostTypes.php:46
+#: includes/PostTypes.php:64
 msgid "No image templates found in Trash."
 msgstr ""
 
-#: includes/RestAPI.php:86
-msgid "You do not have permission to access image templates."
+#: includes/PromptBuilder.php:24
+msgid "A featured image for an article titled \"{title}\"."
 msgstr ""
 
-#: includes/RestAPI.php:108
-msgid "You do not have permission to generate images."
+#: includes/PromptBuilder.php:27
+msgid "A featured image for an article titled \"{title}\". The article is about: {excerpt}"
 msgstr ""
 
-#: includes/RestAPI.php:119
-msgid "You must supply either a prompt or a template_id."
+#: includes/PromptBuilder.php:36
+msgid "Do not include any text, letters, words, logos or watermarks in the image."
 msgstr ""
 
-#: includes/RestAPI.php:188
-msgid "No prompt or template_id provided."
+#: includes/PromptBuilder.php:46
+msgid "None"
 msgstr ""
 
-#: includes/RestAPI.php:208
-msgid "Invalid template ID."
+#: includes/PromptBuilder.php:47
+msgid "Photorealistic"
 msgstr ""
 
-#: includes/RestAPI.php:219
-msgid "Failed to generate image from template."
+#: includes/PromptBuilder.php:48
+msgid "Flat illustration"
 msgstr ""
 
-#: includes/RestAPI.php:264
-msgid "No API key configured. Please add your API key on the Image Generator settings page."
+#: includes/PromptBuilder.php:49
+msgid "3D render"
 msgstr ""
 
-#: includes/RestAPI.php:336
+#: includes/PromptBuilder.php:50
+msgid "Watercolor"
+msgstr ""
+
+#: includes/PromptBuilder.php:51
+msgid "Minimal line art"
+msgstr ""
+
+#: includes/PromptBuilder.php:52
+msgid "Cinematic"
+msgstr ""
+
+#: includes/PromptBuilder.php:53
+msgid "Isometric"
+msgstr ""
+
+#: includes/Providers/OpenAI.php:48
+msgid "OpenAI"
+msgstr ""
+
+#: includes/Providers/OpenAI.php:58
+msgid "GPT Image 2.5 Flare (recommended, fast)"
+msgstr ""
+
+#: includes/Providers/OpenAI.php:59
+msgid "GPT Image 2.5 Sunburst (most capable)"
+msgstr ""
+
+#: includes/Providers/OpenAI.php:60
+msgid "GPT Image 2"
+msgstr ""
+
+#: includes/Providers/OpenAI.php:209
+msgid "The AI service did not respond in time. Please try again."
+msgstr ""
+
+#: includes/Providers/OpenAI.php:221
 msgid "The image generation API returned an error."
 msgstr ""
 
-#. translators: %s: model identifier, e.g. dall-e-3.
-#: includes/RestAPI.php:343
+#. translators: %s: model identifier, e.g. gpt-image-2.
+#: includes/Providers/OpenAI.php:228
 #, php-format
 msgid "Your API account may not have access to the \"%s\" model. Try selecting a different model under Image Generator → Settings → AI Service."
 msgstr ""
 
-#: includes/RestAPI.php:365
+#: includes/Providers/OpenAI.php:255
 msgid "No image returned by the API."
 msgstr ""
 
+#: includes/Queue.php:297
+msgid "The image was not generated in time. Please try again."
+msgstr ""
+
+#: includes/Rendering/Fonts.php:158
+msgid "Upload a .ttf or .otf font file. Web fonts (.woff, .woff2) cannot be used to draw images."
+msgstr ""
+
+#: includes/Rendering/Fonts.php:162
+msgid "The font file is empty or larger than 10 MB."
+msgstr ""
+
+#: includes/Rendering/Fonts.php:168
+msgid "This file is not a TrueType or OpenType font."
+msgstr ""
+
+#: includes/Rendering/Fonts.php:173
+msgid "This server cannot draw text with this font."
+msgstr ""
+
+#: includes/Rendering/Fonts.php:183
+msgid "The fonts folder could not be created."
+msgstr ""
+
+#: includes/Rendering/Fonts.php:192
+msgid "The font could not be saved."
+msgstr ""
+
+#: includes/Rendering/Images.php:22
+msgid "Media Library"
+msgstr ""
+
+#: includes/Rendering/Images.php:23
+msgid "Post featured image"
+msgstr ""
+
+#: includes/Rendering/Images.php:24
+msgid "First image in the post"
+msgstr ""
+
+#: includes/Rendering/Images.php:25
+msgid "Site logo"
+msgstr ""
+
+#: includes/Rendering/Images.php:26
+msgid "Site icon"
+msgstr ""
+
+#: includes/Rendering/Images.php:27
+msgid "Author avatar (uploaded)"
+msgstr ""
+
+#: includes/RestAPI.php:184
+#: includes/RestAPI.php:408
+#: includes/Templates/RestController.php:319
+msgid "You do not have permission to edit this post."
+msgstr ""
+
+#: includes/RestAPI.php:210
+#: includes/RestAPI.php:379
+msgid "You do not have permission to generate images."
+msgstr ""
+
+#: includes/RestAPI.php:218
+#: includes/RestAPI.php:398
+msgid "You do not have permission to generate AI images."
+msgstr ""
+
+#: includes/RestAPI.php:238
 #: includes/RestAPI.php:500
-msgid "The image returned by the API could not be decoded."
+msgid "Invalid template ID."
 msgstr ""
 
-#: includes/RestAPI.php:509
-msgid "Could not create a temporary file for the generated image."
+#: includes/RestAPI.php:307
+msgid "Add a title to the post first; it is used to generate the image."
 msgstr ""
 
-#: includes/RestAPI.php:519
-msgid "Could not write the generated image to a temporary file."
+#: includes/RestAPI.php:357
+msgid "You do not have permission to access image templates."
+msgstr ""
+
+#: includes/RestAPI.php:390
+msgid "You must supply either a prompt or a template_id."
+msgstr ""
+
+#: includes/RestAPI.php:477
+msgid "No prompt or template_id provided."
+msgstr ""
+
+#: includes/Templates/MergeTags.php:32
+msgid "Post title"
+msgstr ""
+
+#: includes/Templates/MergeTags.php:33
+msgid "Excerpt"
+msgstr ""
+
+#: includes/Templates/MergeTags.php:34
+msgid "Categories"
+msgstr ""
+
+#: includes/Templates/MergeTags.php:35
+msgid "Tags"
+msgstr ""
+
+#: includes/Templates/MergeTags.php:36
+msgid "Author"
+msgstr ""
+
+#: includes/Templates/MergeTags.php:38
+msgid "Site name"
+msgstr ""
+
+#: includes/Templates/MergeTags.php:39
+msgid "Reading time"
+msgstr ""
+
+#: includes/Templates/Repository.php:83
+#: includes/Templates/RestController.php:562
+msgid "Template not found."
+msgstr ""
+
+#. translators: %s: template title
+#: includes/Templates/Repository.php:90
+#, php-format
+msgid "%s (copy)"
+msgstr ""
+
+#: includes/Templates/RestController.php:43
+msgid "Template document (schema v2), as an object or JSON."
+msgstr ""
+
+#: includes/Templates/RestController.php:203
+msgid "Choose a font file to upload."
+msgstr ""
+
+#: includes/Templates/RestController.php:232
+msgid "Only uploaded fonts can be deleted."
+msgstr ""
+
+#: includes/Templates/RestController.php:254
+msgid "Post not found."
+msgstr ""
+
+#: includes/Templates/RestController.php:300
+msgid "You do not have permission to manage image templates."
+msgstr ""
+
+#: includes/Templates/RestController.php:338
+#: includes/Templates/RestController.php:397
+msgid "Give the template a title."
+msgstr ""
+
+#: includes/Templates/RestController.php:476
+msgid "The template could not be deleted."
+msgstr ""
+
+#: includes/Templates/RestController.php:507
+msgid "Your post title appears here"
+msgstr ""
+
+#: includes/Templates/RestController.php:514
+msgid "This server cannot render images (GD with FreeType is required)."
+msgstr ""
+
+#: includes/Templates/RestController.php:609
+msgid "Too many previews. Please wait a moment."
+msgstr ""
+
+#: includes/Templates/Starters.php:60
+msgid "Bold headline"
+msgstr ""
+
+#: includes/Templates/Starters.php:122
+msgid "Classic centered"
+msgstr ""
+
+#: includes/Templates/Starters.php:153
+msgid "Photo with fade"
+msgstr ""
+
+#: includes/Templates/Starters.php:203
+msgid "Magazine serif"
+msgstr ""
+
+#: includes/Templates/Starters.php:256
+msgid "Minimal frame"
+msgstr ""
+
+#: includes/Templates/Starters.php:302
+msgid "Highlighted lines"
+msgstr ""
+
+#: includes/Templates/Starters.php:344
+msgid "Split with image"
+msgstr ""
+
+#: includes/Templates/Starters.php:394
+msgid "Quote card"
 msgstr ""
 
 #: assets/js/block-editor.js:1
 #: assets/js/media-library.js:1
-msgid "Failed to load image templates."
+msgid "Preview of the image"
 msgstr ""
 
 #: assets/js/block-editor.js:1
@@ -593,7 +1116,12 @@ msgstr ""
 
 #: assets/js/block-editor.js:1
 #: assets/js/media-library.js:1
-msgid "No AI API key is configured yet. Add one to enable prompt-based generation."
+msgid "Your site administrator has limited AI image generation to other roles. You can still generate images from templates."
+msgstr ""
+
+#: assets/js/block-editor.js:1
+#: assets/js/media-library.js:1
+msgid "No AI API key is configured yet. Add one to enable prompt-based generation, or use the Templates tab, which needs no key."
 msgstr ""
 
 #: assets/js/block-editor.js:1
@@ -618,69 +1146,177 @@ msgstr ""
 
 #: assets/js/block-editor.js:1
 #: assets/js/media-library.js:1
+msgid "Could not build a prompt from the post."
+msgstr ""
+
+#: assets/js/block-editor.js:1
+#: assets/js/media-library.js:1
+#: assets/js/template-studio.js:1
+msgid "Shape"
+msgstr ""
+
+#: assets/js/block-editor.js:1
+#: assets/js/media-library.js:1
+msgid "Style"
+msgstr ""
+
+#: assets/js/block-editor.js:1
+#: assets/js/media-library.js:1
+msgid "Quality"
+msgstr ""
+
+#: assets/js/block-editor.js:1
+#: assets/js/media-library.js:1
+msgid "Variations"
+msgstr ""
+
+#: assets/js/block-editor.js:1
+#: assets/js/media-library.js:1
+msgid "Pick the image to use. The others will be removed from the Media Library."
+msgstr ""
+
+#. translators: %d: variation number
+#: assets/js/block-editor.js:2
+#: assets/js/media-library.js:2
+#, js-format
+msgid "Variation %d"
+msgstr ""
+
+#: assets/js/block-editor.js:2
+#: assets/js/media-library.js:2
+msgid "Failed to load image templates."
+msgstr ""
+
+#: assets/js/block-editor.js:2
+#: assets/js/media-library.js:2
 msgid "Templates"
 msgstr ""
 
-#: assets/js/block-editor.js:1
-#: assets/js/media-library.js:1
+#: assets/js/block-editor.js:2
+#: assets/js/media-library.js:2
 msgid "Custom Prompt"
 msgstr ""
 
-#: assets/js/block-editor.js:1
-#: assets/js/media-library.js:1
+#: assets/js/block-editor.js:2
+#: assets/js/media-library.js:2
 msgid "Generate Image with Image Generator & AI"
 msgstr ""
 
-#: assets/js/block-editor.js:1
-#: assets/js/media-library.js:1
+#: assets/js/block-editor.js:2
+#: assets/js/media-library.js:2
 msgid "Generating…"
 msgstr ""
 
-#: assets/js/block-editor.js:1
-#: assets/js/media-library.js:1
+#: assets/js/block-editor.js:2
+#: assets/js/media-library.js:2
 msgid "Generate Image"
 msgstr ""
 
-#: assets/js/block-editor.js:1
-#: assets/js/media-library.js:1
+#: assets/js/block-editor.js:2
+#: assets/js/media-library.js:2
 msgid "Cancel"
 msgstr ""
 
-#: assets/js/block-editor.js:1
-#: assets/js/media-library.js:1
+#: assets/js/block-editor.js:2
+#: assets/js/media-library.js:2
 msgid "Generating image — this can take up to a minute…"
 msgstr ""
 
-#: assets/js/block-editor.js:1
-#: assets/js/media-library.js:1
-msgid "No image URL returned by the API."
-msgstr ""
-
-#: assets/js/block-editor.js:1
-#: assets/js/media-library.js:1
+#: assets/js/block-editor.js:2
+#: assets/js/block-editor.js:4
+#: assets/js/media-library.js:2
 msgid "Something went wrong. Please try again."
 msgstr ""
 
-#: assets/js/block-editor.js:1
+#: assets/js/block-editor.js:2
+#: assets/js/media-library.js:2
+msgid "No image URL returned by the API."
+msgstr ""
+
+#: assets/js/block-editor.js:2
 msgid "The generated image could not be added to the Media Library — a featured image needs an attachment ID."
 msgstr ""
 
-#: assets/js/block-editor.js:1
+#: assets/js/block-editor.js:2
+msgid "Generate"
+msgstr ""
+
+#: assets/js/block-editor.js:2
+msgid "Try again"
+msgstr ""
+
+#: assets/js/block-editor.js:2
+msgid "Regenerate"
+msgstr ""
+
+#: assets/js/block-editor.js:2
 msgid "Current featured image"
 msgstr ""
 
-#: assets/js/block-editor.js:1
+#: assets/js/block-editor.js:2
+msgid "Featured image queued…"
+msgstr ""
+
+#: assets/js/block-editor.js:2
+msgid "Generating featured image…"
+msgstr ""
+
+#. translators: %s: error message
+#: assets/js/block-editor.js:3
+#, js-format
+msgid "The featured image could not be generated: %s"
+msgstr ""
+
+#: assets/js/block-editor.js:3
+msgid "Save the post first; the saved title is used."
+msgstr ""
+
+#. translators: %s: generation method, e.g. "Image template"
+#: assets/js/block-editor.js:4
+#, js-format
+msgid "Uses the method set in Image Generator → Settings: %s."
+msgstr ""
+
+#: assets/js/block-editor.js:4
+msgid "Choose a template or write a prompt…"
+msgstr ""
+
+#: assets/js/block-editor.js:4
 msgid "Generate Featured Image"
 msgstr ""
 
-#: assets/js/block-editor.js:1
+#: assets/js/block-editor.js:4
 msgid "Generate with Image generator & AI"
 msgstr ""
 
-#: assets/js/block-editor.js:1
+#: assets/js/block-editor.js:4
 msgid "Generate Image with Image generator & AI"
 msgstr ""
 
-#: assets/js/block-editor.js:1
+#: assets/js/block-editor.js:4
 msgid "AI Featured Image"
+msgstr ""
+
+#: assets/js/template-studio.js:1
+msgid "Background"
+msgstr ""
+
+#: assets/js/template-studio.js:1
+msgid "Image"
+msgstr ""
+
+#: assets/js/template-studio.js:1
+msgid "Overlay"
+msgstr ""
+
+#: assets/js/template-studio.js:1
+msgid "Text"
+msgstr ""
+
+#: assets/js/template-studio.js:1
+msgid "Pattern"
+msgstr ""
+
+#: assets/js/template-studio.js:1
+msgid "Frame"
 msgstr ""
