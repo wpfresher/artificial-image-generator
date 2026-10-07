@@ -35,6 +35,8 @@ class RestAPI {
 	 * @return void
 	 */
 	public function register_routes() {
+		( new Templates\RestController() )->register_routes( self::REST_NAMESPACE );
+
 		register_rest_route(
 			self::REST_NAMESPACE,
 			'/generate',
@@ -463,7 +465,7 @@ class RestAPI {
 		$title       = trim( (string) $request->get_param( 'title' ) );
 
 		if ( $template_id ) {
-			return $this->generate_from_template( $template_id, $title );
+			return $this->generate_from_template( $template_id, $title, absint( $request->get_param( 'post_id' ) ) );
 		}
 
 		if ( '' !== $prompt ) {
@@ -482,14 +484,17 @@ class RestAPI {
 	 *
 	 * @param int    $template_id Template post ID.
 	 * @param string $title       Optional title text rendered onto the image.
+	 * @param int    $post_id     Post the image is for; it becomes the attachment's parent.
 	 *
 	 * @since 1.0.0
+	 * @since 1.7.0 Added `$post_id`.
 	 * @return \WP_REST_Response|\WP_Error
 	 */
-	protected function generate_from_template( $template_id, $title = '' ) {
-		$args = Generator::get_render_args( $template_id, $title );
+	protected function generate_from_template( $template_id, $title = '', $post_id = 0 ) {
+		$template = aimg_get_template( $template_id );
+		$args     = Generator::get_render_args( $template_id, $title );
 
-		if ( ! $args ) {
+		if ( ! $args || ! $template ) {
 			return new \WP_Error(
 				'aimg_invalid_template',
 				__( 'Invalid template ID.', 'artificial-image-generator' ),
@@ -497,8 +502,13 @@ class RestAPI {
 			);
 		}
 
-		$render_title = $args['title'];
-		$image_path   = aimg_generate_thumbnail( $args );
+		if ( Templates\Repository::has_document( $template_id ) ) {
+			$render_title = '' !== trim( $title ) ? $title : aimg_get_plain_title( $template_id );
+			$image_path   = Generator::render( $template_id, $render_title, $post_id );
+		} else {
+			$render_title = $args['title'];
+			$image_path   = aimg_generate_thumbnail( $args );
+		}
 
 		if ( ! $image_path || ! file_exists( $image_path ) ) {
 			return new \WP_Error(
@@ -513,6 +523,7 @@ class RestAPI {
 			array(
 				'title'      => $render_title,
 				'alt'        => $render_title,
+				'parent'     => $post_id,
 				'provenance' => array(
 					'source'      => 'template',
 					'template_id' => $template_id,

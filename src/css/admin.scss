@@ -122,3 +122,110 @@
 		font-size: 12px;
 	}
 }
+
+// Templates list: cards with large previews.
+.aimg-templates__bar {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	align-items: center;
+	justify-content: space-between;
+	margin: 12px 0;
+
+	.search-box {
+		position: static;
+		margin: 0;
+	}
+}
+
+.aimg-templates__empty {
+	padding: 40px;
+	text-align: center;
+	background: #fff;
+	border: 1px solid #dcdcde;
+}
+
+.aimg-templates__grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+	gap: 16px;
+	margin: 0;
+}
+
+.aimg-card {
+	display: flex;
+	flex-direction: column;
+	margin: 0;
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	overflow: hidden;
+}
+
+.aimg-card__preview {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	aspect-ratio: 1200 / 630;
+	color: #646970;
+	background: repeating-conic-gradient(#e0e0e0 0% 25%, #f6f7f7 0% 50%) 50% / 16px 16px;
+
+	img {
+		width: 100%;
+		height: 100%;
+		object-fit: contain;
+	}
+}
+
+.aimg-card.is-draft .aimg-card__preview {
+	opacity: 0.6;
+}
+
+.aimg-card__body {
+	position: relative;
+	padding: 10px 12px 12px 36px;
+}
+
+.aimg-card__check {
+	position: absolute;
+	top: 12px;
+	left: 10px;
+}
+
+.aimg-card__title {
+	font-size: 14px;
+	font-weight: 600;
+	text-decoration: none;
+}
+
+.aimg-card__meta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	align-items: center;
+	margin: 6px 0;
+	color: #646970;
+}
+
+.aimg-badge {
+	padding: 1px 8px;
+	font-size: 11px;
+	background: #f0f0f1;
+	border-radius: 10px;
+
+	&.is-default {
+		color: #fff;
+		background: #3858e9;
+	}
+}
+
+.aimg-card__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px 12px;
+	margin: 0;
+}
+
+.aimg-card__delete {
+	color: #b32d2e;
+}

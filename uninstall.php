@@ -26,7 +26,7 @@ function aimg_uninstall_site() {
 
 	// Queued admin notices and AI usage counters are never worth keeping.
 	delete_option( 'aimg_flash_notices' );
-	$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '\_transient\_aimg\_flash\_notices\_%' OR option_name LIKE '\_transient\_timeout\_aimg\_flash\_notices\_%' OR option_name LIKE '\_transient\_aimg\_ai\_usage\_%' OR option_name LIKE '\_transient\_timeout\_aimg\_ai\_usage\_%' OR option_name LIKE '\_transient\_aimg\_kick\_%' OR option_name LIKE '\_transient\_timeout\_aimg\_kick\_%'" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+	$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '\_transient\_aimg\_flash\_notices\_%' OR option_name LIKE '\_transient\_timeout\_aimg\_flash\_notices\_%' OR option_name LIKE '\_transient\_aimg\_ai\_usage\_%' OR option_name LIKE '\_transient\_timeout\_aimg\_ai\_usage\_%' OR option_name LIKE '\_transient\_aimg\_kick\_%' OR option_name LIKE '\_transient\_timeout\_aimg\_kick\_%' OR option_name LIKE '\_transient\_aimg\_previews\_%' OR option_name LIKE '\_transient\_timeout\_aimg\_previews\_%'" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 
 	// Pending background jobs would otherwise fire with no handler.
 	wp_unschedule_hook( 'aimg_generate_featured_image' );
@@ -69,6 +69,17 @@ function aimg_uninstall_site() {
 		wp_delete_post( $template_id, true );
 	}
 
+	// Uploaded fonts: only the files the plugin recorded, only inside its own folder.
+	$fonts_folder = wp_normalize_path( trailingslashit( $upload_dir['basedir'] ) . 'aimg-fonts/' );
+	foreach ( (array) get_option( 'aimg_uploaded_fonts', array() ) as $font ) {
+		$path = is_array( $font ) && isset( $font[1] ) ? wp_normalize_path( trailingslashit( $upload_dir['basedir'] ) . ltrim( $font[1], '/' ) ) : '';
+
+		if ( '' !== $path && empty( $upload_dir['error'] ) && 0 === strpos( $path, $fonts_folder ) && false === strpos( $path, '..' ) ) {
+			wp_delete_file( $path );
+		}
+	}
+
+	delete_option( 'aimg_uploaded_fonts' );
 	delete_option( 'aimg_settings' );
 	delete_option( 'aimg_version' );
 }

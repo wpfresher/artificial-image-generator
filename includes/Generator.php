@@ -211,7 +211,7 @@ class Generator {
 			return new \WP_Error( 'aimg_no_template', __( 'There is no published image template to use.', 'artificial-image-generator' ) );
 		}
 
-		$image_path = self::render( $template_id, $title );
+		$image_path = self::render( $template_id, $title, $post_id );
 
 		if ( ! $image_path ) {
 			return new \WP_Error( 'aimg_generation_failed', __( 'Failed to generate image from template.', 'artificial-image-generator' ) );
@@ -543,11 +543,17 @@ class Generator {
 	 *
 	 * @param int    $template_id Template post ID.
 	 * @param string $title       Title rendered onto the image.
+	 * @param int    $post_id     Post the image is for: merge tags and post images in v2 templates.
 	 *
 	 * @since 1.5.0
+	 * @since 1.7.0 Added `$post_id`.
 	 * @return string|false Absolute path to the rendered file, or false on failure.
 	 */
-	public static function render( $template_id, $title = '' ) {
+	public static function render( $template_id, $title = '', $post_id = 0 ) {
+		if ( Templates\Repository::has_document( $template_id ) ) {
+			return self::render_document( $template_id, $title, $post_id );
+		}
+
 		$args = self::get_render_args( $template_id, $title );
 
 		if ( ! $args ) {
@@ -555,6 +561,46 @@ class Generator {
 		}
 
 		return aimg_generate_thumbnail( $args );
+	}
+
+	/**
+	 * Render a template that has a v2 document.
+	 *
+	 * @param int    $template_id Template post ID.
+	 * @param string $title       Title for the `{title}` tag. Falls back to the template title.
+	 * @param int    $post_id     Post the image is for, or 0.
+	 *
+	 * @since 1.7.0
+	 * @return string|false Absolute path to the rendered file, or false on failure.
+	 */
+	private static function render_document( $template_id, $title, $post_id = 0 ) {
+		$template = aimg_get_template( $template_id );
+
+		if ( ! $template || 'publish' !== $template->post_status ) {
+			return false;
+		}
+
+		$title = '' !== trim( (string) $title ) ? $title : aimg_get_plain_title( $template_id );
+
+		/**
+		 * Filter a v2 template document before it is rendered.
+		 *
+		 * @param array  $document    Sanitized document.
+		 * @param int    $template_id Template post ID.
+		 * @param string $title       Title rendered for `{title}`.
+		 *
+		 * @since 1.7.0
+		 */
+		$document = apply_filters( 'aimg_template_document', Templates\Repository::get_document( $template_id ), $template_id, $title );
+		$image    = Rendering\GdRenderer::render( $document, Templates\MergeTags::values( $post_id, array( 'title' => $title ) ), $post_id );
+
+		if ( ! $image ) {
+			return false;
+		}
+
+		$slug = sanitize_title( $title );
+
+		return Rendering\GdRenderer::save( $image, $document, ( '' !== $slug ? $slug : 'aimg-image' ) . '-' . (int) $template_id );
 	}
 
 	/**

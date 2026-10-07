@@ -59,12 +59,22 @@ for asset-only rebuilds during development use `npx wp-scripts build --webpack-s
 | `Providers\*` | `includes/Providers/` | `ProviderInterface`, `Result`, `OpenAI`, `Registry` (`aimg_providers` filter) |
 | `GenerateImages` | `includes/GenerateImages.php` | Hooks `wp_after_insert_post`; auto-generates featured images when none exists (per-post opt-out `_aimg_disable_auto`) |
 | `RestAPI` | `includes/RestAPI.php` | `aimg/v1/generate`, `/templates`, `/templates/{id}/preview`, `/prompt`, `/status/{post}`, `/featured/{post}` |
+| `Templates\RestController` | `includes/Templates/RestController.php` | Template CRUD (`POST /templates`, `GET/PUT/PATCH/DELETE /templates/{id}`), `POST /templates/preview` (unsaved document → data URI, 60/min per user), `GET /capabilities`; capability filter `aimg_manage_templates_capability` (default `manage_options`). The classic form refuses templates that have a v2 document |
 | `Admin\Admin` | `includes/Admin/Admin.php` | Admin menu, page routing (list / add / edit), script enqueuing |
 | `Admin\Settings` | `includes/Admin/Settings.php` | Settings page UI and option validation |
 | `Admin\Actions` | `includes/Admin/Actions.php` | Processes template CRUD via `admin_post_aimg_update_template` |
 | `Admin\Editor` | `includes/Admin/Editor.php` | Enqueues the block editor integration |
 | `Admin\MediaLibrary` | `includes/Admin/MediaLibrary.php` | Enqueues the generator modal on `upload.php` / `media-new.php` |
-| `Admin\ListTables\TemplatesTable` | `includes/Admin/ListTables/TemplatesTable.php` | Extends `WP_List_Table` for template management |
+| `Admin\ListTables\TemplatesTable` | `includes/Admin/ListTables/TemplatesTable.php` | Since 1.7.0 only used for bulk-delete handling; the list is a card grid (`views/img-templates.php`, actions via `Admin\Actions::template_action()`) |
+| `Templates\Starters` | `includes/Templates/Starters.php` | Starter designs for new templates (`aimg_template_starters`) |
+| `Templates\Schema` | `includes/Templates/Schema.php` | Template document v2 and its sanitizer; layer type registry (`aimg_template_layers`) |
+| `Templates\Repository` | `includes/Templates/Repository.php` | v2 document in `_aimg_template_data`; falls back to `Migration::from_template()` (never writes on read) |
+| `Templates\Migration` | `includes/Templates/Migration.php` | Builds v2 documents from 1.x meta (`from_template`) or render args (`from_render_args`, the bridge `aimg_generate_thumbnail()` uses) |
+| `Rendering\GdRenderer` | `includes/Rendering/GdRenderer.php` | Draws a document layer by layer; `save()` writes PNG/JPEG/WebP into uploads |
+| `Rendering\Layers\*` | `includes/Rendering/Layers/` | One class per layer type (`sanitize()` + `draw()`): `Background`, `Image`, `Overlay`, `Text`, `Shape`, `Pattern`, `Frame` |
+| `Rendering\Paint` / `Rendering\Images` | `includes/Rendering/` | Gradients, supersampled shapes, masks, opacity, rotated compositing, adjustments / image sources (incl. post, logo, local avatar), loading and fitting |
+| `Templates\MergeTags` | `includes/Templates/MergeTags.php` | `{title}` … `{custom_field:key}` (protected meta excluded), one-pass replace, `showIf` conditions; filter `aimg_merge_tags` |
+| `Rendering\TextLayout` | `includes/Rendering/TextLayout.php` | `wrap()` (the 1.x title wrapping) and `fit()` (shrink to a box, max lines, ellipsis) |
 
 ### Data Model
 
@@ -93,12 +103,18 @@ Generated attachments are stamped with `_aimg_generated` (`'1'`, queryable) and
    published template; `Generator::get_render_args()`
    maps its meta to render arguments (this mapping lives only here — the REST endpoint uses it too);
    it returns `false` for templates that are not published.
-3. `aimg_generate_thumbnail()` in `includes/functions.php` uses PHP's **GD library** to:
+3. `Generator::render()` renders a template's v2 document when it has one (`Repository`);
+   otherwise `aimg_generate_thumbnail()` turns the render args into a v2 document
+   (`Migration::from_render_args()`) and draws it with `Rendering\GdRenderer`. The 1.x look:
    - Fill background with one of the template's colors, chosen at random
    - Composite an optional PNG overlay at the chosen position
    - Tint the whole canvas with the same background colour at ~70% opacity (GD alpha 38), so
      overlays show through at ~30%. Keep this value: changing it changes every existing image
    - Render the post title using the bundled Roboto Bold font (`assets/fonts/`)
+
+   **Golden tests** (`tests/test-renderer-parity.php`) compare every v1 path byte-for-byte with the
+   frozen 1.6.0 renderer in `tests/legacy/` (excluded from phpcs; never edit it). Text `size` in
+   documents uses the template font size field's unit (GD size, ≈ 96/72 CSS px) so v1 values map 1:1.
 4. `Generator::create_attachment()` imports the file, sets alt text, stamps provenance meta, and
    fires `aimg_generated_image`. `GenerateImages` then sets it as the post thumbnail.
 
@@ -120,8 +136,14 @@ check in `_wp_relative_upload_path()` and WordPress stores an unusable absolute 
 
 Webpack is configured in `webpack.config.js` extending `@wordpress/scripts`:
 - **Entry:** `src/css/admin.scss` → `assets/css/admin.css` (+ RTL), `src/js/admin.js` → `assets/js/admin.js`
-- **Fonts:** `CopyWebpackPlugin` copies `src/fonts/` → `assets/fonts/`
+- **Fonts:** `CopyWebpackPlugin` copies `src/fonts/` → `assets/fonts/`. Bundled fonts (static TTFs from Google Fonts with extended subsets, OFL/Apache licences in `src/fonts/licenses/`) are listed in `Rendering\Fonts::bundled()`; uploads go to `uploads/aimg-fonts/` (option `aimg_uploaded_fonts`, checked by file signature and a FreeType test render). Variable fonts cannot pick a weight in GD — bundle static instances only
 - `RemoveEmptyScriptsPlugin` strips empty `.js` stubs from CSS-only entries
+- **Template Studio** (`src/js/template-studio/` → `assets/js/template-studio.js`, plus
+  `src/css/template-studio.scss`): loaded on the template add/edit screens with data inlined as
+  `window.aimgStudio` (`Admin::enqueue_studio()`). Uses the `wp.*` globals plus bundled **Konva**
+  (not react-konva: react-konva is pinned to one React major, WordPress ships 17–19). It mounts on
+  `#aimg-template-studio` and hides `#aimg-classic-form` only after mounting (fallback).
+  `canvas/text-layout.js` and `canvas/draw.js` mirror the PHP renderer; keep them in step.
 
 The `assets/` directory is **built output** — do not edit files there directly.
 
@@ -143,6 +165,7 @@ Form submissions use the `admin_post_aimg_update_template` action with nonce ver
   Takes `template_id`; the legacy `post_id` key is still accepted
 - `aimg_generate_preview()` — template editor preview (same pipeline, immediate output)
 - `aimg_uploads_path($path)` — rewrite an uploads path into the separator style WordPress expects
+- `aimg_upload_url($path)` — URL of a file inside uploads ('' outside it)
 - `aimg_delete_upload_by_url($url)` — delete a file inside uploads, given its URL
 - `aimg_get_plain_title($post_id)` — post title without entities; use it for anything drawn or used as alt text
 - `aimg_plain_text($text)` — the same for any text (REST `title` params use it as their sanitizer)

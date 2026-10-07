@@ -10,7 +10,8 @@
 
 defined( 'ABSPATH' ) || exit; // Exit if accessed directly.
 ?>
-<div class="wrap aimg-wrap">
+<div id="aimg-template-studio" class="wrap" hidden></div>
+<div id="aimg-classic-form" class="wrap aimg-wrap">
 	<h1>
 		<?php esc_html_e( 'Add New Image Template', 'artificial-image-generator' ); ?>
 		<abbr title="<?php esc_attr_e( 'Image Generator', 'artificial-image-generator' ); ?>" class="dashicons dashicons-format-image"></abbr>
