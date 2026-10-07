@@ -1,4 +1,4 @@
-=== Image Generator – Automatic AI Featured Images & Thumbnails ===
+=== Image Generator – AI Auto Featured Images, Thumbnails & Post Images ===
 Contributors: beautifulplugins
 Tags: ai, ai image, image generator, featured image, block editor
 Requires at least: 6.0
