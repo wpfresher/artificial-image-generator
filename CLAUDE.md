@@ -65,7 +65,6 @@ for asset-only rebuilds during development use `npx wp-scripts build --webpack-s
 | `Admin\Actions` | `includes/Admin/Actions.php` | Processes template CRUD via `admin_post_aimg_update_template` |
 | `Admin\Editor` | `includes/Admin/Editor.php` | Enqueues the block editor integration |
 | `Admin\MediaLibrary` | `includes/Admin/MediaLibrary.php` | Enqueues the generator modal on `upload.php` / `media-new.php` |
-| `Admin\ReviewNotice` | `includes/Admin/ReviewNotice.php` | WordPress.org review request on the templates list / Settings for admins once 5 `_aimg_generated` images exist; answers via `admin_post_aimg_review_notice` (user meta `aimg_review_notice`: `never` or snooze timestamp) |
 | `Admin\ListTables\TemplatesTable` | `includes/Admin/ListTables/TemplatesTable.php` | Since 1.7.0 only used for bulk-delete handling; the list is a card grid (`views/img-templates.php`, actions via `Admin\Actions::template_action()`) |
 | `Templates\Starters` | `includes/Templates/Starters.php` | Starter designs for new templates (`aimg_template_starters`) |
 | `Templates\Schema` | `includes/Templates/Schema.php` | Template document v2 and its sanitizer; layer type registry (`aimg_template_layers`) |

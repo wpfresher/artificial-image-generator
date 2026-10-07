@@ -16,7 +16,6 @@ class Test_Uninstall extends AIMG_TestCase {
 
 		wp_schedule_single_event( time(), 'aimg_generate_featured_image', array( $post_id, 'ai', false ) );
 		update_post_meta( $post_id, '_aimg_generation_job', array( $post_id, 'ai', false ) );
-		update_user_meta( $this->admin_id, 'aimg_review_notice', 'never' );
 
 		if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 			define( 'WP_UNINSTALL_PLUGIN', 'artificial-image-generator/artificial-image-generator.php' );
@@ -25,7 +24,6 @@ class Test_Uninstall extends AIMG_TestCase {
 
 		$this->assertFalse( wp_next_scheduled( 'aimg_generate_featured_image', array( $post_id, 'ai', false ) ) );
 		$this->assertSame( '', get_post_meta( $post_id, '_aimg_generation_job', true ) );
-		$this->assertSame( '', get_user_meta( $this->admin_id, 'aimg_review_notice', true ) );
 		$this->assertNotNull( get_post( $template ) );
 	}
 }

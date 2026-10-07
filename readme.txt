@@ -1,4 +1,4 @@
-=== Image Generator – AI Featured Images & Thumbnails ===
+=== Image Generator – Automatic AI Featured Images & Thumbnails ===
 Contributors: beautifulplugins
 Tags: ai, ai image, image generator, featured image, block editor
 Requires at least: 6.0
@@ -8,7 +8,7 @@ Stable tag: 1.7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Featured image generator: auto-create post thumbnails from your own templates or with AI, and generate AI images right in the block editor.
+Featured image generator: automatically create post thumbnails on publish from your own templates or with AI, or generate images in the block editor.
 
 == Description ==
 
