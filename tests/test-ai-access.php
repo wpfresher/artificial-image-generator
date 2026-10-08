@@ -112,11 +112,30 @@ class Test_AI_Access extends AIMG_TestCase {
 		}
 	}
 
-	public function test_request_timeout_is_120_seconds() {
+	public function test_request_timeout_is_180_seconds_and_filterable_per_quality() {
 		$this->settings( array() );
 		$this->rest( 'POST', '/aimg/v1/generate', array( 'prompt' => 'a cat' ) );
 
-		$this->assertSame( 120, $this->requests[0]['timeout'] );
+		$this->assertSame( 180, $this->requests[0]['timeout'] );
+
+		add_filter(
+			'aimg_generate_timeout',
+			function ( $timeout, $model, $quality ) {
+				return 'max' === $quality ? 300 : $timeout;
+			},
+			10,
+			3
+		);
+		$this->rest(
+			'POST',
+			'/aimg/v1/generate',
+			array(
+				'prompt'  => 'a cat',
+				'quality' => 'max',
+			)
+		);
+
+		$this->assertSame( 300, $this->requests[1]['timeout'] );
 	}
 
 	public function test_images_cannot_be_attached_to_posts_the_user_cannot_edit() {

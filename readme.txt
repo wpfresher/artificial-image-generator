@@ -204,6 +204,9 @@ The on-demand generation modal is built for Gutenberg. **Automatic featured imag
 = Will it slow down my site? =
 **No.** Template rendering uses PHP's GD library (already loaded) and only runs when a post is saved without a featured image — or when you explicitly trigger it from the editor. Automatic AI images are created in a single background task per post (Action Scheduler when available, otherwise WP-Cron), so saving a post never waits for the AI service. There's no frontend overhead.
 
+= I moved a site that ran on a Windows server. Why do some older generated images point to the old folder? =
+On Windows, versions before 1.4.9 saved the full file path of generated images (for example `C:/sites/example/wp-content/uploads/2026/04/image.png`) instead of the path inside the uploads folder. They keep working on the same server. After a move, back up your database and remove the old uploads prefix, for example with WP-CLI: `wp search-replace 'C:/sites/example/wp-content/uploads/' '' wp_postmeta --dry-run` (run it again without `--dry-run` once the result looks right). Images generated with 1.4.9 or later are not affected.
+
 = Is it compatible with multisite? =
 Yes. Each site on the network can configure its own templates and API key.
 
@@ -272,6 +275,16 @@ AI image generation calls a third-party API (**OpenAI** by default, `https://api
 6. Plugin settings — defaults and AI API key configuration.
 
 == Changelog ==
+= 1.7.1 =
+* Enhance: The Template Studio is now the only template editor. Templates made before 1.7.0 open in the Studio and look exactly the same; saving them there keeps their old settings too, so downgrading still works.
+* Enhance: Duplicating an older template now creates a Studio copy.
+* Removed: The classic template form and its save handler.
+* Dev: Add-ons can add Template Studio layer types with the JS filter `aimg.studio.layerTypes` (scripts enqueued on the new `aimg_enqueue_template_studio` action) together with `aimg_template_layers`.
+* Enhance: Layers of a type whose plugin is not active are kept in the template instead of being removed, and are shown as unavailable.
+* New: "Extra high" and "Maximum" AI image quality for GPT Image 2.5 Flare and Sunburst (GPT Image 2 uses High).
+* Enhance: AI requests now wait up to 3 minutes instead of 2, so slow or high-quality images are not cut off. The `aimg_generate_timeout` filter also receives the model and quality.
+* Deprecated: `aimg_generate_preview()`; use `ArtificialImageGenerator\Templates\Repository::update_preview()`. It will be removed in 1.8.0.
+
 = 1.7.0 ( 07th October 2026 ) =
 * New: **Visual Template Studio.** Design templates on a canvas with layers you can drag, resize and rotate, with snapping guides, undo/redo and keyboard shortcuts.
 * New: Layer types for backgrounds (color, random palette, gradients, images, the post's featured or first image), images (rounded or circle masks, brightness, contrast, blur, black and white, duotone), overlays and gradient fades, shapes, patterns, frames and text.
@@ -367,6 +380,9 @@ AI image generation calls a third-party API (**OpenAI** by default, `https://api
 * Initial release.
 
 == Upgrade Notice ==
+
+= 1.7.1 =
+The classic template form is replaced by the Template Studio. Your templates and images are not changed.
 
 = 1.7.0 =
 Adds the visual Template Studio. Your existing templates and images are not changed; a template switches to the Studio format only when you save it in the Studio.

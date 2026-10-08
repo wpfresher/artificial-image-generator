@@ -17,7 +17,6 @@ const DEFAULT_STATE = {
 	templateId: 0,
 	title: '',
 	status: 'publish',
-	hasDocument: false,
 	document: null,
 	selectedId: null,
 	dirty: false,

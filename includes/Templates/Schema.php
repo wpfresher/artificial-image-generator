@@ -56,10 +56,13 @@ class Schema {
 		);
 
 		/**
-		 * Filter the template layer types.
+		 * Filter the template layer types. Register the same type in the Studio with the JS
+		 * filter `aimg.studio.layerTypes`. Layers of a type that is no longer registered are
+		 * kept in their templates but not drawn.
 		 *
 		 * @param array $types Types as type => class name implementing
 		 *                     \ArtificialImageGenerator\Rendering\Layers\LayerInterface.
+		 *                     Type names may contain a-z, 0-9, _ and -.
 		 *
 		 * @since 1.7.0
 		 */
@@ -168,27 +171,66 @@ class Schema {
 		$ids    = array();
 
 		foreach ( array_slice( $layers, 0, self::MAX_LAYERS ) as $index => $layer ) {
-			if ( ! is_array( $layer ) || ! isset( $layer['type'], $types[ $layer['type'] ] ) ) {
+			if ( ! is_array( $layer ) || ! isset( $layer['type'] ) || ! is_string( $layer['type'] ) || sanitize_key( $layer['type'] ) !== $layer['type'] || '' === $layer['type'] ) {
 				continue;
 			}
 
-			$id = isset( $layer['id'] ) ? sanitize_key( $layer['id'] ) : '';
+			$type = $layer['type'];
+			$id   = isset( $layer['id'] ) ? sanitize_key( $layer['id'] ) : '';
 			if ( '' === $id || isset( $ids[ $id ] ) ) {
-				$id = $layer['type'] . '-' . $index;
+				$id = $type . '-' . $index;
 			}
 			$ids[ $id ] = true;
 
-			$clean['layers'][] = array_merge(
-				array(
-					'id'       => $id,
-					'type'     => $layer['type'],
-					'name'     => isset( $layer['name'] ) ? sanitize_text_field( (string) $layer['name'] ) : '',
-					'visible'  => ! isset( $layer['visible'] ) || (bool) $layer['visible'],
-					'rotation' => self::number( isset( $layer['rotation'] ) ? $layer['rotation'] : 0, -360, 360 ),
-					'showIf'   => MergeTags::sanitize_condition( isset( $layer['showIf'] ) ? $layer['showIf'] : '' ),
-				),
-				call_user_func( array( $types[ $layer['type'] ], 'sanitize' ), $layer, $clean['canvas'] )
+			$common = array(
+				'id'       => $id,
+				'type'     => $type,
+				'name'     => isset( $layer['name'] ) ? sanitize_text_field( (string) $layer['name'] ) : '',
+				'visible'  => ! isset( $layer['visible'] ) || (bool) $layer['visible'],
+				'rotation' => self::number( isset( $layer['rotation'] ) ? $layer['rotation'] : 0, -360, 360 ),
+				'showIf'   => MergeTags::sanitize_condition( isset( $layer['showIf'] ) ? $layer['showIf'] : '' ),
 			);
+
+			// A type from an inactive plugin is kept, cleaned generically and not drawn, so the design survives.
+			$props = isset( $types[ $type ] )
+				? call_user_func( array( $types[ $type ], 'sanitize' ), $layer, $clean['canvas'] )
+				: (array) self::unknown_value( array_diff_key( $layer, $common ) );
+
+			$clean['layers'][] = array_merge( $common, $props );
+		}
+
+		return $clean;
+	}
+
+	/**
+	 * Clean the props of a layer whose type is not registered: scalars and nested arrays only.
+	 *
+	 * @param mixed $value Value.
+	 * @param int   $depth Nesting depth.
+	 *
+	 * @return mixed Clean value, or null to drop it.
+	 */
+	private static function unknown_value( $value, $depth = 0 ) {
+		if ( is_bool( $value ) || is_int( $value ) ) {
+			return $value;
+		}
+		if ( is_float( $value ) ) {
+			return is_finite( $value ) ? $value : 0;
+		}
+		if ( is_string( $value ) ) {
+			return sanitize_textarea_field( $value );
+		}
+		if ( ! is_array( $value ) || $depth >= 5 ) {
+			return null;
+		}
+
+		$clean = array();
+		foreach ( array_slice( $value, 0, 100, true ) as $key => $item ) {
+			$key  = is_int( $key ) ? $key : preg_replace( '/[^A-Za-z0-9_-]/', '', (string) $key );
+			$item = self::unknown_value( $item, $depth + 1 );
+			if ( '' !== $key && null !== $item ) {
+				$clean[ $key ] = $item;
+			}
 		}
 
 		return $clean;

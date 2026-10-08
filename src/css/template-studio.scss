@@ -1,5 +1,5 @@
 // Keep the page width steady as the inspector grows, so the canvas holds still.
-html:has(#aimg-template-studio:not([hidden])) {
+html:has(#aimg-template-studio) {
 	scrollbar-gutter: stable;
 }
 

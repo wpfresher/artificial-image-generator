@@ -7,8 +7,6 @@
 import Konva, { Filters } from './konva';
 import { PX_PER_SIZE, fit, fontString, measure, wrap } from './text-layout';
 
-export const BOXED = [ 'image', 'text', 'shape' ];
-
 const ANCHORS = {
 	'top-left': [ 0, 0 ],
 	'top-center': [ 0.5, 0 ],
@@ -194,7 +192,7 @@ function applyAdjustments( node, adjust ) {
 	}
 }
 
-function roundedPath( ctx, x, y, w, h, r ) {
+export function roundedPath( ctx, x, y, w, h, r ) {
 	r = Math.max( 0, Math.min( r, w / 2, h / 2 ) );
 	ctx.beginPath();
 	ctx.moveTo( x + r, y );
@@ -205,7 +203,7 @@ function roundedPath( ctx, x, y, w, h, r ) {
 	ctx.closePath();
 }
 
-function placeholder( w, h, label ) {
+export function placeholder( w, h, label ) {
 	const group = new Konva.Group();
 	group.add(
 		new Konva.Rect( {
@@ -228,11 +226,11 @@ function placeholder( w, h, label ) {
 	return group;
 }
 
-function hitArea( w, h ) {
+export function hitArea( w, h ) {
 	return new Konva.Rect( { width: w, height: h, fill: 'rgba(0,0,0,0)' } );
 }
 
-function boxedGroup( layer ) {
+export function boxedGroup( layer ) {
 	const { x, y, w, h } = layer.box;
 	return new Konva.Group( {
 		x: x + w / 2,
@@ -645,7 +643,7 @@ function drawText( layer, ctx ) {
 	return group;
 }
 
-const DRAWERS = {
+export const DRAWERS = {
 	background: drawBackground,
 	overlay: drawOverlay,
 	image: drawImage,
@@ -654,23 +652,3 @@ const DRAWERS = {
 	frame: drawFrame,
 	text: drawText,
 };
-
-/**
- * Build the node for a layer.
- *
- * @param {Object} layer Layer.
- * @param {Object} ctx   { canvas, merge, fontFamily, imageFor, sourceLabel, backgroundColor }.
- * @return {Konva.Node|null} Node.
- */
-export function drawLayer( layer, ctx ) {
-	const drawer = DRAWERS[ layer.type ];
-	if ( ! drawer || ! layer.visible ) {
-		return null;
-	}
-	if ( layer.showIf && ctx.merge( '{' + layer.showIf + '}' ).trim() === '' ) {
-		return null;
-	}
-	const node = drawer( layer, ctx );
-	node.setAttr( 'layerId', layer.id );
-	return node;
-}

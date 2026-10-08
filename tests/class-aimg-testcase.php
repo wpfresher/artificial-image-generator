@@ -159,36 +159,4 @@ abstract class AIMG_TestCase extends WP_UnitTestCase {
 
 		return rest_do_request( $request );
 	}
-
-	/**
-	 * Submit the template form handler and return the redirect location.
-	 *
-	 * @param array $post Submitted fields.
-	 *
-	 * @return string Redirect location.
-	 */
-	protected function submit_template_form( $post ) {
-		$_POST    = array_merge( array( '_wpnonce' => wp_create_nonce( 'aimg_update_template' ) ), $post );
-		$_REQUEST = $_POST;
-
-		$_SERVER['HTTP_REFERER'] = admin_url( 'admin.php?page=image-generator&add=1' );
-
-		$location = '';
-		$stop     = function ( $url ) use ( &$location ) {
-			$location = $url;
-			throw new Exception( 'redirect' );
-		};
-
-		add_filter( 'wp_redirect', $stop );
-
-		try {
-			ArtificialImageGenerator\Admin\Actions::update_template();
-		} catch ( Exception $e ) {
-			unset( $e );
-		}
-
-		remove_filter( 'wp_redirect', $stop );
-
-		return $location;
-	}
 }

@@ -212,14 +212,10 @@ class Admin {
 			return;
 		}
 
-		// Enqueue styles and scripts.
 		wp_enqueue_style( 'aimg-admin', AIMG_URL . 'assets/css/admin.css', array(), AIMG_VERSION );
 
-		// Enqueue media uploader scripts.
-		wp_enqueue_media();
-		wp_enqueue_script( 'aimg-admin', AIMG_URL . 'assets/js/admin.js', array( 'jquery' ), AIMG_VERSION, true );
-
 		if ( self::is_add_screen() || self::is_edit_screen() ) {
+			wp_enqueue_media();
 			$this->enqueue_studio();
 		}
 	}
@@ -261,7 +257,7 @@ class Admin {
 		wp_enqueue_script(
 			'aimg-template-studio',
 			AIMG_URL . 'assets/js/template-studio.js',
-			array( 'wp-element', 'wp-components', 'wp-data', 'wp-api-fetch', 'wp-i18n' ),
+			array( 'wp-element', 'wp-components', 'wp-data', 'wp-api-fetch', 'wp-i18n', 'wp-hooks', 'wp-dom-ready' ),
 			AIMG_VERSION,
 			true
 		);
@@ -319,5 +315,13 @@ class Admin {
 		);
 
 		wp_add_inline_script( 'aimg-template-studio', 'window.aimgStudio = ' . wp_json_encode( $data ) . ';', 'before' );
+
+		/**
+		 * Fires after the Template Studio is enqueued, to enqueue scripts that add layer types
+		 * with the JS filter `aimg.studio.layerTypes`. Make them depend on `aimg-template-studio`.
+		 *
+		 * @since 1.7.1
+		 */
+		do_action( 'aimg_enqueue_template_studio' );
 	}
 }

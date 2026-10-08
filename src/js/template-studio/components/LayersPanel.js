@@ -2,7 +2,7 @@
  * Layers panel: the stack (topmost first), selection, visibility, order, delete and add.
  */
 import { STORE } from '../store';
-import { LABELS, createLayer, layerName } from '../layers';
+import { addableTypes, createLayer, layerName, typeLabel } from '../registry';
 
 const { createElement: el } = wp.element;
 const { Button, DropdownMenu } = wp.components;
@@ -27,9 +27,7 @@ export default function LayersPanel( { data } ) {
 		duplicateLayer,
 	} = useDispatch( STORE );
 
-	const types = data.capabilities.layerTypes.filter(
-		( type ) => LABELS[ type ]
-	);
+	const types = addableTypes( data.capabilities.layerTypes );
 
 	return el(
 		'div',
@@ -42,7 +40,7 @@ export default function LayersPanel( { data } ) {
 				icon: 'plus',
 				label: __( 'Add layer', 'artificial-image-generator' ),
 				controls: types.map( ( type ) => ( {
-					title: LABELS[ type ],
+					title: typeLabel( type ),
 					onClick: () =>
 						addLayer( createLayer( type, canvas, data.settings ) ),
 				} ) ),
@@ -82,7 +80,7 @@ export default function LayersPanel( { data } ) {
 						el(
 							'span',
 							{ className: 'aimg-studio__layer-type' },
-							LABELS[ layer.type ]
+							typeLabel( layer.type )
 						),
 						el( 'span', null, layerName( layer ) )
 					),

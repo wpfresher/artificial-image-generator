@@ -2,15 +2,19 @@
  * Inspector: the selected layer's settings, or the canvas settings when nothing is selected.
  */
 import { STORE } from '../store';
-import { LABELS } from '../layers';
-import { BOXED } from '../canvas/draw';
-import { TYPE_FIELDS } from './LayerFields';
+import { isBoxed, layerType, typeLabel } from '../registry';
 import { ShowIfField } from './fields';
 import { UploadedFonts } from './FontField';
 
 const { createElement: el, Fragment } = wp.element;
-const { PanelBody, TextControl, SelectControl, ToggleControl, RangeControl } =
-	wp.components;
+const {
+	Notice,
+	PanelBody,
+	TextControl,
+	SelectControl,
+	ToggleControl,
+	RangeControl,
+} = wp.components;
 const { useSelect, useDispatch } = wp.data;
 const { __ } = wp.i18n;
 
@@ -123,14 +127,24 @@ function LayerSettings( { layer, data } ) {
 	const { updateLayer } = useDispatch( STORE );
 	const update = ( changes ) => updateLayer( layer.id, changes );
 	const box = layer.box;
+	const def = layerType( layer.type );
 
 	return el(
 		Fragment,
 		null,
+		! def &&
+			el(
+				Notice,
+				{ status: 'warning', isDismissible: false },
+				__(
+					'This layer needs a plugin that is not active. It is kept in the template but not drawn.',
+					'artificial-image-generator'
+				)
+			),
 		el(
 			PanelBody,
 			{
-				title: LABELS[ layer.type ] || layer.type,
+				title: typeLabel( layer.type ),
 				initialOpen: true,
 			},
 			el( TextControl, {
@@ -151,9 +165,8 @@ function LayerSettings( { layer, data } ) {
 				onChange: ( showIf ) => update( { showIf } ),
 			} )
 		),
-		TYPE_FIELDS[ layer.type ] &&
-			el( TYPE_FIELDS[ layer.type ], { layer, update, data } ),
-		BOXED.includes( layer.type ) &&
+		def?.Fields && el( def.Fields, { layer, update, data } ),
+		isBoxed( layer.type ) &&
 			box &&
 			el(
 				PanelBody,

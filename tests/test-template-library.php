@@ -66,7 +66,7 @@ class Test_Template_Library extends AIMG_TestCase {
 		}
 	}
 
-	public function test_duplicating_a_1_x_template_keeps_it_classic() {
+	public function test_duplicating_a_1_x_template_creates_a_studio_copy() {
 		$template = $this->create_template(
 			array(
 				'bg_colors'        => '#123456',
@@ -79,8 +79,9 @@ class Test_Template_Library extends AIMG_TestCase {
 		$this->assertIsInt( $copy );
 		$this->assertSame( 'draft', get_post_status( $copy ) );
 		$this->assertSame( 'Test template (copy)', get_the_title( $copy ) );
-		$this->assertFalse( Repository::has_document( $copy ), 'Still editable in the classic form.' );
-		$this->assertSame( '#123456', get_post_meta( $copy, '_aimg_bg_colors', true ) );
+		$this->assertTrue( Repository::has_document( $copy ) );
+		$this->assertSame( Repository::get_document( $template ), Repository::get_document( $copy ) );
+		$this->assertSame( '#123456', get_post_meta( $copy, '_aimg_bg_colors', true ), '1.x settings are kept for downgrades.' );
 		$this->assertSame( 'top-left', get_post_meta( $copy, '_aimg_overlay_position', true ) );
 		$this->assertNotEmpty( get_post_meta( $copy, '_aimg_preview_image_url', true ) );
 	}
@@ -112,7 +113,7 @@ class Test_Template_Library extends AIMG_TestCase {
 			array(
 				'document' => array(
 					'layers' => array(
-						array( 'type' => 'script' ),
+						array( 'type' => '<script>' ),
 						array( 'type' => 'text' ),
 					),
 				),
