@@ -275,7 +275,7 @@ AI image generation calls a third-party API (**OpenAI** by default, `https://api
 6. Plugin settings — defaults and AI API key configuration.
 
 == Changelog ==
-= 1.7.1 ( 8th October 2026 ) =
+= 1.7.1 ( 9th October 2026 ) =
 * Enhance: The Template Studio is now the only template editor. Templates made before 1.7.0 open in the Studio and look exactly the same; saving them there keeps their old settings too, so downgrading still works.
 * Enhance: Duplicating an older template now creates a Studio copy.
 * Removed: The classic template form and its save handler.
