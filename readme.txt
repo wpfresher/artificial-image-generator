@@ -275,7 +275,7 @@ AI image generation calls a third-party API (**OpenAI** by default, `https://api
 6. Plugin settings — defaults and AI API key configuration.
 
 == Changelog ==
-= 1.7.1 =
+= 1.7.1 ( 8th October 2026 ) =
 * Enhance: The Template Studio is now the only template editor. Templates made before 1.7.0 open in the Studio and look exactly the same; saving them there keeps their old settings too, so downgrading still works.
 * Enhance: Duplicating an older template now creates a Studio copy.
 * Removed: The classic template form and its save handler.
@@ -285,7 +285,7 @@ AI image generation calls a third-party API (**OpenAI** by default, `https://api
 * Enhance: AI requests now wait up to 3 minutes instead of 2, so slow or high-quality images are not cut off. The `aimg_generate_timeout` filter also receives the model and quality.
 * Deprecated: `aimg_generate_preview()`; use `ArtificialImageGenerator\Templates\Repository::update_preview()`. It will be removed in 1.8.0.
 
-= 1.7.0 ( 07th October 2026 ) =
+= 1.7.0 ( 7th October 2026 ) =
 * New: **Visual Template Studio.** Design templates on a canvas with layers you can drag, resize and rotate, with snapping guides, undo/redo and keyboard shortcuts.
 * New: Layer types for backgrounds (color, random palette, gradients, images, the post's featured or first image), images (rounded or circle masks, brightness, contrast, blur, black and white, duotone), overlays and gradient fades, shapes, patterns, frames and text.
 * New: Text fits its box, with max lines, letter case, letter spacing, outline, shadow and highlight boxes, plus tags `{title}`, `{excerpt}`, `{category}`, `{tags}`, `{author}`, `{date}`, `{site_name}`, `{reading_time}` and `{custom_field:key}`, and layers that show only when a tag has a value.
@@ -297,7 +297,7 @@ AI image generation calls a third-party API (**OpenAI** by default, `https://api
 * Enhance: Template images made from the editor are now attached to their post in the Media Library.
 * Compatibility: Existing templates look exactly as before and keep their settings; they switch to the Studio only when you save them there. The classic form stays available for templates you haven't changed.
 
-= 1.6.0 ( 06th October 2026 ) =
+= 1.6.0 ( 6th October 2026 ) =
 * New: **Template or AI for automatic featured images.** Choose under Settings → Automatic Featured Images: an image template (default, as before), an AI image, or either one with the other as a fallback.
 * New: Pick which template automatic images use, instead of a random one.
 * New: AI prompt template with tags (`{title}`, `{excerpt}`, `{category}`, `{tags}`, `{site_name}`, `{custom_field:key}`), style presets, and instructions that keep text and watermarks out of AI images.
@@ -319,7 +319,7 @@ AI image generation calls a third-party API (**OpenAI** by default, `https://api
 * Fix: Users who can't upload files (such as Contributors) no longer see generate buttons that would only show a permission error, and the panel is hidden on post types without featured images.
 * Fix: AI request timeouts now show a plain message instead of a technical error.
 
-= 1.5.4 ( 06th October 2026 ) =
+= 1.5.4 ( 6th October 2026 ) =
 * New: **Who Can Generate AI Images** setting — allow AI images for Authors and above (default), Editors and above, or Administrators only. Template images stay available to everyone who can upload files.
 * New: **Hourly Limit per User** setting for AI images (default 20, 0 for no limit) to keep API costs under control.
 * New: Developer filters `aimg_can_generate_from_prompt`, `aimg_ai_hourly_limit` and `aimg_generate_timeout`.
@@ -333,7 +333,7 @@ AI image generation calls a third-party API (**OpenAI** by default, `https://api
 * Fix: Template settings are now checked against the allowed values when saving.
 * Fix: The template font size is now correctly labelled in points.
 
-= 1.5.3 ( 05th October 2026 ) =
+= 1.5.3 ( 5th October 2026 ) =
 * Fix: Resolved a few minor issues.
 
 = 1.5.0 ( 6th September 2026 ) =
@@ -386,15 +386,6 @@ The classic template form is replaced by the Template Studio. Your templates and
 
 = 1.7.0 =
 Adds the visual Template Studio. Your existing templates and images are not changed; a template switches to the Studio format only when you save it in the Studio.
-
-= 1.6.0 =
-Automatic featured images can now be made with AI as well as templates. Important for AI users: OpenAI shuts down GPT Image 1 on October 23, 2026 and has retired DALL·E; this update switches AI images to GPT Image 2.5 Flare automatically. Template images work exactly as before.
-
-= 1.5.4 =
-Adds settings to control who can generate AI images and how many per hour. Your API key is kept but no longer shown in the settings field. No action required when updating.
-
-= 1.5.0 =
-Adds an optional Remove Data on Uninstall setting (off by default) and unifies the image generation pipeline. No action required when updating.
 
 == Support and Feedback ==
 

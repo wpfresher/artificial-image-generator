@@ -2,14 +2,14 @@
 # This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Image Generator 1.7.0\n"
+"Project-Id-Version: Image Generator 1.7.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/artificial-image-generator\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-07T16:50:03+00:00\n"
+"POT-Creation-Date: 2026-10-08T21:29:33+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: artificial-image-generator\n"
@@ -19,8 +19,6 @@ msgstr ""
 #: includes/Admin/Admin.php:35
 #: includes/Admin/Admin.php:36
 #: includes/Admin/Settings.php:65
-#: includes/Admin/views/add-img-template.php:17
-#: includes/Admin/views/edit-img-template.php:18
 msgid "Image Generator"
 msgstr ""
 
@@ -44,45 +42,24 @@ msgstr ""
 msgid "https://beautifulplugins.com"
 msgstr ""
 
-#: includes/Admin/Actions.php:62
-#: includes/Admin/Actions.php:120
+#: includes/Admin/Actions.php:61
 msgid "You do not have permission to process this action"
 msgstr ""
 
-#: includes/Admin/Actions.php:73
+#: includes/Admin/Actions.php:72
 msgid "Template duplicated as a draft."
 msgstr ""
 
-#: includes/Admin/Actions.php:84
+#: includes/Admin/Actions.php:83
 msgid "Automatic featured images now use this template."
 msgstr ""
 
-#: includes/Admin/Actions.php:85
+#: includes/Admin/Actions.php:84
 msgid "Automatic featured images now use a random template."
 msgstr ""
 
-#: includes/Admin/Actions.php:101
+#: includes/Admin/Actions.php:100
 msgid "Template deleted."
-msgstr ""
-
-#: includes/Admin/Actions.php:133
-msgid "The image template you are trying to update does not exist."
-msgstr ""
-
-#: includes/Admin/Actions.php:140
-msgid "This template was designed in the Template Studio and cannot be edited with this form."
-msgstr ""
-
-#: includes/Admin/Actions.php:146
-msgid "The title field is required."
-msgstr ""
-
-#: includes/Admin/Actions.php:206
-msgid "Image template updated successfully."
-msgstr ""
-
-#: includes/Admin/Actions.php:208
-msgid "Image template added successfully."
 msgstr ""
 
 #: includes/Admin/Admin.php:46
@@ -105,25 +82,25 @@ msgstr ""
 msgid "%s item(s) deleted successfully."
 msgstr ""
 
-#: includes/Admin/Admin.php:309
+#: includes/Admin/Admin.php:305
 msgid "How to grow tomatoes on a small balcony"
 msgstr ""
 
-#: includes/Admin/Admin.php:310
+#: includes/Admin/Admin.php:306
 msgid "A simple guide to pots, soil, sun and watering for a big summer harvest."
 msgstr ""
 
-#: includes/Admin/Admin.php:311
+#: includes/Admin/Admin.php:307
 msgid "Gardening"
 msgstr ""
 
-#: includes/Admin/Admin.php:312
+#: includes/Admin/Admin.php:308
 msgid "Tomatoes, Balcony"
 msgstr ""
 
 #. translators: %d: minutes
 #. translators: %d: minutes needed to read the post
-#: includes/Admin/Admin.php:317
+#: includes/Admin/Admin.php:313
 #: includes/Templates/MergeTags.php:66
 #, php-format
 msgid "%d min read"
@@ -140,9 +117,6 @@ msgid "Name"
 msgstr ""
 
 #: includes/Admin/ListTables/TemplatesTable.php:104
-#: includes/Admin/views/add-img-template.php:121
-#: includes/Admin/views/edit-img-template.php:146
-#: includes/Admin/views/edit-img-template.php:150
 msgid "Preview Image"
 msgstr ""
 
@@ -204,12 +178,12 @@ msgid "Automatic Featured Images"
 msgstr ""
 
 #: includes/Admin/Settings.php:134
-#: includes/Admin/Settings.php:564
+#: includes/Admin/Settings.php:566
 msgid "Enable Post Thumbnails"
 msgstr ""
 
 #: includes/Admin/Settings.php:143
-#: includes/Admin/Settings.php:581
+#: includes/Admin/Settings.php:583
 msgid "Enable Page Thumbnails"
 msgstr ""
 
@@ -317,293 +291,121 @@ msgstr ""
 msgid "High"
 msgstr ""
 
-#: includes/Admin/Settings.php:339
+#: includes/Admin/Settings.php:305
+msgid "Extra high"
+msgstr ""
+
+#: includes/Admin/Settings.php:306
+msgid "Maximum (most expensive)"
+msgstr ""
+
+#: includes/Admin/Settings.php:341
 msgid "When a post or page is saved without a featured image, one is generated for it."
 msgstr ""
 
-#: includes/Admin/Settings.php:353
+#: includes/Admin/Settings.php:355
 msgid "AI images are created in the background once a post is published or scheduled, and use your API key. Templates are free and instant."
 msgstr ""
 
-#: includes/Admin/Settings.php:364
+#: includes/Admin/Settings.php:366
 msgid "A random template"
 msgstr ""
 
 #. translators: %s: list of merge tags
-#: includes/Admin/Settings.php:399
+#: includes/Admin/Settings.php:401
 #, php-format
 msgid "Leave empty to use the default shown. Available tags: %s"
 msgstr ""
 
-#: includes/Admin/Settings.php:414
+#: includes/Admin/Settings.php:416
 msgid "Added to the prompt of automatic AI images."
 msgstr ""
 
-#: includes/Admin/Settings.php:427
+#: includes/Admin/Settings.php:429
 msgid "Added to the end of every automatic AI prompt. AI models often draw garbled text, so the default asks for none."
 msgstr ""
 
-#: includes/Admin/Settings.php:438
+#: includes/Admin/Settings.php:440
 msgid "Used for prompts in the editor and the Media Library; it can be changed per image there."
 msgstr ""
 
-#: includes/Admin/Settings.php:448
-msgid "Higher quality costs more."
+#: includes/Admin/Settings.php:450
+msgid "Higher quality costs more. Extra high and Maximum need GPT Image 2.5; GPT Image 2 uses High instead."
 msgstr ""
 
-#: includes/Admin/Settings.php:477
+#: includes/Admin/Settings.php:479
 msgid "Remove the saved API key"
 msgstr ""
 
-#: includes/Admin/Settings.php:484
+#: includes/Admin/Settings.php:486
 msgid "Your API key is currently defined via the AIMG_API_KEY PHP constant and cannot be edited here."
 msgstr ""
 
-#: includes/Admin/Settings.php:486
+#: includes/Admin/Settings.php:488
 msgid "An API key is saved. Leave the field empty to keep it, or enter a new key to replace it."
 msgstr ""
 
-#: includes/Admin/Settings.php:488
+#: includes/Admin/Settings.php:490
 msgid "Enter your image generation API key (an OpenAI API key). For maximum security you can instead define the AIMG_API_KEY constant in wp-config.php."
 msgstr ""
 
-#: includes/Admin/Settings.php:510
+#: includes/Admin/Settings.php:512
 msgid "The OpenAI model used for AI images. GPT Image 2.5 Flare is fast and suited to everyday images; Sunburst is OpenAI's most capable model. Retired models (GPT Image 1 and DALL·E) are switched to GPT Image 2.5 Flare automatically."
 msgstr ""
 
-#: includes/Admin/Settings.php:522
+#: includes/Admin/Settings.php:524
 msgid "Configure the Image Generator general settings."
 msgstr ""
 
-#: includes/Admin/Settings.php:534
+#: includes/Admin/Settings.php:536
 msgid "#008000"
 msgstr ""
 
-#: includes/Admin/Settings.php:535
+#: includes/Admin/Settings.php:537
 msgid "Enter the default background color for the thumbnails. This will be used as a fallback color if no specific color is set."
 msgstr ""
 
-#: includes/Admin/Settings.php:548
+#: includes/Admin/Settings.php:550
 msgid "#ffffff"
 msgstr ""
 
-#: includes/Admin/Settings.php:549
+#: includes/Admin/Settings.php:551
 msgid "Enter the default text color for the thumbnails. This will be used as a fallback color if no specific color is set."
 msgstr ""
 
-#: includes/Admin/Settings.php:566
+#: includes/Admin/Settings.php:568
 msgid "Generate a featured image when a post is saved without one, using the method chosen below."
 msgstr ""
 
-#: includes/Admin/Settings.php:583
+#: includes/Admin/Settings.php:585
 msgid "Generate a featured image when a page is saved without one, using the method chosen below."
 msgstr ""
 
-#: includes/Admin/Settings.php:598
+#: includes/Admin/Settings.php:600
 msgid "Delete templates and settings when the plugin is deleted"
 msgstr ""
 
-#: includes/Admin/Settings.php:600
+#: includes/Admin/Settings.php:602
 msgid "Leave this unchecked to keep your image templates if you delete and later reinstall the plugin. Images already added to the Media Library are never removed."
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:16
+#: includes/Admin/views/add-img-template.php:14
 msgid "Add New Image Template"
 msgstr ""
 
-#: includes/Admin/views/add-img-template.php:19
-#: includes/Admin/views/edit-img-template.php:20
-msgid "Configure the template options to generate images."
-msgstr ""
-
-#: includes/Admin/views/add-img-template.php:27
-#: includes/Admin/views/edit-img-template.php:33
-msgid "Title"
-msgstr ""
-
-#: includes/Admin/views/add-img-template.php:30
-#: includes/Admin/views/edit-img-template.php:36
-msgid "Awesome image template"
-msgstr ""
-
-#: includes/Admin/views/add-img-template.php:31
-#: includes/Admin/views/edit-img-template.php:37
-msgid "Enter the title for the image template."
-msgstr ""
-
-#: includes/Admin/views/add-img-template.php:36
-#: includes/Admin/views/edit-img-template.php:42
-msgid "Background Colors"
-msgstr ""
-
-#: includes/Admin/views/add-img-template.php:39
-#: includes/Admin/views/edit-img-template.php:45
-msgid "e.g. #e74c3c, #2ecc71, #9b59b6"
-msgstr ""
-
-#: includes/Admin/views/add-img-template.php:40
-#: includes/Admin/views/edit-img-template.php:46
-msgid "Enter the background colors for the thumbnails. Use comma to separate multiple colors."
-msgstr ""
-
-#: includes/Admin/views/add-img-template.php:45
-#: includes/Admin/views/edit-img-template.php:51
-msgid "Width"
-msgstr ""
-
-#: includes/Admin/views/add-img-template.php:48
-#: includes/Admin/views/edit-img-template.php:54
-msgid "1200"
-msgstr ""
-
-#: includes/Admin/views/add-img-template.php:49
-#: includes/Admin/views/edit-img-template.php:55
-msgid "Enter the width for the thumbnails in pixels."
-msgstr ""
-
-#: includes/Admin/views/add-img-template.php:54
-#: includes/Admin/views/edit-img-template.php:60
-msgid "Height"
-msgstr ""
-
-#: includes/Admin/views/add-img-template.php:57
-#: includes/Admin/views/edit-img-template.php:63
-msgid "800"
-msgstr ""
-
-#: includes/Admin/views/add-img-template.php:58
-#: includes/Admin/views/edit-img-template.php:64
-msgid "Enter the height for the thumbnails in pixels."
-msgstr ""
-
-#: includes/Admin/views/add-img-template.php:63
-#: includes/Admin/views/edit-img-template.php:69
-msgid "Title Font Size"
-msgstr ""
-
-#: includes/Admin/views/add-img-template.php:66
-#: includes/Admin/views/edit-img-template.php:72
-msgid "40"
-msgstr ""
-
-#: includes/Admin/views/add-img-template.php:67
-#: includes/Admin/views/edit-img-template.php:73
-msgid "Enter the font size for the title in pixel."
-msgstr ""
-
-#: includes/Admin/views/add-img-template.php:72
-#: includes/Admin/views/edit-img-template.php:78
-msgid "Enable Overlay Images"
-msgstr ""
-
-#: includes/Admin/views/add-img-template.php:77
-#: includes/Admin/views/edit-img-template.php:83
-msgid "Enable"
-msgstr ""
-
-#: includes/Admin/views/add-img-template.php:79
-#: includes/Admin/views/edit-img-template.php:85
-msgid "Check this box to enable overlay images in the thumbnails."
-msgstr ""
-
-#: includes/Admin/views/add-img-template.php:85
-#: includes/Admin/views/edit-img-template.php:91
-msgid "Overlay Images"
-msgstr ""
-
-#: includes/Admin/views/add-img-template.php:90
-#: includes/Admin/views/edit-img-template.php:114
-msgid "Select Images"
-msgstr ""
-
-#: includes/Admin/views/add-img-template.php:92
-#: includes/Admin/views/edit-img-template.php:116
-msgid "Select one or more transparent PNG images to use as overlay images in the thumbnails. Randomly one will be selected while generating the thumbnail."
-msgstr ""
-
-#: includes/Admin/views/add-img-template.php:98
-#: includes/Admin/views/edit-img-template.php:122
-msgid "Overlay Image Position"
-msgstr ""
-
-#: includes/Admin/views/add-img-template.php:102
-#: includes/Admin/views/edit-img-template.php:127
-msgid "Top Left"
-msgstr ""
-
-#: includes/Admin/views/add-img-template.php:103
-#: includes/Admin/views/edit-img-template.php:128
-msgid "Top Center"
-msgstr ""
-
-#: includes/Admin/views/add-img-template.php:104
-#: includes/Admin/views/edit-img-template.php:129
-msgid "Top Right"
-msgstr ""
-
-#: includes/Admin/views/add-img-template.php:105
-#: includes/Admin/views/edit-img-template.php:130
-msgid "Left Center"
-msgstr ""
-
-#: includes/Admin/views/add-img-template.php:106
-#: includes/Admin/views/edit-img-template.php:131
-msgid "Center Center"
-msgstr ""
-
-#: includes/Admin/views/add-img-template.php:107
-#: includes/Admin/views/edit-img-template.php:132
-msgid "Right Center"
-msgstr ""
-
-#: includes/Admin/views/add-img-template.php:108
-#: includes/Admin/views/edit-img-template.php:133
-msgid "Bottom Left"
-msgstr ""
-
-#: includes/Admin/views/add-img-template.php:109
-#: includes/Admin/views/edit-img-template.php:134
-msgid "Bottom Center"
-msgstr ""
-
-#: includes/Admin/views/add-img-template.php:110
-#: includes/Admin/views/edit-img-template.php:135
-msgid "Bottom Right"
-msgstr ""
-
-#: includes/Admin/views/add-img-template.php:112
-#: includes/Admin/views/edit-img-template.php:137
-msgid "Select the position for the overlay images in the thumbnails. The overlay image will be positioned based on this selection. Default is \"Center Center\"."
-msgstr ""
-
-#: includes/Admin/views/add-img-template.php:122
-#: includes/Admin/views/edit-img-template.php:154
-msgid "Preview could not be generated. Save changes to generate a preview."
-msgstr ""
-
+#: includes/Admin/views/add-img-template.php:16
 #: includes/Admin/views/edit-img-template.php:17
+msgid "Loading the Template Studio…"
+msgstr ""
+
+#: includes/Admin/views/add-img-template.php:17
+#: includes/Admin/views/edit-img-template.php:18
+msgid "If this message does not go away, make sure JavaScript is enabled and reload the page. Your templates keep working in the meantime."
+msgstr ""
+
+#: includes/Admin/views/edit-img-template.php:15
 #: includes/PostTypes.php:58
 msgid "Edit Image Template"
-msgstr ""
-
-#: includes/Admin/views/edit-img-template.php:23
-msgid "This template was designed in the Template Studio. Its settings are not shown in this form and cannot be changed here; the preview shows how it looks."
-msgstr ""
-
-#: includes/Admin/views/edit-img-template.php:104
-msgid "Overlay Image"
-msgstr ""
-
-#: includes/Admin/views/edit-img-template.php:105
-msgid "X"
-msgstr ""
-
-#: includes/Admin/views/edit-img-template.php:110
-msgid "No overlay images selected."
-msgstr ""
-
-#: includes/Admin/views/edit-img-template.php:152
-msgid "This is a preview of how the image will look like based on the current settings. Save changes to generate a new preview."
 msgstr ""
 
 #: includes/Admin/views/img-templates.php:24
@@ -680,7 +482,7 @@ msgid "Delete this template? Images already made with it stay in the Media Libra
 msgstr ""
 
 #. translators: %d: number of AI images the user can still generate this hour
-#: includes/functions.php:387
+#: includes/functions.php:391
 #, php-format
 msgid "You can generate %d more AI image this hour. Request fewer images."
 msgid_plural "You can generate %d more AI images this hour. Request fewer images."
@@ -688,7 +490,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #. translators: 1: hourly limit, 2: minutes until the limit resets
-#: includes/functions.php:403
+#: includes/functions.php:407
 #, php-format
 msgid "You have reached the limit of %1$d AI image per hour. Try again in %2$d minutes."
 msgid_plural "You have reached the limit of %1$d AI images per hour. Try again in %2$d minutes."
@@ -721,7 +523,7 @@ msgid "Failed to generate image from template."
 msgstr ""
 
 #: includes/Generator.php:248
-#: includes/Providers/OpenAI.php:145
+#: includes/Providers/OpenAI.php:157
 #: includes/RestAPI.php:303
 #: includes/RestAPI.php:563
 msgid "No API key configured. Please add your API key on the Image Generator settings page."
@@ -844,37 +646,37 @@ msgstr ""
 msgid "Isometric"
 msgstr ""
 
-#: includes/Providers/OpenAI.php:48
+#: includes/Providers/OpenAI.php:55
 msgid "OpenAI"
 msgstr ""
 
-#: includes/Providers/OpenAI.php:58
+#: includes/Providers/OpenAI.php:65
 msgid "GPT Image 2.5 Flare (recommended, fast)"
 msgstr ""
 
-#: includes/Providers/OpenAI.php:59
+#: includes/Providers/OpenAI.php:66
 msgid "GPT Image 2.5 Sunburst (most capable)"
 msgstr ""
 
-#: includes/Providers/OpenAI.php:60
+#: includes/Providers/OpenAI.php:67
 msgid "GPT Image 2"
 msgstr ""
 
-#: includes/Providers/OpenAI.php:209
+#: includes/Providers/OpenAI.php:223
 msgid "The AI service did not respond in time. Please try again."
 msgstr ""
 
-#: includes/Providers/OpenAI.php:221
+#: includes/Providers/OpenAI.php:235
 msgid "The image generation API returned an error."
 msgstr ""
 
 #. translators: %s: model identifier, e.g. gpt-image-2.
-#: includes/Providers/OpenAI.php:228
+#: includes/Providers/OpenAI.php:242
 #, php-format
 msgid "Your API account may not have access to the \"%s\" model. Try selecting a different model under Image Generator → Settings → AI Service."
 msgstr ""
 
-#: includes/Providers/OpenAI.php:255
+#: includes/Providers/OpenAI.php:269
 msgid "No image returned by the API."
 msgstr ""
 
