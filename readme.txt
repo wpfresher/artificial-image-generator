@@ -306,12 +306,22 @@ Searching or importing stock photos calls the library you choose: **Unsplash** (
 - The plugin does not set cookies, track users, or load any external scripts on the frontend.
 
 == Screenshots ==
-1. Block editor toolbar — generate an image directly into an Image block with one click.
-2. Image Templates — Pre-made list of image templates.
-3. Image Template editor — colors, dimensions, overlays, and live preview.
-4. Preview of generated image in the frontend in a post.
-5. Preview of another generated image in the frontend in a post.
-6. Plugin settings — defaults and AI API key configuration.
+1. Block editor — the ✨ button on Image and Media & Text blocks opens the image generator.
+2. AI Featured Image panel in the post sidebar — regenerate the featured image in one click, or choose a template, stock photo or prompt.
+3. Templates tab — preview any of your templates with the post title before you add it.
+4. Custom Prompt tab — write a prompt (or build one from the post) and pick the shape, style, quality and number of variations for an AI image.
+5. Free stock photos from Pixabay, searched with keywords from the post title, with the photographer credit.
+6. Pexels tab — filter stock photos by orientation and color and scroll for more.
+7. Media Library — Generate Image opens the same modal, so it works with any editor or page builder.
+8. A stock photo imported into the Media Library with alt text, title and the photographer credit in the caption.
+9. Image Templates — your templates as a grid with previews; duplicate, set as default, export or delete.
+10. Start from a design — ready-made templates, including stock photo designs (the review, sale, course, recipe and price tag designs come with Pro).
+11. Template Studio — edit layers on a canvas; text fits its box and uses tags like {title} and {category}.
+12. Template Studio — a background that shows a stock photo picked for each post, with your design on top.
+13. Template Studio — layer types: background, image, overlay, text, shape, pattern and frame (Rating, Progress bar and Badge come with Pro).
+14. Settings — automatic featured images with a template, AI or a stock photo, and the AI prompt and style.
+15. Settings — AI service: API key, model, image shape and quality, who can use AI and an hourly limit.
+16. Settings — stock photo API keys with Test Connection, and the library, orientation, size and credit options.
 
 == Changelog ==
 = 1.8.0 ( 10th October 2026 ) =
