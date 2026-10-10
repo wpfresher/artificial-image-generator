@@ -335,7 +335,6 @@ class Admin {
 
 		$logo = (int) get_theme_mod( 'custom_logo' );
 		$icon = (int) get_option( 'site_icon' );
-		$user = wp_get_current_user();
 
 		$data = array(
 			'template'      => $template,
@@ -365,27 +364,8 @@ class Admin {
 				'stock'     => \ArtificialImageGenerator\Rendering\Hybrid::sample_url(),
 				'ai'        => \ArtificialImageGenerator\Rendering\Hybrid::sample_url(),
 			),
-			'sampleTags'    => array(
-				'title'        => __( 'How to grow tomatoes on a small balcony', 'artificial-image-generator' ),
-				'excerpt'      => __( 'A simple guide to pots, soil, sun and watering for a big summer harvest.', 'artificial-image-generator' ),
-				'category'     => __( 'Gardening', 'artificial-image-generator' ),
-				'tags'         => __( 'Tomatoes, Balcony', 'artificial-image-generator' ),
-				'author'       => $user->display_name,
-				'date'         => wp_date( get_option( 'date_format' ) ),
-				'site_name'    => html_entity_decode( get_bloginfo( 'name' ), ENT_QUOTES | ENT_HTML5, 'UTF-8' ),
-				/* translators: %d: minutes */
-				'reading_time' => sprintf( _n( '%d min read', '%d min read', 4, 'artificial-image-generator' ), 4 ),
-			),
+			'sampleTags'    => \ArtificialImageGenerator\Templates\MergeTags::samples(),
 		);
-
-		/**
-		 * Filter the sample values the Template Studio shows for merge tags.
-		 *
-		 * @param array $tags Values as tag name => text; custom fields as "custom_field:key".
-		 *
-		 * @since 1.8.0
-		 */
-		$data['sampleTags'] = (array) apply_filters( 'aimg_studio_sample_tags', $data['sampleTags'] );
 
 		wp_add_inline_script( 'aimg-template-studio', 'window.aimgStudio = ' . wp_json_encode( $data ) . ';', 'before' );
 

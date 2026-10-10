@@ -50,6 +50,35 @@ class MergeTags {
 	}
 
 	/**
+	 * Sample values for previews without a post: the Studio canvas and its exact preview.
+	 *
+	 * @since 1.8.0
+	 * @return array Values as tag name => text; custom fields as "custom_field:key".
+	 */
+	public static function samples() {
+		$samples = array(
+			'title'        => __( 'How to grow tomatoes on a small balcony', 'artificial-image-generator' ),
+			'excerpt'      => __( 'A simple guide to pots, soil, sun and watering for a big summer harvest.', 'artificial-image-generator' ),
+			'category'     => __( 'Gardening', 'artificial-image-generator' ),
+			'tags'         => __( 'Tomatoes, Balcony', 'artificial-image-generator' ),
+			'author'       => wp_get_current_user()->display_name,
+			'date'         => wp_date( get_option( 'date_format' ) ),
+			'site_name'    => html_entity_decode( get_bloginfo( 'name' ), ENT_QUOTES | ENT_HTML5, 'UTF-8' ),
+			/* translators: %d: minutes */
+			'reading_time' => sprintf( _n( '%d min read', '%d min read', 4, 'artificial-image-generator' ), 4 ),
+		);
+
+		/**
+		 * Filter the sample values the Template Studio shows for merge tags.
+		 *
+		 * @param array $tags Values as tag name => text; custom fields as "custom_field:key".
+		 *
+		 * @since 1.8.0
+		 */
+		return (array) apply_filters( 'aimg_studio_sample_tags', $samples );
+	}
+
+	/**
 	 * Tag values for a post, as name => value.
 	 *
 	 * @param int   $post_id   Post ID, or 0 for none.
@@ -97,7 +126,7 @@ class MergeTags {
 	 * Unknown tags are removed.
 	 *
 	 * @param string $text    Text.
-	 * @param array  $values  Values as name => text.
+	 * @param array  $values  Values as name => text; a "custom_field:key" value replaces the post meta.
 	 * @param int    $post_id Post ID for `{custom_field:key}`, or 0.
 	 *
 	 * @return string
@@ -107,6 +136,10 @@ class MergeTags {
 			self::PATTERN,
 			function ( $matches ) use ( $values, $post_id ) {
 				if ( 'custom_field' === $matches[1] && ! empty( $matches[2] ) ) {
+					if ( isset( $values[ 'custom_field:' . $matches[2] ] ) ) {
+						return (string) $values[ 'custom_field:' . $matches[2] ];
+					}
+
 					$value = $post_id && ! is_protected_meta( $matches[2], 'post' ) ? get_post_meta( $post_id, $matches[2], true ) : '';
 
 					return is_scalar( $value ) ? wp_strip_all_tags( (string) $value ) : '';

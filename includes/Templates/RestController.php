@@ -503,11 +503,13 @@ class RestController {
 		$document = Schema::sanitize( $request->get_param( 'document' ) );
 		$started  = microtime( true );
 
-		if ( '' === $title && ! $post_id ) {
-			$title = __( 'Your post title appears here', 'artificial-image-generator' );
+		$overrides = '' !== $title ? array( 'title' => $title ) : array();
+
+		if ( ! $post_id ) {
+			$overrides = array_merge( MergeTags::samples(), $overrides );
 		}
 
-		$values = MergeTags::values( $post_id, '' !== $title ? array( 'title' => $title ) : array() );
+		$values = MergeTags::values( $post_id, $overrides );
 		$image  = GdRenderer::render( $document, $values, $post_id );
 
 		if ( ! $image ) {
