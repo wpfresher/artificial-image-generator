@@ -241,13 +241,14 @@ $aimg-muted:         #6b7280;
 /* ── Prompt options ──────────────────────────────────────────────────────── */
 .aimg-modal .aimg-modal__build-prompt {
 	display: inline-block;
-	margin: 8px 0 20px;
+	margin: 8px 0 4px;
 }
 
 .aimg-modal__options {
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
 	gap: 12px;
+	margin-top: 16px;
 }
 
 /* ── Variation picker ────────────────────────────────────────────────────── */
