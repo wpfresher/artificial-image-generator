@@ -155,7 +155,9 @@ Webpack is configured in `webpack.config.js` extending `@wordpress/scripts`:
   `canvas/text-layout.js` and `canvas/draw.js` mirror the PHP renderer; keep them in step.
   Layer types come from `registry.js` (core definitions in `layers.js`); other plugins add types
   with the JS filter `aimg.studio.layerTypes` from a script enqueued on `aimg_enqueue_template_studio`,
-  plus the PHP filter `aimg_template_layers`. Layers of an unregistered type are kept
+  plus the PHP filter `aimg_template_layers`. `canvas/konva.js` bundles only Rect, Ellipse, Line, Image,
+  Text and Transformer, so add-on drawers must build other shapes from those (e.g. stars as closed Lines).
+  Sample values for `{custom_field:key}` come from `aimg_studio_sample_tags` keys named `custom_field:key`. Layers of an unregistered type are kept
   (`Schema::sanitize()` cleans them generically) but not drawn.
 - **Image modal** (`src/js/components/aimg-modal.js`, used by `block-editor.js` and `media-library.js`):
   tabs come from the JS filter `aimgModal.tabs` (core: Templates, Custom Prompt, one per stock library in
