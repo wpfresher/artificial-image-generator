@@ -324,7 +324,7 @@ Searching or importing stock photos calls the library you choose: **Unsplash** (
 16. Settings — stock photo API keys with Test Connection, and the library, orientation, size and credit options.
 
 == Changelog ==
-= 1.8.0 ( 10th October 2026 ) =
+= 1.8.0 ( 11th October 2026 ) =
 * New: **Free stock photos from Unsplash, Pexels and Pixabay.** Search them in the editor and the Media Library with orientation and color filters, and insert one with a click. Photos are imported with alt text and the photographer's credit, and importing the same photo again reuses it.
 * New: Stock photos as an automatic featured image method ("Stock photo" or "Stock photo, template if none is found"), picked with keywords from the post title in the background.
 * New: **Hybrid templates.** A background or image layer can show a stock photo or an AI image made for each post, with your design on top. Two new starters use it.
