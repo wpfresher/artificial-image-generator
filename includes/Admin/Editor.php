@@ -64,5 +64,15 @@ class Editor {
 		}
 
 		wp_localize_script( 'aimg-editor', 'aimgData', aimg_get_js_data() );
+
+		/**
+		 * Fires after the image modal script is enqueued, e.g. to add modal tabs
+		 * with the JS filter `aimgModal.tabs` from a script that depends on wp-hooks.
+		 *
+		 * @param string $handle Handle of the modal script.
+		 *
+		 * @since 1.8.0
+		 */
+		do_action( 'aimg_enqueue_modal', 'aimg-editor' );
 	}
 }

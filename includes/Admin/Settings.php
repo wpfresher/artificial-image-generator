@@ -47,7 +47,7 @@ class Settings {
 
 		$asset = include AIMG_ASSETS_PATH . 'js/settings.asset.php';
 
-		wp_enqueue_script( 'aimg-settings', AIMG_ASSETS_URL . 'js/settings.js', $asset['dependencies'], $asset['version'], true );
+		wp_enqueue_script( 'aimg-settings', AIMG_ASSETS_URL . 'js/settings.js', array_merge( $asset['dependencies'], array( 'wp-api-fetch', 'wp-dom-ready', 'wp-i18n' ) ), $asset['version'], true );
 		wp_set_script_translations( 'aimg-settings', 'artificial-image-generator', AIMG_PATH . 'languages' );
 		wp_enqueue_style( 'aimg-admin', AIMG_ASSETS_URL . 'css/admin.css', array(), AIMG_VERSION );
 	}
@@ -329,9 +329,9 @@ class Settings {
 				echo wp_kses_post(
 					sprintf(
 					/* translators: 1: link to the provider's API page, 2: PHP constant name */
-					esc_html__( 'Get a free key at %1$s, or define the %2$s constant in wp-config.php.', 'artificial-image-generator' ),
-					'<a href="' . esc_url( $provider->get_signup_url() ) . '" target="_blank" rel="noopener noreferrer">' . esc_html( $provider->get_label() ) . '</a>',
-					'<code>' . esc_html( $constant ) . '</code>'
+						esc_html__( 'Get a free key at %1$s, or define the %2$s constant in wp-config.php.', 'artificial-image-generator' ),
+						'<a href="' . esc_url( $provider->get_signup_url() ) . '" target="_blank" rel="noopener noreferrer">' . esc_html( $provider->get_label() ) . '</a>',
+						'<code>' . esc_html( $constant ) . '</code>'
 					)
 				);
 			}

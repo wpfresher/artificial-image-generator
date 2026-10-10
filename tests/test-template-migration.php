@@ -114,8 +114,8 @@ class Test_Template_Migration extends AIMG_TestCase {
 	}
 
 	public function test_a_template_with_a_document_is_left_alone() {
-		$template = $this->legacy_template();
-		$document = Migration::from_template( $template );
+		$template                         = $this->legacy_template();
+		$document                         = Migration::from_template( $template );
 		$document['canvas']['background'] = '#123456';
 		Repository::save_document( $template, $document );
 

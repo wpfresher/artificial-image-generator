@@ -34,6 +34,23 @@ class RestController {
 
 		register_rest_route(
 			$namespace_name,
+			'/stock/keywords',
+			array(
+				'methods'             => \WP_REST_Server::READABLE,
+				'callback'            => array( $this, 'keywords' ),
+				'permission_callback' => array( $this, 'can_upload' ),
+				'args'                => array(
+					'title' => array(
+						'type'              => 'string',
+						'default'           => '',
+						'sanitize_callback' => 'aimg_plain_text',
+					),
+				),
+			)
+		);
+
+		register_rest_route(
+			$namespace_name,
 			'/stock/(?P<provider>[a-z0-9_-]+)/search',
 			array(
 				'methods'             => \WP_REST_Server::READABLE,
@@ -187,6 +204,17 @@ class RestController {
 	}
 
 	/**
+	 * Search terms for a title, as automatic stock photos use them.
+	 *
+	 * @param \WP_REST_Request $request Request.
+	 *
+	 * @return \WP_REST_Response
+	 */
+	public function keywords( \WP_REST_Request $request ) {
+		return rest_ensure_response( array( 'query' => Keywords::from_text( (string) $request->get_param( 'title' ) ) ) );
+	}
+
+	/**
 	 * Search a library.
 	 *
 	 * @param \WP_REST_Request $request Request.
@@ -296,6 +324,10 @@ class RestController {
 		if ( '' !== $key && $provider instanceof Provider ) {
 			$provider = clone $provider;
 			$provider->set_key( $key );
+		}
+
+		if ( ! $provider->is_configured() ) {
+			return new \WP_Error( 'aimg_stock_no_key', __( 'Enter an API key to test.', 'artificial-image-generator' ), array( 'status' => 400 ) );
 		}
 
 		$result = $provider->search( 'nature', array( 'per_page' => 3 ) );

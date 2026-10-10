@@ -40,11 +40,11 @@ class Generator {
 	 *
 	 * @var string
 	 */
-	const METHOD_TEMPLATE    = 'template';
-	const METHOD_AI          = 'ai';
-	const METHOD_TEMPLATE_AI = 'template_ai';
-	const METHOD_AI_TEMPLATE = 'ai_template';
-	const METHOD_STOCK       = 'stock';
+	const METHOD_TEMPLATE       = 'template';
+	const METHOD_AI             = 'ai';
+	const METHOD_TEMPLATE_AI    = 'template_ai';
+	const METHOD_AI_TEMPLATE    = 'ai_template';
+	const METHOD_STOCK          = 'stock';
 	const METHOD_STOCK_TEMPLATE = 'stock_template';
 
 	/**
@@ -55,11 +55,11 @@ class Generator {
 	 */
 	public static function get_methods() {
 		$methods = array(
-			self::METHOD_TEMPLATE    => __( 'Image template', 'artificial-image-generator' ),
-			self::METHOD_AI          => __( 'AI image', 'artificial-image-generator' ),
-			self::METHOD_TEMPLATE_AI => __( 'Image template, AI if no template is available', 'artificial-image-generator' ),
-			self::METHOD_AI_TEMPLATE => __( 'AI image, template if AI fails', 'artificial-image-generator' ),
-			self::METHOD_STOCK       => __( 'Stock photo (Unsplash, Pexels or Pixabay)', 'artificial-image-generator' ),
+			self::METHOD_TEMPLATE       => __( 'Image template', 'artificial-image-generator' ),
+			self::METHOD_AI             => __( 'AI image', 'artificial-image-generator' ),
+			self::METHOD_TEMPLATE_AI    => __( 'Image template, AI if no template is available', 'artificial-image-generator' ),
+			self::METHOD_AI_TEMPLATE    => __( 'AI image, template if AI fails', 'artificial-image-generator' ),
+			self::METHOD_STOCK          => __( 'Stock photo (Unsplash, Pexels or Pixabay)', 'artificial-image-generator' ),
 			self::METHOD_STOCK_TEMPLATE => __( 'Stock photo, template if none is found', 'artificial-image-generator' ),
 		);
 

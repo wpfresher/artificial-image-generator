@@ -117,7 +117,13 @@ class Test_Stock extends AIMG_TestCase {
 			}
 
 			if ( 0 === strpos( $path, '/search/photos' ) ) {
-				$premium = array_merge( $unsplash, array( 'id' => 'plus1', 'premium' => true ) );
+				$premium = array_merge(
+					$unsplash,
+					array(
+						'id'      => 'plus1',
+						'premium' => true,
+					)
+				);
 
 				return $this->response(
 					200,

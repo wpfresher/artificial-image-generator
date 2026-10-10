@@ -397,7 +397,7 @@ import {
 						className: 'aimg-featured__more',
 					},
 					__(
-						'Choose a template or write a prompt…',
+						'Choose a template, a stock photo or a prompt…',
 						'artificial-image-generator'
 					)
 				)

@@ -90,6 +90,7 @@ function aimg_get_js_data() {
 			'status'    => rest_url( 'aimg/v1/status/' ),
 			'featured'  => rest_url( 'aimg/v1/featured/' ),
 			'media'     => rest_url( 'wp/v2/media/' ),
+			'stock'     => rest_url( 'aimg/v1/stock' ),
 		),
 		'nonce'     => wp_create_nonce( 'wp_rest' ),
 		'uploadUrl' => admin_url( 'upload.php' ),
@@ -105,10 +106,13 @@ function aimg_get_js_data() {
 			'methodLabel' => isset( $methods[ $method ] ) ? $methods[ $method ] : '',
 			'methodIsAi'  => '' === $runnable || \ArtificialImageGenerator\Generator::method_starts_with_ai( $runnable ),
 		),
+		'stock'     => array_values( array_map( array( '\ArtificialImageGenerator\Stock\RestController', 'describe' ), \ArtificialImageGenerator\Stock\Registry::all() ) ),
 		'options'   => array(
-			'sizes'     => \ArtificialImageGenerator\Admin\Settings::get_sizes(),
-			'qualities' => \ArtificialImageGenerator\Admin\Settings::get_qualities(),
-			'styles'    => wp_list_pluck( \ArtificialImageGenerator\PromptBuilder::get_styles(), 0 ),
+			'sizes'        => \ArtificialImageGenerator\Admin\Settings::get_sizes(),
+			'qualities'    => \ArtificialImageGenerator\Admin\Settings::get_qualities(),
+			'styles'       => wp_list_pluck( \ArtificialImageGenerator\PromptBuilder::get_styles(), 0 ),
+			'orientations' => \ArtificialImageGenerator\Stock\Registry::orientations(),
+			'colors'       => \ArtificialImageGenerator\Stock\Registry::colors(),
 		),
 	);
 }

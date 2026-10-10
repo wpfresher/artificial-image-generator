@@ -1,8 +1,7 @@
-import apiFetch from '@wordpress/api-fetch';
-import domReady from '@wordpress/dom-ready';
-import { __ } from '@wordpress/i18n';
+const { __ } = wp.i18n;
+const apiFetch = wp.apiFetch;
 
-domReady( () => {
+wp.domReady( () => {
 	document.querySelectorAll( '.aimg-test-stock' ).forEach( ( button ) => {
 		button.addEventListener( 'click', () => {
 			const provider = button.dataset.provider;
