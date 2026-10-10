@@ -36,6 +36,7 @@ class RestAPI {
 	 */
 	public function register_routes() {
 		( new Templates\RestController() )->register_routes( self::REST_NAMESPACE );
+		( new Stock\RestController() )->register_routes( self::REST_NAMESPACE );
 
 		register_rest_route(
 			self::REST_NAMESPACE,
@@ -307,7 +308,7 @@ class RestAPI {
 			return new \WP_Error( 'aimg_no_title', __( 'Add a title to the post first; it is used to generate the image.', 'artificial-image-generator' ), array( 'status' => 400 ) );
 		}
 
-		if ( Generator::method_starts_with_ai( $method ) ) {
+		if ( Generator::method_runs_in_background( $method ) ) {
 			Queue::enqueue( $post_id, $method, true );
 
 			return rest_ensure_response( $this->status_response( $post_id ) );

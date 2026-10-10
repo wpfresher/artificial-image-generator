@@ -104,3 +104,15 @@
 .aimg-card__delete {
 	color: #b32d2e;
 }
+
+.aimg-test-stock-result {
+	margin-left: 8px;
+
+	&.is-success {
+		color: #008a20;
+	}
+
+	&.is-error {
+		color: #b32d2e;
+	}
+}

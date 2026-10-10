@@ -129,7 +129,7 @@ class GenerateImages {
 			return;
 		}
 
-		if ( Generator::method_starts_with_ai( $method ) ) {
+		if ( Generator::method_runs_in_background( $method ) ) {
 			if ( self::can_use_ai( $post_id ) && ! self::last_job_failed( $post_id ) ) {
 				Queue::enqueue( $post_id, $method );
 			}
