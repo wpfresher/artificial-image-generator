@@ -300,6 +300,8 @@ class Admin {
 			'dynamicImages' => array(
 				'site_logo' => $logo ? (string) wp_get_attachment_image_url( $logo, 'large' ) : '',
 				'site_icon' => $icon ? (string) wp_get_attachment_image_url( $icon, 'large' ) : '',
+				'stock'     => \ArtificialImageGenerator\Rendering\Hybrid::sample_url(),
+				'ai'        => \ArtificialImageGenerator\Rendering\Hybrid::sample_url(),
 			),
 			'sampleTags'    => array(
 				'title'        => __( 'How to grow tomatoes on a small balcony', 'artificial-image-generator' ),

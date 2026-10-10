@@ -1,50 +1,50 @@
-const defaultConfig = require('@wordpress/scripts/config/webpack.config');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const path = require('path');
-const RemoveEmptyScriptsPlugin = require('webpack-remove-empty-scripts');
+const defaultConfig = require( '@wordpress/scripts/config/webpack.config' );
+const CopyWebpackPlugin = require( 'copy-webpack-plugin' );
+const path = require( 'path' );
+const RemoveEmptyScriptsPlugin = require( 'webpack-remove-empty-scripts' );
 
 module.exports = [
-    {
-        ...defaultConfig,
-        entry: {
-            ...defaultConfig.entry(),
-            'css/admin': './src/css/admin.scss',
-            'css/block-editor': './src/css/block-editor.scss',
-            'css/media-library': './src/css/media-library.scss',
-            'css/template-studio': './src/css/template-studio.scss',
-            'js/block-editor': './src/js/block-editor.js',
-            'js/media-library': './src/js/media-library.js',
-            'js/template-studio': './src/js/template-studio/index.js',
-            'js/settings': './src/js/settings.js',
-        },
-        // Fonts are copied for the server and loaded only when a layer uses one; keep size hints for bundles.
-        performance: {
-            assetFilter: ( file ) => ! /\.(ttf|otf)$/.test( file ),
-        },
-        output: {
-            ...defaultConfig.output,
-            filename: '[name].js',
-            path: __dirname + '/assets/',
-        },
-        plugins: [
-            ...defaultConfig.plugins,
+	{
+		...defaultConfig,
+		entry: {
+			...defaultConfig.entry(),
+			'css/admin': './src/css/admin.scss',
+			'css/block-editor': './src/css/block-editor.scss',
+			'css/media-library': './src/css/media-library.scss',
+			'css/template-studio': './src/css/template-studio.scss',
+			'js/block-editor': './src/js/block-editor.js',
+			'js/media-library': './src/js/media-library.js',
+			'js/template-studio': './src/js/template-studio/index.js',
+			'js/settings': './src/js/settings.js',
+		},
+		// Fonts are copied for the server and loaded only when a layer uses one; keep size hints for bundles.
+		performance: {
+			assetFilter: ( file ) => ! /\.(ttf|otf)$/.test( file ),
+		},
+		output: {
+			...defaultConfig.output,
+			filename: '[name].js',
+			path: __dirname + '/assets/',
+		},
+		plugins: [
+			...defaultConfig.plugins,
 			// Copy images to the assets folder.
-			new CopyWebpackPlugin({
+			new CopyWebpackPlugin( {
 				patterns: [
 					// {
 					// 	from: path.resolve(__dirname, 'src/images'),
 					// 	to: path.resolve(__dirname, 'assets/images'),
 					// },
 					{
-						from: path.resolve(__dirname, 'src/fonts'),
-						to: path.resolve(__dirname, 'assets/fonts'),
-					}
-				]
-			}),
-            new RemoveEmptyScriptsPlugin({
-                stage: RemoveEmptyScriptsPlugin.STAGE_AFTER_PROCESS_PLUGINS,
-                remove: /\.(js)$/,
-            }),
-        ],
-    },
+						from: path.resolve( __dirname, 'src/fonts' ),
+						to: path.resolve( __dirname, 'assets/fonts' ),
+					},
+				],
+			} ),
+			new RemoveEmptyScriptsPlugin( {
+				stage: RemoveEmptyScriptsPlugin.STAGE_AFTER_PROCESS_PLUGINS,
+				remove: /\.(js)$/,
+			} ),
+		],
+	},
 ];

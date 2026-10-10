@@ -8,18 +8,45 @@ import { fontFamily, loadFont } from './fonts';
 /**
  * Render a document to a data URL.
  *
- * @param {Object} doc   Document.
- * @param {Object} tags  Merge tag values.
- * @param {Array}  fonts Fonts { id, url }.
- * @param {number} width Image width.
+ * @param {Object} doc    Document.
+ * @param {Object} tags   Merge tag values.
+ * @param {Array}  fonts  Fonts { id, url }.
+ * @param {number} width  Image width.
+ * @param {Object} images Image URLs by source, e.g. { stock: url }.
  * @return {Promise<string>} PNG data URL.
  */
-export async function renderThumbnail( doc, tags, fonts, width = 360 ) {
+export async function renderThumbnail(
+	doc,
+	tags,
+	fonts,
+	width = 360,
+	images = {}
+) {
 	const used = new Set(
 		doc.layers.map( ( layer ) => layer.font ).filter( Boolean )
 	);
 	await Promise.all(
 		fonts.filter( ( font ) => used.has( font.id ) ).map( loadFont )
+	);
+
+	const sourceOf = ( item ) => item.source || item.fill?.source || '';
+	const loaded = {};
+	await Promise.all(
+		doc.layers
+			.map( sourceOf )
+			.filter( ( source ) => images[ source ] )
+			.map(
+				( source ) =>
+					new Promise( ( resolve ) => {
+						const img = new window.Image();
+						img.onload = () => {
+							loaded[ source ] = img;
+							resolve();
+						};
+						img.onerror = resolve;
+						img.src = images[ source ];
+					} )
+			)
 	);
 
 	const scale = width / doc.canvas.width;
@@ -51,7 +78,7 @@ export async function renderThumbnail( doc, tags, fonts, width = 360 ) {
 		fontFamily,
 		backgroundColor: () => background,
 		sourceLabel: () => '',
-		imageFor: () => null,
+		imageFor: ( item ) => loaded[ item.source ] || null,
 	};
 
 	doc.layers.forEach( ( item ) => {

@@ -16,7 +16,7 @@ import {
 import { FontField } from './FontField';
 
 const { createElement: el, Fragment } = wp.element;
-const { Button, PanelBody, TextareaControl } = wp.components;
+const { Button, PanelBody, TextareaControl, TextControl } = wp.components;
 const { __ } = wp.i18n;
 
 const ANCHORS = {
@@ -44,6 +44,38 @@ const imageSources = ( data, allowed ) => {
 	} );
 	return out;
 };
+
+// Search terms or prompt for an image picked per post when it is generated.
+function RemoteSourceFields( { value, onChange } ) {
+	if ( value.source === 'stock' ) {
+		return el( TextControl, {
+			label: __( 'Search for', 'artificial-image-generator' ),
+			help: __(
+				'Merge tags work here. A photo is picked from the keywords when the image is generated; the Studio shows a sample photo.',
+				'artificial-image-generator'
+			),
+			value: value.query ?? '{title}',
+			onChange: ( query ) => onChange( { query } ),
+			__nextHasNoMarginBottom: true,
+		} );
+	}
+
+	if ( value.source === 'ai' ) {
+		return el( TextareaControl, {
+			label: __( 'AI prompt', 'artificial-image-generator' ),
+			help: __(
+				'Leave empty to use the AI Prompt from the settings. Each post gets its own image when it is generated, using your AI service; the Studio shows a sample photo.',
+				'artificial-image-generator'
+			),
+			value: value.prompt || '',
+			onChange: ( prompt ) => onChange( { prompt } ),
+			rows: 3,
+			__nextHasNoMarginBottom: true,
+		} );
+	}
+
+	return null;
+}
 
 function BackgroundFields( { layer, update, data } ) {
 	const fill = layer.fill;
@@ -194,8 +226,14 @@ function BackgroundFields( { layer, update, data } ) {
 							'first',
 							'site_logo',
 							'site_icon',
+							'stock',
+							'ai',
 						] ),
 						onChange: ( source ) => setFill( { source } ),
+					} ),
+					el( RemoteSourceFields, {
+						value: fill,
+						onChange: setFill,
 					} ),
 					fill.source === 'media' &&
 						el( MediaField, {
@@ -281,6 +319,7 @@ function ImageFields( { layer, update, data } ) {
 				),
 				onChange: ( source ) => update( { source } ),
 			} ),
+			el( RemoteSourceFields, { value: layer, onChange: update } ),
 			layer.source === 'media' &&
 				el( MediaField, {
 					value: layer.attachments,

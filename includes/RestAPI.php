@@ -308,7 +308,7 @@ class RestAPI {
 			return new \WP_Error( 'aimg_no_title', __( 'Add a title to the post first; it is used to generate the image.', 'artificial-image-generator' ), array( 'status' => 400 ) );
 		}
 
-		if ( Generator::method_runs_in_background( $method ) ) {
+		if ( Generator::runs_in_background_for_post( $method, $post_id ) ) {
 			Queue::enqueue( $post_id, $method, true );
 
 			return rest_ensure_response( $this->status_response( $post_id ) );
@@ -505,7 +505,11 @@ class RestAPI {
 
 		if ( Templates\Repository::has_document( $template_id ) ) {
 			$render_title = '' !== trim( $title ) ? $title : aimg_get_plain_title( $template_id );
-			$image_path   = Generator::render( $template_id, $render_title, $post_id );
+			$image_path   = Rendering\Hybrid::fetching(
+				function () use ( $template_id, $render_title, $post_id ) {
+					return Generator::render( $template_id, $render_title, $post_id );
+				}
+			);
 		} else {
 			$render_title = $args['title'];
 			$image_path   = aimg_generate_thumbnail( $args );

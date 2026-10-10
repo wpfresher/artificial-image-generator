@@ -124,6 +124,30 @@ class Generator {
 	}
 
 	/**
+	 * Whether a post's image runs as a background job: the method calls a remote
+	 * service, or the post's template has a stock photo or AI image layer.
+	 *
+	 * @param string $method  Method.
+	 * @param int    $post_id Post ID.
+	 *
+	 * @since 1.8.0
+	 * @return bool
+	 */
+	public static function runs_in_background_for_post( $method, $post_id ) {
+		if ( self::method_runs_in_background( $method ) ) {
+			return true;
+		}
+
+		if ( ! in_array( $method, array( self::METHOD_TEMPLATE, self::METHOD_TEMPLATE_AI ), true ) ) {
+			return false;
+		}
+
+		$template_id = self::get_template_id_for_post( $post_id );
+
+		return $template_id && Templates\Repository::has_document( $template_id ) && Rendering\Hybrid::document_is_remote( Templates\Repository::get_document( $template_id ) );
+	}
+
+	/**
 	 * The method that can actually run: without a configured AI provider the AI
 	 * part is dropped, so `ai_template` and `template_ai` become `template` and
 	 * `ai` becomes an empty string.
@@ -255,7 +279,11 @@ class Generator {
 			return new \WP_Error( 'aimg_no_template', __( 'There is no published image template to use.', 'artificial-image-generator' ) );
 		}
 
-		$image_path = self::render( $template_id, $title, $post_id );
+		$image_path = Rendering\Hybrid::fetching(
+			function () use ( $template_id, $title, $post_id ) {
+				return self::render( $template_id, $title, $post_id );
+			}
+		);
 
 		if ( ! $image_path ) {
 			return new \WP_Error( 'aimg_generation_failed', __( 'Failed to generate image from template.', 'artificial-image-generator' ) );

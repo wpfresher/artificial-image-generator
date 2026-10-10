@@ -374,4 +374,94 @@ class Test_Stock extends AIMG_TestCase {
 		$response = $this->rest( 'POST', '/aimg/v1/stock/pexels/test' );
 		$this->assertSame( 'Connected to Pexels.', $response->get_data()['message'] );
 	}
+
+	/**
+	 * Requests made to the stock APIs.
+	 *
+	 * @return array[]
+	 */
+	private function api_requests() {
+		return array_values(
+			array_filter(
+				$this->requests,
+				function ( $request ) {
+					return (bool) preg_match( '#^https://(api\.unsplash\.com|api\.pexels\.com|pixabay\.com/api)#', $request['url'] );
+				}
+			)
+		);
+	}
+
+	/**
+	 * A published template whose background is a stock photo.
+	 *
+	 * @return int Template ID.
+	 */
+	private function hybrid_template() {
+		$id = $this->create_template();
+		ArtificialImageGenerator\Templates\Repository::save_document( $id, ArtificialImageGenerator\Templates\Starters::all()['photo-headline'][1] );
+
+		return $id;
+	}
+
+	public function test_remote_sources_keep_their_fields() {
+		$document = ArtificialImageGenerator\Templates\Starters::all()['photo-headline'][1];
+
+		$this->assertSame( 'stock', $document['layers'][0]['fill']['source'] );
+		$this->assertSame( '{title}', $document['layers'][0]['fill']['query'] );
+		$this->assertTrue( ArtificialImageGenerator\Rendering\Hybrid::document_is_remote( $document ) );
+		$this->assertArrayNotHasKey( 'query', ArtificialImageGenerator\Rendering\Layers\Image::sanitize( array( 'source' => 'media' ), $document['canvas'] ) );
+	}
+
+	public function test_previews_never_call_remote_services() {
+		$template = $this->hybrid_template();
+		$post_id  = self::factory()->post->create( array( 'post_title' => 'Brewing better coffee' ) );
+
+		$this->assertNotFalse( Generator::render( $template, 'Preview' ) );
+		$this->assertNotFalse( Generator::render( $template, 'Preview', $post_id ) );
+		$this->assertSame( array(), $this->api_requests() );
+	}
+
+	public function test_hybrid_templates_fetch_once_per_post_while_generating() {
+		$template = $this->hybrid_template();
+		$this->set_settings( array( 'default_template_id' => $template ) );
+		$post_id = self::factory()->post->create( array( 'post_title' => 'Brewing better coffee' ) );
+
+		$this->assertTrue( Generator::runs_in_background_for_post( Generator::METHOD_TEMPLATE, $post_id ) );
+
+		$first = Generator::generate_template_for_post( $post_id );
+		$this->assertIsInt( $first );
+		$searches = count( $this->api_requests() );
+		$this->assertGreaterThan( 0, $searches );
+
+		$photo = get_post_meta( $post_id, ArtificialImageGenerator\Rendering\Hybrid::META, true );
+		$this->assertSame( 'unsplash:abc123', get_post_meta( reset( $photo ), Importer::KEY_META, true ) );
+
+		Generator::generate_template_for_post( $post_id );
+		$this->assertCount( $searches, $this->api_requests(), 'Generating again reuses the photo.' );
+	}
+
+	public function test_hybrid_templates_fall_back_without_a_library() {
+		update_option( 'aimg_settings', array() );
+		Registry::reset();
+		$template = $this->hybrid_template();
+		$post_id  = self::factory()->post->create( array( 'post_title' => 'Brewing better coffee' ) );
+
+		$this->assertIsInt( Generator::generate_template_for_post( $post_id ), 'The background color is drawn instead.' );
+		$this->assertSame( '', get_post_meta( $post_id, ArtificialImageGenerator\Rendering\Hybrid::META, true ) );
+	}
+
+	public function test_saving_a_post_queues_a_hybrid_template() {
+		$this->set_settings( array( 'default_template_id' => $this->hybrid_template() ) );
+
+		$post_id = self::factory()->post->create(
+			array(
+				'post_title'  => 'Brewing better coffee',
+				'post_status' => 'publish',
+			)
+		);
+
+		$this->assertSame( 'queued', ArtificialImageGenerator\Queue::get_status( $post_id )['status'] );
+		$this->assertFalse( has_post_thumbnail( $post_id ) );
+		$this->assertSame( array(), $this->api_requests(), 'Nothing is fetched while saving.' );
+	}
 }

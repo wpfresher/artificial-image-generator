@@ -30,7 +30,9 @@ export default function StarterGallery( { data, onDone } ) {
 					renderThumbnail(
 						item.document,
 						data.sampleTags,
-						fonts
+						fonts,
+						360,
+						data.dynamicImages
 					).then( ( url ) => {
 						if ( ! cancelled ) {
 							setThumbs( ( current ) => ( {
