@@ -19,6 +19,8 @@ class Admin {
 	 */
 	public function __construct() {
 		add_action( 'admin_menu', array( $this, 'add_menu' ) );
+		add_action( 'admin_menu', array( $this, 'add_pro_menu' ), 99 );
+		add_filter( 'plugin_action_links_' . plugin_basename( AIMG_FILE ), array( __CLASS__, 'action_links' ) );
 		add_filter( 'set-screen-option', array( $this, 'screen_option' ), 10, 3 );
 		add_action( 'load-toplevel_page_image-generator', array( $this, 'handle_list_table_actions' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
@@ -52,6 +54,66 @@ class Admin {
 
 		// Load screen options.
 		add_action( 'load-' . $load, array( __CLASS__, 'load_pages' ) );
+	}
+
+	/**
+	 * Add the "Upgrade to Pro" menu item while Image Generator Pro is not active.
+	 *
+	 * @since 1.8.0
+	 * @return void
+	 */
+	public function add_pro_menu() {
+		if ( defined( 'AIMG_PRO_VERSION' ) ) {
+			return;
+		}
+
+		add_submenu_page(
+			'image-generator',
+			__( 'Upgrade to Pro', 'artificial-image-generator' ),
+			'<span style="color:#00ed77;"><span class="dashicons dashicons-star-filled" style="font-size:17px"></span> ' . esc_html__( 'Upgrade to Pro', 'artificial-image-generator' ) . '</span>',
+			'manage_options',
+			self::pro_url( 'admin-menu' )
+		);
+	}
+
+	/**
+	 * Settings and "Go Pro" links on the Plugins screen.
+	 *
+	 * @param array $links Action links.
+	 *
+	 * @since 1.8.0
+	 * @return array
+	 */
+	public static function action_links( $links ) {
+		$own = array(
+			'settings' => sprintf( '<a href="%1$s">%2$s</a>', esc_url( admin_url( 'admin.php?page=aimg-settings' ) ), esc_html__( 'Settings', 'artificial-image-generator' ) ),
+		);
+
+		if ( ! defined( 'AIMG_PRO_VERSION' ) ) {
+			$links['go_pro'] = sprintf( '<a href="%1$s" target="_blank" style="color:#39b54a;font-weight:bold;">%2$s</a>', esc_url( self::pro_url( 'plugin-action' ) ), esc_html__( 'Go Pro', 'artificial-image-generator' ) );
+		}
+
+		return array_merge( $own, $links );
+	}
+
+	/**
+	 * Image Generator Pro page, with where the link was clicked.
+	 *
+	 * @param string $campaign Link location.
+	 *
+	 * @since 1.8.0
+	 * @return string
+	 */
+	public static function pro_url( $campaign ) {
+		return add_query_arg(
+			array(
+				'utm_source'   => 'plugin',
+				'utm_medium'   => 'link',
+				'utm_campaign' => sanitize_key( $campaign ),
+				'utm_id'       => 'artificial-image-generator',
+			),
+			'https://beautifulplugins.com/plugins/image-generator-pro/'
+		);
 	}
 
 	/**

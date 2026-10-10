@@ -20,6 +20,7 @@ Stop wasting hours on stock photo sites. Stop publishing posts with broken thumb
 - **Auto-generate featured images** from reusable **image templates** whenever a post or page is saved without one.
 - **Insert AI-generated images** straight into Image and Media & Text blocks while you write.
 - **Set a Featured Image** with a single click from the new **AI Featured Image** sidebar panel.
+- **Search free stock photos** from **Unsplash, Pexels and Pixabay** without leaving WordPress, imported with the photographer's credit.
 
 Whether you run a blog, news site, magazine, portfolio, affiliate site, online store, or membership platform, this plugin gives every post a polished, **SEO-friendly featured image** — without the manual work.
 
@@ -66,8 +67,14 @@ Adds an **"AI Generate" sparkle button** to the toolbar of core Image and Media 
 ✅ **Two Generation Modes in One Modal**
 A single, unified modal lets editors switch between **Templates** (fast, on-brand, free) and **Custom Prompt** (AI-generated, unique). Pick the right tool for each post.
 
+✅ **Free Stock Photos from Unsplash, Pexels & Pixabay**
+Search millions of free photos in the editor and the Media Library, filter by orientation and color, and insert one with a click. Each photo is downloaded into your Media Library with alt text and the photographer's credit in the caption. Stock photos can also be the automatic featured image, picked with keywords from the post title. Each library needs its own free API key.
+
+✅ **On-Brand Photos: Templates over Stock or AI Images**
+Use a stock photo or an AI image as a template's background or image layer, and every post gets a different picture with your logo, colors and title on top. The picture is fetched once per post in the background and reused when you regenerate.
+
 ✅ **Visual Template Studio**
-Design image templates on a canvas: drag, resize and rotate layers, with snapping guides, undo/redo and keyboard shortcuts. Combine backgrounds (colors, random palettes, gradients, your images or the post's own featured image), images with rounded or circle masks and duotone, see-through overlays and fades, shapes, patterns, frames and text. Text fits itself to its box, with 11 bundled fonts (or upload your own .ttf/.otf), outlines, shadows, highlight boxes and tags like `{title}`, `{category}`, `{author}`, `{date}` and `{custom_field:key}`. Preview with long titles or a real post, check the exact image your server will make, start from 8 ready-made designs, and import or export designs as JSON.
+Design image templates on a canvas: drag, resize and rotate layers, with snapping guides, undo/redo and keyboard shortcuts. Combine backgrounds (colors, random palettes, gradients, your images or the post's own featured image), images with rounded or circle masks and duotone, see-through overlays and fades, shapes, patterns, frames and text. Text fits itself to its box, with 11 bundled fonts (or upload your own .ttf/.otf), outlines, shadows, highlight boxes and tags like `{title}`, `{category}`, `{author}`, `{date}` and `{custom_field:key}`. Preview with long titles or a real post, check the exact image your server will make, start from 10 ready-made designs, and import or export designs as JSON.
 
 ✅ **Unlimited Reusable Image Templates**
 Build as many image templates as you want. Each template is rendered server-side using PHP's GD library, no external dependency — the canvas you design on draws the same way, so what you see is what your posts get.
@@ -175,7 +182,13 @@ Without Image Generator | With Image Generator
 == Frequently Asked Questions ==
 
 = Do I need an API key to use this plugin? =
-**No — only for AI prompt-based generation.** Template-based image creation, including the automatic featured image on publish, runs entirely on your own server using PHP's built-in GD library. No external services, no API calls, no recurring costs.
+**No — only for AI prompt-based generation and stock photos.** Template-based image creation, including the automatic featured image on publish, runs entirely on your own server using PHP's built-in GD library. No external services, no API calls, no recurring costs. Stock photos need a free API key from Unsplash, Pexels or Pixabay; you only need one.
+
+= How do I get free stock photo API keys? =
+Create a free key at [Unsplash](https://unsplash.com/oauth/applications), [Pexels](https://www.pexels.com/api/new/) or [Pixabay](https://pixabay.com/api/docs/), then paste it under **Image Generator → Settings → Stock Photos** and click **Test Connection**. You can also define `AIMG_UNSPLASH_KEY`, `AIMG_PEXELS_KEY` or `AIMG_PIXABAY_KEY` in `wp-config.php`. New Unsplash keys are limited to 50 searches an hour until Unsplash approves them for production.
+
+= Do I need to credit stock photographers? =
+Unsplash, Pexels and Pixabay photos are free to use, and the libraries ask you to credit photographers where you can. The plugin adds a credit with links to the image caption (you can turn this off under Settings → Stock Photos) and always saves it with the image.
 
 = Which AI image generation service is supported? =
 Out of the box, the plugin calls **OpenAI's Images API** using **GPT Image 2.5 Flare** by default — you can switch to GPT Image 2.5 Sunburst or GPT Image 2 under **Image Generator → Settings**. Models OpenAI has retired (GPT Image 1, DALL·E 2 and DALL·E 3) are no longer offered; sites that used them switch to GPT Image 2.5 Flare automatically. Developers can swap the endpoint, model, or request body via the `aimg_generate_endpoint` and `aimg_generate_request_body` filters — so you can point it at compatible services (Stability AI, self-hosted SDXL via a compatible proxy, etc.).
@@ -260,10 +273,14 @@ Each font's license, with its copyright notice, ships in `assets/fonts/licenses/
 = AI Image Generation =
 AI image generation calls a third-party API (**OpenAI** by default, `https://api.openai.com/v1/images/generations`). You are responsible for the API key, usage costs, and compliance with the provider's [terms of use](https://openai.com/policies/terms-of-use) and [privacy policy](https://openai.com/policies/privacy-policy). **Nothing is sent to an external service unless you add an API key and either generate from a prompt, click *Write a prompt from this post*, or choose an AI method for automatic featured images.** Template-based generation never leaves your server.
 
+= Stock Photos =
+Searching or importing stock photos calls the library you choose: **Unsplash** (`api.unsplash.com`, images from `images.unsplash.com`), **Pexels** (`api.pexels.com`, images from `images.pexels.com`) or **Pixabay** (`pixabay.com/api`, images from `pixabay.com`). The plugin sends your API key and the search terms — what you type, or keywords from the post title (or the template's search text) for automatic images. **Nothing is sent unless you add a key and search, test the key, choose a stock method for automatic featured images, or use a template with a stock photo layer.** Thumbnails in search results are loaded from the library in the editor, as the libraries require; the photo you pick is downloaded to your Media Library. Unsplash: [terms](https://unsplash.com/terms), [API guidelines](https://help.unsplash.com/en/articles/2511245-unsplash-api-guidelines), [privacy](https://unsplash.com/privacy). Pexels: [terms](https://www.pexels.com/terms-of-service/), [license](https://www.pexels.com/license/), [privacy](https://www.pexels.com/privacy-policy/). Pixabay: [terms](https://pixabay.com/service/terms/), [license](https://pixabay.com/service/license-summary/), [privacy](https://pixabay.com/service/privacy/).
+
 == Privacy ==
 
 - **Template-based generation** runs entirely on your server. No data is sent to third parties.
 - **AI generation** sends a prompt to OpenAI (or your configured endpoint): the prompt you type, or — for automatic AI images — one built from your prompt template, which by default includes the post's title and excerpt. No user or visitor data is transmitted.
+- **Stock photo searches** send search terms to the library you use (Unsplash, Pexels or Pixabay). No user or visitor data is transmitted.
 - The plugin does not set cookies, track users, or load any external scripts on the frontend.
 
 == Screenshots ==
@@ -275,6 +292,16 @@ AI image generation calls a third-party API (**OpenAI** by default, `https://api
 6. Plugin settings — defaults and AI API key configuration.
 
 == Changelog ==
+= 1.8.0 ( Unreleased ) =
+* New: **Free stock photos from Unsplash, Pexels and Pixabay.** Search them in the editor and the Media Library with orientation and color filters, and insert one with a click. Photos are imported with alt text and the photographer's credit, and importing the same photo again reuses it.
+* New: Stock photos as an automatic featured image method ("Stock photo" or "Stock photo, template if none is found"), picked with keywords from the post title in the background.
+* New: **Hybrid templates.** A background or image layer can show a stock photo or an AI image made for each post, with your design on top. Two new starters use it.
+* New: Stock Photos settings with a Test Connection button; keys can also be set with `AIMG_UNSPLASH_KEY`, `AIMG_PEXELS_KEY` and `AIMG_PIXABAY_KEY`.
+* Enhance: Templates made before 1.7.0 are converted to the Template Studio format in the background, only when they look exactly the same; any that would change keep working as before and are listed in Site Health. Their old settings are kept.
+* Enhance: The default background and text colors in Settings now apply to new templates; existing templates keep the colors they were saved with.
+* Dev: Modal tabs can be added with the JS filter `aimgModal.tabs` (action `aimg_enqueue_modal`); new filters `aimg_stock_providers`, `aimg_stock_keywords`, `aimg_stock_stop_words`, `aimg_stock_max_bytes`, `aimg_unsplash_app_name` and `aimg_sanitize_settings`; REST endpoints under `/aimg/v1/stock`.
+* Removed: `aimg_generate_preview()`, deprecated in 1.7.1.
+
 = 1.7.1 ( 9th October 2026 ) =
 * Enhance: The Template Studio is now the only template editor. Templates made before 1.7.0 open in the Studio and look exactly the same; saving them there keeps their old settings too, so downgrading still works.
 * Enhance: Duplicating an older template now creates a Studio copy.
@@ -380,6 +407,9 @@ AI image generation calls a third-party API (**OpenAI** by default, `https://api
 * Initial release.
 
 == Upgrade Notice ==
+
+= 1.8.0 =
+Adds free stock photos from Unsplash, Pexels and Pixabay and photo templates. Older templates are converted to the Template Studio format in the background only when they look exactly the same. Removes aimg_generate_preview().
 
 = 1.7.1 =
 The classic template form is replaced by the Template Studio. Your templates and images are not changed.

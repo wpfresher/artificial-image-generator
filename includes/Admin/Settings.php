@@ -708,7 +708,7 @@ class Settings {
 		$default_bg_color = aimg_get_settings( 'default_bg_color' );
 		?>
 		<input type="text" name="aimg_settings[default_bg_color]" id="aimg_settings[default_bg_color]" value="<?php echo esc_attr( $default_bg_color ); ?>" class="regular-text" placeholder="<?php esc_attr_e( '#008000', 'artificial-image-generator' ); ?>" />
-		<p class="description"><?php esc_html_e( 'Enter the default background color for the thumbnails. This will be used as a fallback color if no specific color is set.', 'artificial-image-generator' ); ?></p>
+		<p class="description"><?php esc_html_e( 'Background color for new templates. Templates keep the colors they were saved with; change those in the Template Studio.', 'artificial-image-generator' ); ?></p>
 		<?php
 	}
 
@@ -722,7 +722,7 @@ class Settings {
 		$default_text_color = aimg_get_settings( 'default_text_color' );
 		?>
 		<input type="text" name="aimg_settings[default_text_color]" id="aimg_settings[default_text_color]" value="<?php echo esc_attr( $default_text_color ); ?>" class="regular-text" placeholder="<?php esc_attr_e( '#ffffff', 'artificial-image-generator' ); ?>" />
-		<p class="description"><?php esc_html_e( 'Enter the default text color for the thumbnails. This will be used as a fallback color if no specific color is set.', 'artificial-image-generator' ); ?></p>
+		<p class="description"><?php esc_html_e( 'Title color for new templates. Templates keep the colors they were saved with; change those in the Template Studio.', 'artificial-image-generator' ); ?></p>
 		<?php
 	}
 
