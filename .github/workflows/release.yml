@@ -49,15 +49,15 @@ jobs:
       - name: Build plugin
         run: |
           echo "➤ Building plugin..."
-          composer install
-          composer install --no-dev --no-scripts
+          composer install --no-dev --optimize-autoloader
           npm install && npm run build
           echo "✓ Plugin built!"
 
       - name: Verify build output
         run: |
-          if [ ! -d "build" ] && [ ! -d "dist" ]; then
-            echo "⚠ Warning: No build/dist directory found after build"
+          echo "➤ Verifying build output..."
+          if [ ! -d "assets" ]; then
+            echo "⚠ Warning: No assets directory found after build"
           else
             echo "✓ Build output verified"
           fi
@@ -177,7 +177,7 @@ jobs:
           payload: |
             {
               "channel": "#announcement",
-              "username": "Beautiful Plugins Bot",
+              "username": "BeautifulPlugins Bot",
               "icon_emoji": ":rocket:",
               "blocks": [
                 {

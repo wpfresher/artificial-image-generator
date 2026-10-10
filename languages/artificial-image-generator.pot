@@ -2,23 +2,24 @@
 # This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Image Generator 1.7.1\n"
+"Project-Id-Version: Image Generator 1.8.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/artificial-image-generator\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-08T21:35:37+00:00\n"
+"POT-Creation-Date: 2026-10-10T18:49:07+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: artificial-image-generator\n"
 
 #. Plugin Name of the plugin
 #: artificial-image-generator.php
-#: includes/Admin/Admin.php:35
-#: includes/Admin/Admin.php:36
-#: includes/Admin/Settings.php:65
+#: includes/Admin/Admin.php:37
+#: includes/Admin/Admin.php:38
+#: includes/Admin/Settings.php:88
+#: includes/Templates/Migrator.php:249
 msgid "Image Generator"
 msgstr ""
 
@@ -62,51 +63,41 @@ msgstr ""
 msgid "Template deleted."
 msgstr ""
 
-#: includes/Admin/Admin.php:46
-#: includes/Admin/Admin.php:47
+#: includes/Admin/Admin.php:48
+#: includes/Admin/Admin.php:49
 #: includes/Admin/views/img-templates.php:22
 msgid "Image Templates"
 msgstr ""
 
-#: includes/Admin/Admin.php:94
+#: includes/Admin/Admin.php:72
+#: includes/Admin/Admin.php:73
+msgid "Upgrade to Pro"
+msgstr ""
+
+#: includes/Admin/Admin.php:89
+#: includes/Admin/Settings.php:64
+#: includes/Admin/Settings.php:65
+#: includes/Admin/Settings.php:87
+msgid "Settings"
+msgstr ""
+
+#: includes/Admin/Admin.php:93
+msgid "Go Pro"
+msgstr ""
+
+#: includes/Admin/Admin.php:156
 msgid "Image templates per page"
 msgstr ""
 
-#: includes/Admin/Admin.php:166
+#: includes/Admin/Admin.php:228
 msgid "You do not have permission to perform this action."
 msgstr ""
 
 #. translators: %s: number of accounts.
-#: includes/Admin/Admin.php:190
+#: includes/Admin/Admin.php:252
 #, php-format
 msgid "%s item(s) deleted successfully."
 msgstr ""
-
-#: includes/Admin/Admin.php:305
-msgid "How to grow tomatoes on a small balcony"
-msgstr ""
-
-#: includes/Admin/Admin.php:306
-msgid "A simple guide to pots, soil, sun and watering for a big summer harvest."
-msgstr ""
-
-#: includes/Admin/Admin.php:307
-msgid "Gardening"
-msgstr ""
-
-#: includes/Admin/Admin.php:308
-msgid "Tomatoes, Balcony"
-msgstr ""
-
-#. translators: %d: minutes
-#. translators: %d: minutes needed to read the post
-#: includes/Admin/Admin.php:313
-#: includes/Templates/MergeTags.php:66
-#, php-format
-msgid "%d min read"
-msgid_plural "%d min read"
-msgstr[0] ""
-msgstr[1] ""
 
 #: includes/Admin/ListTables/TemplatesTable.php:90
 msgid "No templates found."
@@ -143,249 +134,313 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
-#: includes/Admin/Settings.php:41
-#: includes/Admin/Settings.php:42
-#: includes/Admin/Settings.php:64
-msgid "Settings"
-msgstr ""
-
-#: includes/Admin/Settings.php:58
+#: includes/Admin/Settings.php:81
 msgid "You do not have sufficient permissions to access this page."
 msgstr ""
 
-#: includes/Admin/Settings.php:67
+#: includes/Admin/Settings.php:90
 msgid "Configure the settings for the Image Generator plugin."
 msgstr ""
 
-#: includes/Admin/Settings.php:92
+#: includes/Admin/Settings.php:115
 msgid "General Settings"
 msgstr ""
 
-#: includes/Admin/Settings.php:100
+#: includes/Admin/Settings.php:123
 msgid "Default Background Color"
 msgstr ""
 
-#: includes/Admin/Settings.php:109
+#: includes/Admin/Settings.php:132
 msgid "Default Text Color"
 msgstr ""
 
-#: includes/Admin/Settings.php:118
+#: includes/Admin/Settings.php:141
 msgid "Remove Data on Uninstall"
 msgstr ""
 
-#: includes/Admin/Settings.php:126
+#: includes/Admin/Settings.php:149
 msgid "Automatic Featured Images"
 msgstr ""
 
-#: includes/Admin/Settings.php:134
-#: includes/Admin/Settings.php:566
+#: includes/Admin/Settings.php:157
+#: includes/Admin/Settings.php:740
 msgid "Enable Post Thumbnails"
 msgstr ""
 
-#: includes/Admin/Settings.php:143
-#: includes/Admin/Settings.php:583
+#: includes/Admin/Settings.php:166
+#: includes/Admin/Settings.php:757
 msgid "Enable Page Thumbnails"
 msgstr ""
 
-#: includes/Admin/Settings.php:150
+#: includes/Admin/Settings.php:173
 msgid "Generate With"
 msgstr ""
 
-#: includes/Admin/Settings.php:151
+#: includes/Admin/Settings.php:174
 msgid "Image Template"
 msgstr ""
 
-#: includes/Admin/Settings.php:152
+#: includes/Admin/Settings.php:175
 msgid "AI Image Shape"
 msgstr ""
 
-#: includes/Admin/Settings.php:153
+#: includes/Admin/Settings.php:176
 msgid "AI Prompt"
 msgstr ""
 
-#: includes/Admin/Settings.php:154
+#: includes/Admin/Settings.php:177
 msgid "AI Style"
 msgstr ""
 
-#: includes/Admin/Settings.php:155
+#: includes/Admin/Settings.php:178
 msgid "AI Instructions"
 msgstr ""
 
-#: includes/Admin/Settings.php:165
+#: includes/Admin/Settings.php:188
 msgid "AI Service"
 msgstr ""
 
-#: includes/Admin/Settings.php:173
+#: includes/Admin/Settings.php:196
 msgid "API Key"
 msgstr ""
 
-#: includes/Admin/Settings.php:182
+#: includes/Admin/Settings.php:205
 msgid "Image Model"
 msgstr ""
 
-#: includes/Admin/Settings.php:190
+#: includes/Admin/Settings.php:213
 msgid "Default Image Shape"
 msgstr ""
 
-#: includes/Admin/Settings.php:198
+#: includes/Admin/Settings.php:221
 msgid "Image Quality"
 msgstr ""
 
-#: includes/Admin/Settings.php:206
+#: includes/Admin/Settings.php:229
 msgid "Who Can Generate AI Images"
 msgstr ""
 
-#: includes/Admin/Settings.php:214
+#: includes/Admin/Settings.php:237
 msgid "Hourly Limit per User"
 msgstr ""
 
-#: includes/Admin/Settings.php:230
+#: includes/Admin/Settings.php:245
+msgid "Stock Photos"
+msgstr ""
+
+#. translators: %s: provider name, e.g. Unsplash
+#: includes/Admin/Settings.php:254
+#, php-format
+msgid "%s API Key"
+msgstr ""
+
+#: includes/Admin/Settings.php:263
+msgid "Library for Automatic Images"
+msgstr ""
+
+#: includes/Admin/Settings.php:264
+msgid "Photo Orientation"
+msgstr ""
+
+#: includes/Admin/Settings.php:265
+msgid "Import Size"
+msgstr ""
+
+#: includes/Admin/Settings.php:266
+msgid "Credit"
+msgstr ""
+
+#: includes/Admin/Settings.php:281
+msgid "Search free photos from Unsplash, Pexels and Pixabay in the editor and the Media Library, or use them for automatic featured images. Each library needs its own free API key."
+msgstr ""
+
+#: includes/Admin/Settings.php:311
+msgid "Test Connection"
+msgstr ""
+
+#: includes/Admin/Settings.php:317
+#: includes/Admin/Settings.php:653
+msgid "Remove the saved API key"
+msgstr ""
+
+#. translators: %s: PHP constant name
+#: includes/Admin/Settings.php:325
+#, php-format
+msgid "Defined with the %s constant in wp-config.php."
+msgstr ""
+
+#: includes/Admin/Settings.php:327
+msgid "A key is saved. Leave the field empty to keep it, or enter a new key to replace it."
+msgstr ""
+
+#. translators: 1: link to the provider's API page, 2: PHP constant name
+#: includes/Admin/Settings.php:332
+#, php-format
+msgid "Get a free key at %1$s, or define the %2$s constant in wp-config.php."
+msgstr ""
+
+#: includes/Admin/Settings.php:350
+msgid "The first library with a key"
+msgstr ""
+
+#: includes/Admin/Settings.php:356
+msgid "Used when \"Generate With\" is a stock photo. The photo is found with keywords from the post title."
+msgstr ""
+
+#: includes/Admin/Settings.php:389
+msgid "Add the photographer credit to the image caption"
+msgstr ""
+
+#: includes/Admin/Settings.php:391
+msgid "Unsplash, Pexels and Pixabay ask you to credit photographers where you can. The credit is always saved with the image."
+msgstr ""
+
+#: includes/Admin/Settings.php:404
 msgid "Authors and above"
 msgstr ""
 
-#: includes/Admin/Settings.php:231
+#: includes/Admin/Settings.php:405
 msgid "Editors and above"
 msgstr ""
 
-#: includes/Admin/Settings.php:232
+#: includes/Admin/Settings.php:406
 msgid "Administrators only"
 msgstr ""
 
-#: includes/Admin/Settings.php:240
+#: includes/Admin/Settings.php:414
 msgid "AI images are paid for with your API key. Templates stay available to everyone who can upload files."
 msgstr ""
 
-#: includes/Admin/Settings.php:254
+#: includes/Admin/Settings.php:428
 msgid "Maximum AI images each user can generate per hour. Set to 0 for no limit."
 msgstr ""
 
-#: includes/Admin/Settings.php:276
+#: includes/Admin/Settings.php:450
 msgid "The AI service used for prompts in the editor and the Media Library, and for automatic AI featured images."
 msgstr ""
 
-#: includes/Admin/Settings.php:287
+#: includes/Admin/Settings.php:461
+#: includes/Stock/Registry.php:107
 msgid "Square"
 msgstr ""
 
-#: includes/Admin/Settings.php:288
+#: includes/Admin/Settings.php:462
+#: includes/Stock/Registry.php:105
 msgid "Landscape"
 msgstr ""
 
-#: includes/Admin/Settings.php:289
+#: includes/Admin/Settings.php:463
+#: includes/Stock/Registry.php:106
 msgid "Portrait"
 msgstr ""
 
-#: includes/Admin/Settings.php:301
+#: includes/Admin/Settings.php:475
 msgid "Automatic"
 msgstr ""
 
-#: includes/Admin/Settings.php:302
+#: includes/Admin/Settings.php:476
 msgid "Low (cheapest)"
 msgstr ""
 
-#: includes/Admin/Settings.php:303
+#: includes/Admin/Settings.php:477
 msgid "Medium"
 msgstr ""
 
-#: includes/Admin/Settings.php:304
+#: includes/Admin/Settings.php:478
 msgid "High"
 msgstr ""
 
-#: includes/Admin/Settings.php:305
+#: includes/Admin/Settings.php:479
 msgid "Extra high"
 msgstr ""
 
-#: includes/Admin/Settings.php:306
+#: includes/Admin/Settings.php:480
 msgid "Maximum (most expensive)"
 msgstr ""
 
-#: includes/Admin/Settings.php:341
+#: includes/Admin/Settings.php:515
 msgid "When a post or page is saved without a featured image, one is generated for it."
 msgstr ""
 
-#: includes/Admin/Settings.php:355
+#: includes/Admin/Settings.php:529
 msgid "AI images are created in the background once a post is published or scheduled, and use your API key. Templates are free and instant."
 msgstr ""
 
-#: includes/Admin/Settings.php:366
+#: includes/Admin/Settings.php:540
 msgid "A random template"
 msgstr ""
 
 #. translators: %s: list of merge tags
-#: includes/Admin/Settings.php:401
+#: includes/Admin/Settings.php:575
 #, php-format
 msgid "Leave empty to use the default shown. Available tags: %s"
 msgstr ""
 
-#: includes/Admin/Settings.php:416
+#: includes/Admin/Settings.php:590
 msgid "Added to the prompt of automatic AI images."
 msgstr ""
 
-#: includes/Admin/Settings.php:429
+#: includes/Admin/Settings.php:603
 msgid "Added to the end of every automatic AI prompt. AI models often draw garbled text, so the default asks for none."
 msgstr ""
 
-#: includes/Admin/Settings.php:440
+#: includes/Admin/Settings.php:614
 msgid "Used for prompts in the editor and the Media Library; it can be changed per image there."
 msgstr ""
 
-#: includes/Admin/Settings.php:450
+#: includes/Admin/Settings.php:624
 msgid "Higher quality costs more. Extra high and Maximum need GPT Image 2.5; GPT Image 2 uses High instead."
 msgstr ""
 
-#: includes/Admin/Settings.php:479
-msgid "Remove the saved API key"
-msgstr ""
-
-#: includes/Admin/Settings.php:486
+#: includes/Admin/Settings.php:660
 msgid "Your API key is currently defined via the AIMG_API_KEY PHP constant and cannot be edited here."
 msgstr ""
 
-#: includes/Admin/Settings.php:488
+#: includes/Admin/Settings.php:662
 msgid "An API key is saved. Leave the field empty to keep it, or enter a new key to replace it."
 msgstr ""
 
-#: includes/Admin/Settings.php:490
+#: includes/Admin/Settings.php:664
 msgid "Enter your image generation API key (an OpenAI API key). For maximum security you can instead define the AIMG_API_KEY constant in wp-config.php."
 msgstr ""
 
-#: includes/Admin/Settings.php:512
+#: includes/Admin/Settings.php:686
 msgid "The OpenAI model used for AI images. GPT Image 2.5 Flare is fast and suited to everyday images; Sunburst is OpenAI's most capable model. Retired models (GPT Image 1 and DALL·E) are switched to GPT Image 2.5 Flare automatically."
 msgstr ""
 
-#: includes/Admin/Settings.php:524
+#: includes/Admin/Settings.php:698
 msgid "Configure the Image Generator general settings."
 msgstr ""
 
-#: includes/Admin/Settings.php:536
+#: includes/Admin/Settings.php:710
 msgid "#008000"
 msgstr ""
 
-#: includes/Admin/Settings.php:537
-msgid "Enter the default background color for the thumbnails. This will be used as a fallback color if no specific color is set."
+#: includes/Admin/Settings.php:711
+msgid "Background color for new templates. Templates keep the colors they were saved with; change those in the Template Studio."
 msgstr ""
 
-#: includes/Admin/Settings.php:550
+#: includes/Admin/Settings.php:724
 msgid "#ffffff"
 msgstr ""
 
-#: includes/Admin/Settings.php:551
-msgid "Enter the default text color for the thumbnails. This will be used as a fallback color if no specific color is set."
+#: includes/Admin/Settings.php:725
+msgid "Title color for new templates. Templates keep the colors they were saved with; change those in the Template Studio."
 msgstr ""
 
-#: includes/Admin/Settings.php:568
+#: includes/Admin/Settings.php:742
 msgid "Generate a featured image when a post is saved without one, using the method chosen below."
 msgstr ""
 
-#: includes/Admin/Settings.php:585
+#: includes/Admin/Settings.php:759
 msgid "Generate a featured image when a page is saved without one, using the method chosen below."
 msgstr ""
 
-#: includes/Admin/Settings.php:600
+#: includes/Admin/Settings.php:774
 msgid "Delete templates and settings when the plugin is deleted"
 msgstr ""
 
-#: includes/Admin/Settings.php:602
+#: includes/Admin/Settings.php:776
 msgid "Leave this unchecked to keep your image templates if you delete and later reinstall the plugin. Images already added to the Media Library are never removed."
 msgstr ""
 
@@ -426,6 +481,8 @@ msgid "Search templates"
 msgstr ""
 
 #: includes/Admin/views/img-templates.php:45
+#: assets/js/block-editor.js:4
+#: assets/js/media-library.js:4
 msgid "Search"
 msgstr ""
 
@@ -482,7 +539,7 @@ msgid "Delete this template? Images already made with it stay in the Media Libra
 msgstr ""
 
 #. translators: %d: number of AI images the user can still generate this hour
-#: includes/functions.php:391
+#: includes/functions.php:325
 #, php-format
 msgid "You can generate %d more AI image this hour. Request fewer images."
 msgid_plural "You can generate %d more AI images this hour. Request fewer images."
@@ -490,58 +547,80 @@ msgstr[0] ""
 msgstr[1] ""
 
 #. translators: 1: hourly limit, 2: minutes until the limit resets
-#: includes/functions.php:407
+#: includes/functions.php:341
 #, php-format
 msgid "You have reached the limit of %1$d AI image per hour. Try again in %2$d minutes."
 msgid_plural "You have reached the limit of %1$d AI images per hour. Try again in %2$d minutes."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/Generator.php:56
+#: includes/Generator.php:58
 msgid "Image template"
 msgstr ""
 
-#: includes/Generator.php:57
+#: includes/Generator.php:59
 msgid "AI image"
 msgstr ""
 
-#: includes/Generator.php:58
+#: includes/Generator.php:60
 msgid "Image template, AI if no template is available"
 msgstr ""
 
-#: includes/Generator.php:59
+#: includes/Generator.php:61
 msgid "AI image, template if AI fails"
 msgstr ""
 
-#: includes/Generator.php:211
+#: includes/Generator.php:62
+msgid "Stock photo (Unsplash, Pexels or Pixabay)"
+msgstr ""
+
+#: includes/Generator.php:63
+msgid "Stock photo, template if none is found"
+msgstr ""
+
+#: includes/Generator.php:279
 msgid "There is no published image template to use."
 msgstr ""
 
-#: includes/Generator.php:217
-#: includes/RestAPI.php:516
+#: includes/Generator.php:289
+#: includes/RestAPI.php:521
 msgid "Failed to generate image from template."
 msgstr ""
 
-#: includes/Generator.php:248
+#: includes/Generator.php:319
+msgid "Add an Unsplash, Pexels or Pixabay API key on the Image Generator settings page."
+msgstr ""
+
+#: includes/Generator.php:325
+msgid "No search terms could be found in the post title."
+msgstr ""
+
+#. translators: 1: provider name, 2: search terms
+#: includes/Generator.php:342
+#, php-format
+msgid "%1$s has no photos for \"%2$s\"."
+msgstr ""
+
+#: includes/Generator.php:377
 #: includes/Providers/OpenAI.php:157
-#: includes/RestAPI.php:303
-#: includes/RestAPI.php:563
+#: includes/RestAPI.php:304
+#: includes/RestAPI.php:568
 msgid "No API key configured. Please add your API key on the Image Generator settings page."
 msgstr ""
 
-#: includes/Generator.php:307
+#: includes/Generator.php:436
 msgid "No AI image provider is available."
 msgstr ""
 
-#: includes/Generator.php:368
+#: includes/Generator.php:497
 msgid "The image returned by the API could not be decoded."
 msgstr ""
 
-#: includes/Generator.php:379
+#: includes/Generator.php:508
 msgid "Could not write the generated image to a temporary file."
 msgstr ""
 
-#: includes/Generator.php:651
+#: includes/Generator.php:780
 msgid "The generated image could not be found on disk."
 msgstr ""
 
@@ -680,7 +759,7 @@ msgstr ""
 msgid "No image returned by the API."
 msgstr ""
 
-#: includes/Queue.php:297
+#: includes/Queue.php:300
 msgid "The image was not generated in time. Please try again."
 msgstr ""
 
@@ -708,6 +787,26 @@ msgstr ""
 msgid "The font could not be saved."
 msgstr ""
 
+#: includes/Rendering/Hybrid.php:44
+msgid "Stock photo for the post (Unsplash, Pexels or Pixabay)"
+msgstr ""
+
+#: includes/Rendering/Hybrid.php:45
+msgid "AI image for the post"
+msgstr ""
+
+#: includes/Rendering/Hybrid.php:285
+msgid "No stock photo library or search terms."
+msgstr ""
+
+#: includes/Rendering/Hybrid.php:297
+msgid "No photos found."
+msgstr ""
+
+#: includes/Rendering/Hybrid.php:331
+msgid "No AI service is configured."
+msgstr ""
+
 #: includes/Rendering/Images.php:22
 msgid "Media Library"
 msgstr ""
@@ -732,41 +831,161 @@ msgstr ""
 msgid "Author avatar (uploaded)"
 msgstr ""
 
-#: includes/RestAPI.php:184
-#: includes/RestAPI.php:408
+#: includes/RestAPI.php:185
+#: includes/RestAPI.php:409
+#: includes/Stock/RestController.php:172
 #: includes/Templates/RestController.php:319
 msgid "You do not have permission to edit this post."
 msgstr ""
 
-#: includes/RestAPI.php:210
-#: includes/RestAPI.php:379
+#: includes/RestAPI.php:211
+#: includes/RestAPI.php:380
 msgid "You do not have permission to generate images."
 msgstr ""
 
-#: includes/RestAPI.php:218
-#: includes/RestAPI.php:398
+#: includes/RestAPI.php:219
+#: includes/RestAPI.php:399
 msgid "You do not have permission to generate AI images."
 msgstr ""
 
-#: includes/RestAPI.php:238
-#: includes/RestAPI.php:500
+#: includes/RestAPI.php:239
+#: includes/RestAPI.php:501
 msgid "Invalid template ID."
 msgstr ""
 
-#: includes/RestAPI.php:307
+#: includes/RestAPI.php:308
 msgid "Add a title to the post first; it is used to generate the image."
 msgstr ""
 
-#: includes/RestAPI.php:357
+#: includes/RestAPI.php:358
 msgid "You do not have permission to access image templates."
 msgstr ""
 
-#: includes/RestAPI.php:390
+#: includes/RestAPI.php:391
 msgid "You must supply either a prompt or a template_id."
 msgstr ""
 
-#: includes/RestAPI.php:477
+#: includes/RestAPI.php:478
 msgid "No prompt or template_id provided."
+msgstr ""
+
+#: includes/Stock/Importer.php:61
+#: includes/Stock/RestController.php:319
+#: includes/Stock/RestController.php:370
+msgid "Unknown stock photo library."
+msgstr ""
+
+#: includes/Stock/Importer.php:80
+msgid "The photo is not hosted where this library serves its images."
+msgstr ""
+
+#: includes/Stock/Importer.php:225
+msgid "The photo file is too large. Choose a smaller import size."
+msgstr ""
+
+#: includes/Stock/Importer.php:236
+msgid "The downloaded file is not a JPEG, PNG or WebP image."
+msgstr ""
+
+#: includes/Stock/Pixabay.php:130
+#: includes/Stock/Provider.php:137
+msgid "The photo was not found."
+msgstr ""
+
+#. translators: %s: provider name, e.g. Unsplash
+#. translators: %s: provider name
+#: includes/Stock/Provider.php:99
+#: includes/Stock/RestController.php:375
+#, php-format
+msgid "Add your %s API key on the Image Generator settings page."
+msgstr ""
+
+#. translators: %s: provider name
+#: includes/Stock/Provider.php:128
+#, php-format
+msgid "%s did not accept the API key. Check it on the Image Generator settings page."
+msgstr ""
+
+#. translators: %s: provider name
+#: includes/Stock/Provider.php:133
+#, php-format
+msgid "%s has had too many requests from this site. Please try again later."
+msgstr ""
+
+#. translators: 1: provider name, 2: HTTP status code
+#: includes/Stock/Provider.php:142
+#, php-format
+msgid "%1$s returned an error (HTTP %2$d)."
+msgstr ""
+
+#. translators: %s: provider name, linked
+#: includes/Stock/Provider.php:179
+#, php-format
+msgid "Photo from %s"
+msgstr ""
+
+#. translators: 1: photographer name, 2: provider name, both linked
+#: includes/Stock/Provider.php:185
+#, php-format
+msgid "Photo by %1$s on %2$s"
+msgstr ""
+
+#: includes/Stock/Registry.php:118
+msgid "Black"
+msgstr ""
+
+#: includes/Stock/Registry.php:119
+msgid "White"
+msgstr ""
+
+#: includes/Stock/Registry.php:120
+msgid "Red"
+msgstr ""
+
+#: includes/Stock/Registry.php:121
+msgid "Orange"
+msgstr ""
+
+#: includes/Stock/Registry.php:122
+msgid "Yellow"
+msgstr ""
+
+#: includes/Stock/Registry.php:123
+msgid "Green"
+msgstr ""
+
+#: includes/Stock/Registry.php:124
+msgid "Blue"
+msgstr ""
+
+#: includes/Stock/Registry.php:135
+msgid "Regular (about 1080–1900 px wide)"
+msgstr ""
+
+#: includes/Stock/Registry.php:136
+msgid "Large (up to 2400 px wide)"
+msgstr ""
+
+#: includes/Stock/Registry.php:137
+msgid "Original (largest file)"
+msgstr ""
+
+#: includes/Stock/RestController.php:157
+msgid "You do not have permission to add photos to the Media Library."
+msgstr ""
+
+#: includes/Stock/RestController.php:188
+msgid "You do not have permission to change the settings."
+msgstr ""
+
+#: includes/Stock/RestController.php:330
+msgid "Enter an API key to test."
+msgstr ""
+
+#. translators: %s: provider name
+#: includes/Stock/RestController.php:340
+#, php-format
+msgid "Connected to %s."
 msgstr ""
 
 #: includes/Templates/MergeTags.php:32
@@ -797,8 +1016,98 @@ msgstr ""
 msgid "Reading time"
 msgstr ""
 
+#: includes/Templates/MergeTags.php:60
+msgid "How to grow tomatoes on a small balcony"
+msgstr ""
+
+#: includes/Templates/MergeTags.php:61
+msgid "A simple guide to pots, soil, sun and watering for a big summer harvest."
+msgstr ""
+
+#: includes/Templates/MergeTags.php:62
+msgid "Gardening"
+msgstr ""
+
+#: includes/Templates/MergeTags.php:63
+msgid "Tomatoes, Balcony"
+msgstr ""
+
+#. translators: %d: minutes
+#. translators: %d: minutes needed to read the post
+#: includes/Templates/MergeTags.php:68
+#: includes/Templates/MergeTags.php:104
+#, php-format
+msgid "%d min read"
+msgid_plural "%d min read"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/Templates/Migrator.php:169
+msgid "This server cannot draw images (GD with FreeType is missing)."
+msgstr ""
+
+#: includes/Templates/Migrator.php:173
+msgid "A plugin or theme changes how this template is drawn (filter aimg_template_render_args)."
+msgstr ""
+
+#: includes/Templates/Migrator.php:180
+msgid "The template has background colors the Template Studio cannot read."
+msgstr ""
+
+#: includes/Templates/Migrator.php:193
+msgid "How to grow tomatoes on a small balcony: ten tips for a big summer harvest"
+msgstr ""
+
+#: includes/Templates/Migrator.php:213
+msgid "The template would look different in the Template Studio format."
+msgstr ""
+
+#: includes/Templates/Migrator.php:231
+msgid "Image templates use the Template Studio format"
+msgstr ""
+
+#: includes/Templates/Migrator.php:246
+msgid "All image templates use the Template Studio format"
+msgstr ""
+
+#: includes/Templates/Migrator.php:252
+msgid "Every image template is stored in the format the Template Studio uses."
+msgstr ""
+
+#: includes/Templates/Migrator.php:259
+msgid "Image templates are being updated to the Template Studio format"
+msgstr ""
+
+#: includes/Templates/Migrator.php:260
+msgid "Image Generator is updating older templates in the background. Their images do not change."
+msgstr ""
+
+#: includes/Templates/Migrator.php:273
+msgid "Some image templates still use the old format"
+msgstr ""
+
+#: includes/Templates/Migrator.php:274
+msgid "These templates keep working as before. Open each one in the Template Studio, check it and save it to update it."
+msgstr ""
+
+#: includes/Templates/Migrator.php:289
+msgid "this server cannot draw images"
+msgstr ""
+
+#: includes/Templates/Migrator.php:290
+msgid "a plugin or theme changes how it is drawn"
+msgstr ""
+
+#: includes/Templates/Migrator.php:291
+msgid "it has invalid background colors"
+msgstr ""
+
+#: includes/Templates/Migrator.php:292
+msgid "it would look different"
+msgstr ""
+
 #: includes/Templates/Repository.php:83
-#: includes/Templates/RestController.php:562
+#: includes/Templates/RestController.php:564
 msgid "Template not found."
 msgstr ""
 
@@ -837,15 +1146,11 @@ msgstr ""
 msgid "The template could not be deleted."
 msgstr ""
 
-#: includes/Templates/RestController.php:507
-msgid "Your post title appears here"
-msgstr ""
-
-#: includes/Templates/RestController.php:514
+#: includes/Templates/RestController.php:516
 msgid "This server cannot render images (GD with FreeType is required)."
 msgstr ""
 
-#: includes/Templates/RestController.php:609
+#: includes/Templates/RestController.php:611
 msgid "Too many previews. Please wait a moment."
 msgstr ""
 
@@ -881,222 +1186,175 @@ msgstr ""
 msgid "Quote card"
 msgstr ""
 
-#: assets/js/block-editor.js:1
-#: assets/js/media-library.js:1
-msgid "Preview of the image"
+#: includes/Templates/Starters.php:457
+msgid "Stock photo with headline"
 msgstr ""
 
-#: assets/js/block-editor.js:1
-#: assets/js/media-library.js:1
-msgid "Loading templates…"
+#: includes/Templates/Starters.php:525
+msgid "Stock photo with card"
 msgstr ""
 
-#: assets/js/block-editor.js:1
-#: assets/js/media-library.js:1
-msgid "No templates available"
-msgstr ""
-
-#: assets/js/block-editor.js:1
-#: assets/js/media-library.js:1
-msgid "Create at least one image template under Image Generator → Image Templates to use this option."
-msgstr ""
-
-#: assets/js/block-editor.js:1
-#: assets/js/media-library.js:1
-msgid "Title text (optional)"
-msgstr ""
-
-#: assets/js/block-editor.js:1
-#: assets/js/media-library.js:1
-msgid "This text is rendered onto the generated image. Leave blank to use the default."
-msgstr ""
-
-#: assets/js/block-editor.js:1
-#: assets/js/media-library.js:1
-msgid "Image templates"
-msgstr ""
-
-#: assets/js/block-editor.js:1
-#: assets/js/media-library.js:1
-msgid "Your site administrator has limited AI image generation to other roles. You can still generate images from templates."
-msgstr ""
-
-#: assets/js/block-editor.js:1
-#: assets/js/media-library.js:1
-msgid "No AI API key is configured yet. Add one to enable prompt-based generation, or use the Templates tab, which needs no key."
-msgstr ""
-
-#: assets/js/block-editor.js:1
-#: assets/js/media-library.js:1
-msgid "Open settings"
-msgstr ""
-
-#: assets/js/block-editor.js:1
-#: assets/js/media-library.js:1
-msgid "Describe the image you want"
-msgstr ""
-
-#: assets/js/block-editor.js:1
-#: assets/js/media-library.js:1
-msgid "Tip: press Ctrl + Enter (⌘ + Enter on Mac) to generate."
-msgstr ""
-
-#: assets/js/block-editor.js:1
-#: assets/js/media-library.js:1
-msgid "e.g. A sunlit forest path in autumn, photorealistic, soft lighting"
-msgstr ""
-
-#: assets/js/block-editor.js:1
-#: assets/js/media-library.js:1
-msgid "Could not build a prompt from the post."
-msgstr ""
-
-#: assets/js/block-editor.js:1
-#: assets/js/media-library.js:1
-#: assets/js/template-studio.js:1
-msgid "Shape"
-msgstr ""
-
-#: assets/js/block-editor.js:1
-#: assets/js/media-library.js:1
-msgid "Style"
-msgstr ""
-
-#: assets/js/block-editor.js:1
-#: assets/js/media-library.js:1
-msgid "Quality"
-msgstr ""
-
-#: assets/js/block-editor.js:1
-#: assets/js/media-library.js:1
-msgid "Variations"
-msgstr ""
-
-#: assets/js/block-editor.js:1
-#: assets/js/media-library.js:1
-msgid "Pick the image to use. The others will be removed from the Media Library."
-msgstr ""
-
-#. translators: %d: variation number
+#. translators: %s: stock photo library, e.g. Unsplash
 #: assets/js/block-editor.js:2
 #: assets/js/media-library.js:2
 #, js-format
-msgid "Variation %d"
+msgid "Search free photos from %s"
 msgstr ""
 
 #: assets/js/block-editor.js:2
 #: assets/js/media-library.js:2
-msgid "Failed to load image templates."
+msgid "This library needs a free API key. Create one, then add it under Image Generator → Settings → Stock Photos."
 msgstr ""
 
-#: assets/js/block-editor.js:2
-#: assets/js/media-library.js:2
-msgid "Templates"
+#. translators: %s: stock photo library
+#: assets/js/block-editor.js:3
+#: assets/js/media-library.js:3
+#, js-format
+msgid "Get a free %s key"
 msgstr ""
 
-#: assets/js/block-editor.js:2
-#: assets/js/media-library.js:2
-msgid "Custom Prompt"
+#: assets/js/block-editor.js:3
+#: assets/js/media-library.js:3
+msgid "Open settings"
 msgstr ""
 
-#: assets/js/block-editor.js:2
-#: assets/js/media-library.js:2
-msgid "Generate Image with Image Generator & AI"
+#: assets/js/block-editor.js:3
+#: assets/js/media-library.js:3
+msgid "The search failed."
 msgstr ""
 
-#: assets/js/block-editor.js:2
-#: assets/js/media-library.js:2
-msgid "Generating…"
-msgstr ""
-
-#: assets/js/block-editor.js:2
-#: assets/js/media-library.js:2
-msgid "Generate Image"
-msgstr ""
-
-#: assets/js/block-editor.js:2
-#: assets/js/media-library.js:2
-msgid "Cancel"
-msgstr ""
-
-#: assets/js/block-editor.js:2
-#: assets/js/media-library.js:2
-msgid "Generating image — this can take up to a minute…"
-msgstr ""
-
-#: assets/js/block-editor.js:2
+#. translators: %s: stock photo library
 #: assets/js/block-editor.js:4
-#: assets/js/media-library.js:2
-msgid "Something went wrong. Please try again."
+#: assets/js/media-library.js:4
+#, js-format
+msgid "Search %s"
 msgstr ""
 
-#: assets/js/block-editor.js:2
-#: assets/js/media-library.js:2
-msgid "No image URL returned by the API."
+#: assets/js/block-editor.js:4
+#: assets/js/media-library.js:4
+msgid "Orientation"
 msgstr ""
 
-#: assets/js/block-editor.js:2
+#: assets/js/block-editor.js:4
+#: assets/js/media-library.js:4
+msgid "Any"
+msgstr ""
+
+#: assets/js/block-editor.js:4
+#: assets/js/media-library.js:4
+msgid "Color"
+msgstr ""
+
+#: assets/js/block-editor.js:4
+#: assets/js/media-library.js:4
+msgid "No photos found. Try other words."
+msgstr ""
+
+#. translators: %s: stock photo library
+#: assets/js/block-editor.js:5
+#: assets/js/media-library.js:5
+#, js-format
+msgid "Photos from %s"
+msgstr ""
+
+#. translators: %s: photographer name
+#: assets/js/block-editor.js:6
+#: assets/js/media-library.js:6
+#, js-format
+msgid "Photo by %s"
+msgstr ""
+
+#: assets/js/block-editor.js:6
+#: assets/js/media-library.js:6
+msgid "In Media Library"
+msgstr ""
+
+#: assets/js/block-editor.js:6
+#: assets/js/media-library.js:6
+msgid "Load more"
+msgstr ""
+
+#. translators: %d: variation number
+#: assets/js/block-editor.js:7
 msgid "The generated image could not be added to the Media Library — a featured image needs an attachment ID."
 msgstr ""
 
-#: assets/js/block-editor.js:2
+#: assets/js/block-editor.js:7
 msgid "Generate"
 msgstr ""
 
-#: assets/js/block-editor.js:2
+#: assets/js/block-editor.js:7
 msgid "Try again"
 msgstr ""
 
-#: assets/js/block-editor.js:2
+#: assets/js/block-editor.js:7
 msgid "Regenerate"
 msgstr ""
 
-#: assets/js/block-editor.js:2
+#: assets/js/block-editor.js:7
 msgid "Current featured image"
 msgstr ""
 
-#: assets/js/block-editor.js:2
+#: assets/js/block-editor.js:7
 msgid "Featured image queued…"
 msgstr ""
 
-#: assets/js/block-editor.js:2
+#: assets/js/block-editor.js:7
 msgid "Generating featured image…"
 msgstr ""
 
 #. translators: %s: error message
-#: assets/js/block-editor.js:3
+#: assets/js/block-editor.js:8
 #, js-format
 msgid "The featured image could not be generated: %s"
 msgstr ""
 
-#: assets/js/block-editor.js:3
+#: assets/js/block-editor.js:8
 msgid "Save the post first; the saved title is used."
 msgstr ""
 
 #. translators: %s: generation method, e.g. "Image template"
-#: assets/js/block-editor.js:4
+#: assets/js/block-editor.js:9
 #, js-format
 msgid "Uses the method set in Image Generator → Settings: %s."
 msgstr ""
 
-#: assets/js/block-editor.js:4
-msgid "Choose a template or write a prompt…"
+#: assets/js/block-editor.js:9
+msgid "Choose a template, a stock photo or a prompt…"
 msgstr ""
 
-#: assets/js/block-editor.js:4
+#: assets/js/block-editor.js:9
 msgid "Generate Featured Image"
 msgstr ""
 
-#: assets/js/block-editor.js:4
-msgid "Generate with Image generator & AI"
+#: assets/js/block-editor.js:9
+msgid "Generate with Image Generator & AI"
 msgstr ""
 
-#: assets/js/block-editor.js:4
-msgid "Generate Image with Image generator & AI"
+#. translators: %d: variation number
+#: assets/js/block-editor.js:9
+#: assets/js/media-library.js:7
+msgid "Generate Image with Image Generator & AI"
 msgstr ""
 
-#: assets/js/block-editor.js:4
+#: assets/js/block-editor.js:9
+msgid "Something went wrong. Please try again."
+msgstr ""
+
+#: assets/js/block-editor.js:9
 msgid "AI Featured Image"
+msgstr ""
+
+#: assets/js/media-library.js:7
+msgid "Generate Image"
+msgstr ""
+
+#: assets/js/settings.js:1
+msgid "Testing…"
+msgstr ""
+
+#: assets/js/settings.js:1
+msgid "The test failed."
 msgstr ""
 
 #: assets/js/template-studio.js:1
@@ -1113,6 +1371,10 @@ msgstr ""
 
 #: assets/js/template-studio.js:1
 msgid "Text"
+msgstr ""
+
+#: assets/js/template-studio.js:1
+msgid "Shape"
 msgstr ""
 
 #: assets/js/template-studio.js:1
