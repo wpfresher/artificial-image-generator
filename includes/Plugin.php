@@ -241,6 +241,7 @@ class Plugin {
 		new PostTypes();
 		new GenerateImages();
 		new Queue();
+		new Templates\Migrator();
 		new RestAPI();
 
 		// Load the admin classes if it's an admin area.

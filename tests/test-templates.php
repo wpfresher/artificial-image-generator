@@ -53,10 +53,8 @@ class Test_Templates extends AIMG_TestCase {
 		$this->assertFileDoesNotExist( $path );
 	}
 
-	public function test_the_deprecated_preview_helper_still_renders() {
-		$this->setExpectedDeprecated( 'aimg_generate_preview' );
-
-		$this->assertNotEmpty( aimg_generate_preview( $this->create_template(), '#224466', 300, 150 ) );
+	public function test_the_deprecated_preview_helper_is_gone() {
+		$this->assertFalse( function_exists( 'aimg_generate_preview' ) );
 	}
 
 	public function test_the_classic_form_handler_is_gone() {
