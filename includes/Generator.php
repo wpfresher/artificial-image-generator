@@ -40,10 +40,12 @@ class Generator {
 	 *
 	 * @var string
 	 */
-	const METHOD_TEMPLATE    = 'template';
-	const METHOD_AI          = 'ai';
-	const METHOD_TEMPLATE_AI = 'template_ai';
-	const METHOD_AI_TEMPLATE = 'ai_template';
+	const METHOD_TEMPLATE       = 'template';
+	const METHOD_AI             = 'ai';
+	const METHOD_TEMPLATE_AI    = 'template_ai';
+	const METHOD_AI_TEMPLATE    = 'ai_template';
+	const METHOD_STOCK          = 'stock';
+	const METHOD_STOCK_TEMPLATE = 'stock_template';
 
 	/**
 	 * Methods for automatic featured images, as ID => label.
@@ -53,10 +55,12 @@ class Generator {
 	 */
 	public static function get_methods() {
 		$methods = array(
-			self::METHOD_TEMPLATE    => __( 'Image template', 'artificial-image-generator' ),
-			self::METHOD_AI          => __( 'AI image', 'artificial-image-generator' ),
-			self::METHOD_TEMPLATE_AI => __( 'Image template, AI if no template is available', 'artificial-image-generator' ),
-			self::METHOD_AI_TEMPLATE => __( 'AI image, template if AI fails', 'artificial-image-generator' ),
+			self::METHOD_TEMPLATE       => __( 'Image template', 'artificial-image-generator' ),
+			self::METHOD_AI             => __( 'AI image', 'artificial-image-generator' ),
+			self::METHOD_TEMPLATE_AI    => __( 'Image template, AI if no template is available', 'artificial-image-generator' ),
+			self::METHOD_AI_TEMPLATE    => __( 'AI image, template if AI fails', 'artificial-image-generator' ),
+			self::METHOD_STOCK          => __( 'Stock photo (Unsplash, Pexels or Pixabay)', 'artificial-image-generator' ),
+			self::METHOD_STOCK_TEMPLATE => __( 'Stock photo, template if none is found', 'artificial-image-generator' ),
 		);
 
 		/**
@@ -96,6 +100,54 @@ class Generator {
 	}
 
 	/**
+	 * Whether a method searches a stock photo library first.
+	 *
+	 * @param string $method Method.
+	 *
+	 * @since 1.8.0
+	 * @return bool
+	 */
+	public static function method_starts_with_stock( $method ) {
+		return in_array( $method, array( self::METHOD_STOCK, self::METHOD_STOCK_TEMPLATE ), true );
+	}
+
+	/**
+	 * Whether a method calls a remote service, so it runs as a background job.
+	 *
+	 * @param string $method Method.
+	 *
+	 * @since 1.8.0
+	 * @return bool
+	 */
+	public static function method_runs_in_background( $method ) {
+		return self::method_starts_with_ai( $method ) || self::method_starts_with_stock( $method );
+	}
+
+	/**
+	 * Whether a post's image runs as a background job: the method calls a remote
+	 * service, or the post's template has a stock photo or AI image layer.
+	 *
+	 * @param string $method  Method.
+	 * @param int    $post_id Post ID.
+	 *
+	 * @since 1.8.0
+	 * @return bool
+	 */
+	public static function runs_in_background_for_post( $method, $post_id ) {
+		if ( self::method_runs_in_background( $method ) ) {
+			return true;
+		}
+
+		if ( ! in_array( $method, array( self::METHOD_TEMPLATE, self::METHOD_TEMPLATE_AI ), true ) ) {
+			return false;
+		}
+
+		$template_id = self::get_template_id_for_post( $post_id );
+
+		return $template_id && Templates\Repository::has_document( $template_id ) && Rendering\Hybrid::document_is_remote( Templates\Repository::get_document( $template_id ) );
+	}
+
+	/**
 	 * The method that can actually run: without a configured AI provider the AI
 	 * part is dropped, so `ai_template` and `template_ai` become `template` and
 	 * `ai` becomes an empty string.
@@ -107,6 +159,14 @@ class Generator {
 	 */
 	public static function get_runnable_method( $method = '' ) {
 		$method = '' !== $method ? $method : self::get_method();
+
+		if ( self::method_starts_with_stock( $method ) ) {
+			if ( Stock\Registry::get_default() ) {
+				return $method;
+			}
+
+			return self::METHOD_STOCK === $method ? '' : self::METHOD_TEMPLATE;
+		}
 
 		if ( ! in_array( $method, array( self::METHOD_AI, self::METHOD_AI_TEMPLATE, self::METHOD_TEMPLATE_AI ), true ) ) {
 			return $method;
@@ -163,6 +223,14 @@ class Generator {
 
 				return is_wp_error( $result ) ? self::generate_template_for_post( $post_id ) : $result;
 
+			case self::METHOD_STOCK:
+				return self::generate_stock_for_post( $post_id );
+
+			case self::METHOD_STOCK_TEMPLATE:
+				$result = self::generate_stock_for_post( $post_id );
+
+				return is_wp_error( $result ) ? self::generate_template_for_post( $post_id ) : $result;
+
 			default:
 				return self::generate_template_for_post( $post_id );
 		}
@@ -211,7 +279,11 @@ class Generator {
 			return new \WP_Error( 'aimg_no_template', __( 'There is no published image template to use.', 'artificial-image-generator' ) );
 		}
 
-		$image_path = self::render( $template_id, $title, $post_id );
+		$image_path = Rendering\Hybrid::fetching(
+			function () use ( $template_id, $title, $post_id ) {
+				return self::render( $template_id, $title, $post_id );
+			}
+		);
 
 		if ( ! $image_path ) {
 			return new \WP_Error( 'aimg_generation_failed', __( 'Failed to generate image from template.', 'artificial-image-generator' ) );
@@ -227,6 +299,63 @@ class Generator {
 					'source'      => 'template',
 					'template_id' => $template_id,
 				),
+			)
+		);
+	}
+
+	/**
+	 * Import a stock photo found with keywords from the post: the first result not
+	 * already in the Media Library, or the first result when all of them are.
+	 *
+	 * @param int $post_id Post ID.
+	 *
+	 * @since 1.8.0
+	 * @return int|\WP_Error Attachment ID.
+	 */
+	public static function generate_stock_for_post( $post_id ) {
+		$provider = Stock\Registry::get_default();
+
+		if ( ! $provider ) {
+			return new \WP_Error( 'aimg_stock_no_key', __( 'Add an Unsplash, Pexels or Pixabay API key on the Image Generator settings page.', 'artificial-image-generator' ), array( 'status' => 400 ) );
+		}
+
+		$query = Stock\Keywords::for_post( $post_id );
+
+		if ( '' === $query ) {
+			return new \WP_Error( 'aimg_stock_no_keywords', __( 'No search terms could be found in the post title.', 'artificial-image-generator' ), array( 'status' => 400 ) );
+		}
+
+		$result = $provider->search(
+			$query,
+			array(
+				'per_page'    => 10,
+				'orientation' => (string) aimg_get_settings( 'stock_orientation', 'landscape' ),
+			)
+		);
+
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+
+		if ( empty( $result['photos'] ) ) {
+			/* translators: 1: provider name, 2: search terms */
+			return new \WP_Error( 'aimg_stock_no_results', sprintf( __( '%1$s has no photos for "%2$s".', 'artificial-image-generator' ), $provider->get_label(), $query ), array( 'status' => 404 ) );
+		}
+
+		$photo = $result['photos'][0];
+		foreach ( $result['photos'] as $candidate ) {
+			if ( ! Stock\Importer::find( $provider->get_id(), $candidate->id ) ) {
+				$photo = $candidate;
+				break;
+			}
+		}
+
+		return Stock\Importer::import(
+			$provider->get_id(),
+			$photo->id,
+			array(
+				'post_id' => $post_id,
+				'query'   => $query,
 			)
 		);
 	}
@@ -709,7 +838,7 @@ class Generator {
 	 * @param array $provenance    {
 	 *     Optional. Provenance details.
 	 *
-	 *     @type string $source      'template', 'prompt' or 'auto' (AI image made from the post).
+	 *     @type string $source      'template', 'prompt', 'auto' (AI image made from the post) or a stock provider ID such as 'unsplash'.
 	 *     @type int    $template_id Template used, when rendered from a template.
 	 *     @type string $prompt      Prompt used, when generated from a prompt.
 	 *     @type string $provider    Service that produced the image.

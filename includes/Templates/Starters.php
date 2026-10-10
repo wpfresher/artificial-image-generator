@@ -453,6 +453,133 @@ class Starters {
 					),
 				),
 			),
+			'photo-headline'  => array(
+				__( 'Stock photo with headline', 'artificial-image-generator' ),
+				array(
+					array(
+						'type' => 'background',
+						'fill' => array(
+							'kind'   => 'image',
+							'source' => 'stock',
+							'query'  => '{title}',
+							'fit'    => 'cover',
+							'color'  => '#1f2933',
+						),
+					),
+					array(
+						'type'     => 'overlay',
+						'kind'     => 'gradient',
+						'opacity'  => 1,
+						'gradient' => array(
+							'kind'  => 'linear',
+							'angle' => 180,
+							'stops' => array(
+								array(
+									'color'   => '#000000',
+									'pos'     => 0.15,
+									'opacity' => 0,
+								),
+								array(
+									'color'   => '#000000',
+									'pos'     => 1,
+									'opacity' => 0.85,
+								),
+							),
+						),
+					),
+					$text(
+						'{category}',
+						array( 70, 250, 600, 46 ),
+						array(
+							'font'          => 'inter-bold',
+							'size'          => array(
+								'max' => 14,
+								'min' => 10,
+							),
+							'align'         => 'left',
+							'transform'     => 'upper',
+							'letterSpacing' => 3,
+							'color'         => '#111111',
+							'highlight'     => $pill,
+							'showIf'        => 'category',
+						)
+					),
+					$text(
+						'{title}',
+						array( 70, 320, 1060, 250 ),
+						array(
+							'font'       => 'inter-bold',
+							'size'       => array(
+								'max' => 50,
+								'min' => 24,
+							),
+							'align'      => 'left',
+							'valign'     => 'bottom',
+							'lineHeight' => 1.2,
+							'maxLines'   => 3,
+						)
+					),
+				),
+			),
+			'photo-card'      => array(
+				__( 'Stock photo with card', 'artificial-image-generator' ),
+				array(
+					array(
+						'type' => 'background',
+						'fill' => array(
+							'kind'   => 'image',
+							'source' => 'stock',
+							'query'  => '{title}',
+							'fit'    => 'cover',
+							'color'  => '#33475b',
+						),
+					),
+					array(
+						'type'   => 'shape',
+						'shape'  => 'rect',
+						'box'    => array(
+							'x' => 80,
+							'y' => 140,
+							'w' => 640,
+							'h' => 350,
+						),
+						'radius' => 18,
+						'fill'   => array(
+							'kind'  => 'solid',
+							'color' => '#ffffff',
+						),
+					),
+					$text(
+						'{title}',
+						array( 120, 180, 560, 230 ),
+						array(
+							'font'       => 'poppins-bold',
+							'size'       => array(
+								'max' => 40,
+								'min' => 20,
+							),
+							'align'      => 'left',
+							'valign'     => 'top',
+							'lineHeight' => 1.25,
+							'maxLines'   => 4,
+							'color'      => '#1f2933',
+						)
+					),
+					$text(
+						'{site_name}',
+						array( 120, 430, 560, 36 ),
+						array(
+							'font'  => 'poppins-regular',
+							'size'  => array(
+								'max' => 16,
+								'min' => 10,
+							),
+							'align' => 'left',
+							'color' => '#52606d',
+						)
+					),
+				),
+			),
 		);
 
 		$out = array();

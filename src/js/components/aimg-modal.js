@@ -4,13 +4,16 @@
  * Holds the reusable pieces that power every "Generate Image" entry point:
  *   • AIG_ICON     – the sparkle/wand icon
  *   • useGenerator – state + REST call orchestration hook
- *   • AIMGModal    – the Templates / Custom Prompt modal UI
+ *   • AIMGModal    – the modal: Templates, Custom Prompt, one tab per stock
+ *                    photo library, and tabs added with the `aimgModal.tabs` filter
  *
  * Both the block editor integration (`block-editor.js`) and the Media Library
  * integration (`media-library.js`) import from here so the popup behaves
  * identically everywhere. The PHP REST endpoint sideloads the result into the
  * Media Library and returns an attachment id, so the modal is context-agnostic.
  */
+
+import { StockPanel } from './stock-panel';
 
 const { Fragment, createElement: el, useState, useEffect, useRef } = wp.element;
 const {
@@ -29,6 +32,23 @@ const { __, sprintf } = wp.i18n;
 const apiFetch = wp.apiFetch;
 const { useSelect } = wp.data;
 const { decodeEntities } = wp.htmlEntities;
+const { applyFilters } = wp.hooks;
+
+const LAST_TAB_KEY = 'aimgModalTab';
+
+function lastTab() {
+	try {
+		return window.localStorage.getItem( LAST_TAB_KEY ) || '';
+	} catch {
+		return '';
+	}
+}
+
+function rememberTab( name ) {
+	try {
+		window.localStorage.setItem( LAST_TAB_KEY, name );
+	} catch {}
+}
 
 // ── Sparkle / wand icon ───────────────────────────────────────────────────────
 export const AIG_ICON = el(
@@ -513,6 +533,7 @@ export function AIMGModal( {
 } ) {
 	const settings = data().settings || {};
 	const [ activeTab, setActiveTab ] = useState( 'templates' );
+	const [ tabPayloads, setTabPayloads ] = useState( {} );
 	const [ selectedId, setSelectedId ] = useState( 0 );
 	const [ titleText, setTitleText ] = useState( '' );
 	const [ prompt, setPrompt ] = useState( '' );
@@ -570,7 +591,11 @@ export function AIMGModal( {
 	}, [ postTitle ] );
 
 	const handleConfirm = () => {
-		if ( activeTab === 'templates' ) {
+		if ( activeTab !== 'templates' && activeTab !== 'prompt' ) {
+			if ( tabPayloads[ activeTab ] ) {
+				onConfirm( tabPayloads[ activeTab ] );
+			}
+		} else if ( activeTab === 'templates' ) {
 			if ( ! selectedId ) {
 				return;
 			}
@@ -597,15 +622,22 @@ export function AIMGModal( {
 		}
 	};
 
+	const isCoreTab = activeTab === 'templates' || activeTab === 'prompt';
 	const isConfirmDisabled =
 		isLoading ||
-		( activeTab === 'templates'
-			? ! selectedId
-			: ! prompt.trim() ||
-			  ! settings.hasApiKey ||
-			  settings.canUseAi === false );
+		( ! isCoreTab && ! tabPayloads[ activeTab ] ) ||
+		( activeTab === 'templates' && ! selectedId ) ||
+		( activeTab === 'prompt' &&
+			( ! prompt.trim() ||
+				! settings.hasApiKey ||
+				settings.canUseAi === false ) );
 
-	const tabs = [
+	const setTabPayload = ( name ) => ( payload ) =>
+		setTabPayloads( ( current ) =>
+			Object.assign( {}, current, { [ name ]: payload || null } )
+		);
+
+	const coreTabs = [
 		{
 			name: 'templates',
 			title: __( 'Templates', 'artificial-image-generator' ),
@@ -616,7 +648,59 @@ export function AIMGModal( {
 			title: __( 'Custom Prompt', 'artificial-image-generator' ),
 			className: 'aimg-tab aimg-tab--prompt',
 		},
-	];
+	].concat(
+		( data().stock || [] ).map( ( provider ) => ( {
+			name: 'stock-' + provider.id,
+			title: provider.label,
+			className: 'aimg-tab aimg-tab--stock',
+			confirmLabel: __( 'Insert Photo', 'artificial-image-generator' ),
+			render: ( props ) =>
+				el( StockPanel, {
+					provider,
+					postTitle,
+					isLoading: props.isLoading,
+					selected: props.payload ? props.payload.photo : null,
+					onSelect: ( photo ) =>
+						props.setPayload( {
+							mode: 'stock',
+							endpoint:
+								data().endpoints.stock +
+								'/' +
+								provider.id +
+								'/import',
+							data: {
+								id: photo.id,
+								query: photo.query,
+								post_id: postContext ? postContext.postId : 0,
+							},
+							photo,
+							title: photo.description,
+						} ),
+				} ),
+		} ) )
+	);
+
+	/**
+	 * Filter the tabs of the image modal.
+	 *
+	 * A tab is `{ name, title, className, confirmLabel, render }`. `render( props )`
+	 * gets `{ isLoading, postContext, payload, setPayload }`; call `setPayload()`
+	 * with `{ mode, endpoint, data, title }` to enable the confirm button, which
+	 * POSTs `data` to `endpoint`. The endpoint returns `{ id, url, alt }`.
+	 *
+	 * @param {Array}       tabs        Tabs.
+	 * @param {Object|null} postContext Post being edited, or null.
+	 */
+	const tabs = applyFilters( 'aimgModal.tabs', coreTabs, postContext );
+	const activeTabDef = tabs.find( ( tab ) => tab.name === activeTab );
+	const initialTab = tabs.some( ( tab ) => tab.name === lastTab() )
+		? lastTab()
+		: 'templates';
+
+	useEffect( () => {
+		setActiveTab( initialTab );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
 
 	const hasChoices = Array.isArray( choices ) && choices.length > 0;
 
@@ -660,10 +744,21 @@ export function AIMGModal( {
 					className: 'aimg-modal__tabs',
 					activeClass: 'is-active',
 					tabs,
-					initialTabName: 'templates',
-					onSelect: ( tabName ) => setActiveTab( tabName ),
+					initialTabName: initialTab,
+					onSelect: ( tabName ) => {
+						setActiveTab( tabName );
+						rememberTab( tabName );
+					},
 				},
 				( tab ) => {
+					if ( typeof tab.render === 'function' ) {
+						return tab.render( {
+							isLoading,
+							postContext,
+							payload: tabPayloads[ tab.name ] || null,
+							setPayload: setTabPayload( tab.name ),
+						} );
+					}
 					if ( tab.name === 'templates' ) {
 						return el( TemplatesPanel, {
 							templates,
@@ -713,7 +808,11 @@ export function AIMGModal( {
 									)
 								)
 						  )
-						: __( 'Generate Image', 'artificial-image-generator' )
+						: ( activeTabDef && activeTabDef.confirmLabel ) ||
+								__(
+									'Generate Image',
+									'artificial-image-generator'
+								)
 				),
 				el(
 					Button,
@@ -810,7 +909,12 @@ export function useGenerator( { onSuccess } ) {
 		setError( '' );
 
 		try {
-			const res = await generateImage( payload );
+			const res = payload.endpoint
+				? await apiRequest( payload.endpoint, {
+						method: 'POST',
+						data: payload.data,
+				  } )
+				: await generateImage( payload );
 
 			if ( ! res?.url ) {
 				throw new Error(

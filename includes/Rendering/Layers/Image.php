@@ -44,7 +44,7 @@ class Image implements LayerInterface {
 			)
 		);
 
-		return array(
+		return self::remote_fields( $layer ) + array(
 			'source'      => Schema::choice( isset( $layer['source'] ) ? $layer['source'] : '', array_keys( Images::sources() ) ),
 			'attachments' => $ids,
 			'pick'        => Schema::choice( isset( $layer['pick'] ) ? $layer['pick'] : '', array( 'random', 'first' ) ),
@@ -56,6 +56,24 @@ class Image implements LayerInterface {
 			'mask'        => Schema::choice( isset( $layer['mask'] ) ? $layer['mask'] : '', array( 'none', 'rounded', 'circle' ) ),
 			'radius'      => Schema::number( isset( $layer['radius'] ) ? $layer['radius'] : 0, 0, 2000 ),
 			'adjust'      => Schema::adjustments( isset( $layer['adjust'] ) ? $layer['adjust'] : array() ),
+		);
+	}
+
+	/**
+	 * Search terms and prompt of a stock or AI source, cleaned; empty for other sources.
+	 *
+	 * @param array $layer Raw layer or background fill.
+	 *
+	 * @return array { query, prompt } or array().
+	 */
+	public static function remote_fields( $layer ) {
+		if ( ! \ArtificialImageGenerator\Rendering\Hybrid::is_remote( isset( $layer['source'] ) ? $layer['source'] : '' ) ) {
+			return array();
+		}
+
+		return array(
+			'query'  => isset( $layer['query'] ) ? mb_substr( sanitize_text_field( (string) $layer['query'] ), 0, 200 ) : '{title}',
+			'prompt' => isset( $layer['prompt'] ) ? mb_substr( sanitize_textarea_field( (string) $layer['prompt'] ), 0, 1000 ) : '',
 		);
 	}
 
@@ -88,7 +106,7 @@ class Image implements LayerInterface {
 	 */
 	public static function draw( Canvas $canvas, $layer ) {
 		$box   = $layer['box'];
-		$files = isset( $layer['_files'] ) ? (array) $layer['_files'] : Images::files( $layer, $canvas->post_id );
+		$files = isset( $layer['_files'] ) ? (array) $layer['_files'] : Images::files( $layer, $canvas->post_id, $canvas );
 
 		foreach ( $files as $file ) {
 			$source = Images::load( $file );

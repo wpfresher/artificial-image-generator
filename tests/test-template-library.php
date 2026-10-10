@@ -54,7 +54,7 @@ class Test_Template_Library extends AIMG_TestCase {
 	public function test_every_starter_renders() {
 		$starters = Starters::all();
 
-		$this->assertCount( 8, $starters );
+		$this->assertCount( 10, $starters );
 
 		foreach ( $starters as $id => $starter ) {
 			$this->assertNotEmpty( $starter[0], $id );

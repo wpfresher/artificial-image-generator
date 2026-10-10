@@ -272,7 +272,10 @@ class Queue {
 
 		// The author chose an image while we were working; theirs wins.
 		if ( ! $replace && has_post_thumbnail( $post_id ) ) {
-			wp_delete_attachment( $attachment_id, true );
+			// A stock photo may be one imported earlier and used elsewhere.
+			if ( ! get_post_meta( $attachment_id, Stock\Importer::KEY_META, true ) ) {
+				wp_delete_attachment( $attachment_id, true );
+			}
 		} else {
 			set_post_thumbnail( $post_id, $attachment_id );
 		}

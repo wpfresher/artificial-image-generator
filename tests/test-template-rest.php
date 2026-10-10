@@ -5,6 +5,7 @@
  * @package ArtificialImageGenerator
  */
 
+use ArtificialImageGenerator\Templates\MergeTags;
 use ArtificialImageGenerator\Templates\Repository;
 use ArtificialImageGenerator\Templates\RestController;
 
@@ -249,6 +250,63 @@ class Test_Template_Rest extends AIMG_TestCase {
 
 		$this->assertSame( 200, $statuses[ RestController::PREVIEWS_PER_MINUTE - 1 ] );
 		$this->assertSame( 429, end( $statuses ) );
+	}
+
+	public function test_preview_without_a_post_uses_the_studio_samples() {
+		add_filter(
+			'aimg_studio_sample_tags',
+			function ( $tags ) {
+				return $tags + array( 'custom_field:rating' => '4.5' );
+			}
+		);
+
+		$square = function ( $x, $condition ) {
+			return array(
+				'type'   => 'shape',
+				'shape'  => 'rect',
+				'showIf' => $condition,
+				'box'    => array(
+					'x' => $x,
+					'y' => 0,
+					'w' => 50,
+					'h' => 50,
+				),
+				'fill'   => array(
+					'kind'  => 'solid',
+					'color' => '#ff0000',
+				),
+			);
+		};
+
+		$document = array(
+			'canvas' => array(
+				'width'  => 200,
+				'height' => 50,
+			),
+			'layers' => array(
+				array(
+					'type' => 'background',
+					'fill' => array(
+						'kind'  => 'solid',
+						'color' => '#000000',
+					),
+				),
+				$square( 0, 'category' ),
+				$square( 75, 'custom_field:rating' ),
+				$square( 150, 'custom_field:missing' ),
+			),
+		);
+
+		$data  = $this->rest( 'POST', '/aimg/v1/templates/preview', array( 'document' => $document ) )->get_data();
+		$image = imagecreatefromstring( base64_decode( substr( $data['image'], strlen( 'data:image/png;base64,' ) ) ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
+		$red   = function ( $x ) use ( $image ) {
+			return 0xff0000 === ( imagecolorat( $image, $x, 25 ) & 0xffffff );
+		};
+
+		$this->assertTrue( $red( 25 ), 'The sample category shows layers that need one.' );
+		$this->assertTrue( $red( 100 ), 'Sample custom fields count too.' );
+		$this->assertFalse( $red( 175 ), 'Fields without a sample stay empty.' );
+		$this->assertSame( 'Gardening', MergeTags::values( 0, MergeTags::samples() )['category'] );
 	}
 
 	public function test_merge_tags_for_previewing_with_a_post() {

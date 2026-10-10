@@ -57,6 +57,9 @@ for asset-only rebuilds during development use `npx wp-scripts build --webpack-s
 | `PromptBuilder` | `includes/PromptBuilder.php` | Builds AI prompts from a post: prompt template + merge tags, style presets, negative instructions |
 | `Queue` | `includes/Queue.php` | Background jobs for AI featured images: started at once by a non-blocking loopback (`aimg_run_job`, single-use token), with Action Scheduler or WP-Cron as backup; atomic queued→running claim; status in post meta |
 | `Providers\*` | `includes/Providers/` | `ProviderInterface`, `Result`, `OpenAI`, `Registry` (`aimg_providers` filter) |
+| `Stock\*` | `includes/Stock/` | Stock photos: `Unsplash`, `Pexels`, `Pixabay` (base `Provider`: key from `AIMG_{ID}_KEY` or `{id}_key` setting, cached GETs; Pixabay 24 h as its terms require), `Registry` (`aimg_stock_providers`), `Importer` (allowlisted hosts, size/type check, reuse by `_aimg_stock_key`, credit in caption + `_aimg_stock_data`), `Keywords`, `RestController` (`/stock`, `/stock/keywords`, `/stock/{p}/search`, `/import`, `/test`) |
+| `Rendering\Hybrid` | `includes/Rendering/Hybrid.php` | `stock` / `ai` layer sources: fetched only inside `Hybrid::fetching()` (generation), cached per post in `_aimg_hybrid_images`; previews and the Studio use a GD-made sample in `uploads/aimg-cache/` |
+| `Templates\Migrator` | `includes/Templates/Migrator.php` | 1.8.0 background migration of 1.x templates to v2 (only when byte-identical per color × overlay); state in `aimg_templates_migrated`, Site Health test |
 | `GenerateImages` | `includes/GenerateImages.php` | Hooks `wp_after_insert_post`; auto-generates featured images when none exists (per-post opt-out `_aimg_disable_auto`) |
 | `RestAPI` | `includes/RestAPI.php` | `aimg/v1/generate`, `/templates`, `/templates/{id}/preview`, `/prompt`, `/status/{post}`, `/featured/{post}` |
 | `Templates\RestController` | `includes/Templates/RestController.php` | Template CRUD (`POST /templates`, `GET/PUT/PATCH/DELETE /templates/{id}`), `POST /templates/preview` (unsaved document → data URI, 60/min per user), `GET /capabilities`; capability filter `aimg_manage_templates_capability` (default `manage_options`) |
@@ -80,15 +83,17 @@ for asset-only rebuilds during development use `npx wp-scripts build --webpack-s
 
 Templates are stored as the hidden CPT `aimg_template`. A template saved in the Template Studio holds a
 v2 document in `_aimg_template_data` (`Templates\Repository`). The Studio is the only editor (the
-classic form was removed in 1.7.1); 1.x templates without a document are still read from their 1.x meta
-until they are migrated (planned for 1.8.0), and that meta is kept for downgrades. The 1.x meta on each
+classic form was removed in 1.7.1); 1.8.0 migrates 1.x templates in the background (`Templates\Migrator`);
+ones skipped there are still read from their 1.x meta, and that meta is kept for downgrades (read path
+removed in 2.0.0). The 1.x meta on each
 template post: `_aimg_bg_colors` (comma separated list, one picked at random per render),
 `_aimg_width`, `_aimg_height`, `_aimg_title_font_size`, `_aimg_is_overlay_image`,
 `_aimg_overlay_images` (JSON array of attachment IDs), `_aimg_overlay_position`, and
 `_aimg_preview_image_url`.
 
-Title **text color is not per template** — it is a single site-wide setting
-(`aimg_settings['default_text_color']`), as is the fallback background color.
+1.x templates have **no text color of their own**: they use the site-wide `default_text_color` (and
+`default_bg_color` when they have no colors). Building a v2 document (Studio save, duplicate, 1.8.0
+migration) writes the current values into it, so afterwards those settings only seed new templates.
 
 Generated attachments are stamped with `_aimg_generated` (`'1'`, queryable) and
 `_aimg_generated_data` (source, template ID, prompt, provider, model, plugin version, timestamp).
@@ -99,8 +104,9 @@ Generated attachments are stamped with `_aimg_generated` (`'1'`, queryable) and
    featured image after `save_post`) for posts/pages (per settings) that have no featured image and
    no `_aimg_disable_auto` opt-out. Removing a generated featured image sets that opt-out.
    The `generation_method` setting decides what happens: `template` (default) renders inline, as
-   before; `ai` / `ai_template` queue a background job via `Queue` (only for published/scheduled
-   posts); `template_ai` renders inline and queues AI when no template exists. Jobs run
+   before; `ai` / `ai_template` / `stock` / `stock_template` queue a background job via `Queue` (only for
+   published/scheduled posts); `template_ai` renders inline and queues AI when no template exists.
+   A template with a `stock`/`ai` layer source is queued too (`Generator::runs_in_background_for_post()`). Jobs run
    `Generator::generate_for_post()`, which also backs the editor's Generate button.
 2. `Generator::get_template_id_for_post()` uses the `default_template_id` setting or a random
    published template; `Generator::get_render_args()`
@@ -149,8 +155,15 @@ Webpack is configured in `webpack.config.js` extending `@wordpress/scripts`:
   `canvas/text-layout.js` and `canvas/draw.js` mirror the PHP renderer; keep them in step.
   Layer types come from `registry.js` (core definitions in `layers.js`); other plugins add types
   with the JS filter `aimg.studio.layerTypes` from a script enqueued on `aimg_enqueue_template_studio`,
-  plus the PHP filter `aimg_template_layers`. Layers of an unregistered type are kept
+  plus the PHP filter `aimg_template_layers`. `canvas/konva.js` bundles only Rect, Ellipse, Line, Image,
+  Text and Transformer, so add-on drawers must build other shapes from those (e.g. stars as closed Lines).
+  Sample values for `{custom_field:key}` come from `aimg_studio_sample_tags` keys named `custom_field:key`. Layers of an unregistered type are kept
   (`Schema::sanitize()` cleans them generically) but not drawn.
+- **Image modal** (`src/js/components/aimg-modal.js`, used by `block-editor.js` and `media-library.js`):
+  tabs come from the JS filter `aimgModal.tabs` (core: Templates, Custom Prompt, one per stock library in
+  `stock-panel.js`); add-ons enqueue on `aimg_enqueue_modal`. A tab's payload `{ endpoint, data }` is POSTed
+  and must return `{ id, url, alt }`.
+- `src/js/settings.js` → Test Connection buttons on the settings page.
 
 The `assets/` directory is **built output** — do not edit files there directly.
 
@@ -158,7 +171,8 @@ The `assets/` directory is **built output** — do not edit files there directly
 
 - **Image Generator** (top-level menu, `dashicons-format-image`)
   - **Image Templates** — list, add, and edit templates; bulk delete; search by title
-  - **Settings** — default BG/text colors; toggle auto-generation for posts and pages
+  - **Settings** — default BG/text colors; auto-generation; AI service; Stock Photos (keys, Test Connection)
+  - **Upgrade to Pro** — external link, only while `AIMG_PRO_VERSION` is undefined (also a "Go Pro" plugin action link)
 
 Templates are saved through the REST API (`Templates\RestController`); list actions use
 `admin_post_aimg_template_action` with per-action nonces.
@@ -171,7 +185,6 @@ Templates are saved through the REST API (`Templates\RestController`); list acti
 - `aimg_get_js_data()` — REST endpoints, nonce and settings passed to the editor scripts
 - `aimg_generate_thumbnail($args)` — GD image generation (background → overlay → scrim → text).
   Takes `template_id`; the legacy `post_id` key is still accepted
-- `aimg_generate_preview()` — deprecated in 1.7.1 (use `Repository::update_preview()`), removed in 1.8.0
 - `aimg_uploads_path($path)` — rewrite an uploads path into the separator style WordPress expects
 - `aimg_upload_url($path)` — URL of a file inside uploads ('' outside it)
 - `aimg_delete_upload_by_url($url)` — delete a file inside uploads, given its URL

@@ -90,6 +90,7 @@ function aimg_get_js_data() {
 			'status'    => rest_url( 'aimg/v1/status/' ),
 			'featured'  => rest_url( 'aimg/v1/featured/' ),
 			'media'     => rest_url( 'wp/v2/media/' ),
+			'stock'     => rest_url( 'aimg/v1/stock' ),
 		),
 		'nonce'     => wp_create_nonce( 'wp_rest' ),
 		'uploadUrl' => admin_url( 'upload.php' ),
@@ -105,82 +106,15 @@ function aimg_get_js_data() {
 			'methodLabel' => isset( $methods[ $method ] ) ? $methods[ $method ] : '',
 			'methodIsAi'  => '' === $runnable || \ArtificialImageGenerator\Generator::method_starts_with_ai( $runnable ),
 		),
+		'stock'     => array_values( array_map( array( '\ArtificialImageGenerator\Stock\RestController', 'describe' ), \ArtificialImageGenerator\Stock\Registry::all() ) ),
 		'options'   => array(
-			'sizes'     => \ArtificialImageGenerator\Admin\Settings::get_sizes(),
-			'qualities' => \ArtificialImageGenerator\Admin\Settings::get_qualities(),
-			'styles'    => wp_list_pluck( \ArtificialImageGenerator\PromptBuilder::get_styles(), 0 ),
+			'sizes'        => \ArtificialImageGenerator\Admin\Settings::get_sizes(),
+			'qualities'    => \ArtificialImageGenerator\Admin\Settings::get_qualities(),
+			'styles'       => wp_list_pluck( \ArtificialImageGenerator\PromptBuilder::get_styles(), 0 ),
+			'orientations' => \ArtificialImageGenerator\Stock\Registry::orientations(),
+			'colors'       => \ArtificialImageGenerator\Stock\Registry::colors(),
 		),
 	);
-}
-
-/**
- * Generate a template preview from 1.x settings.
- *
- * @deprecated 1.7.1 Use \ArtificialImageGenerator\Templates\Repository::update_preview(). Removed in 1.8.0.
- *
- * @param int    $post_id  Post ID for which the preview is being generated.
- * @param string $colors   Comma separated hex colors.
- * @param int    $width    Image width.
- * @param int    $height   Image height.
- * @param array  $overlays Array of attachment IDs for overlays.
- *
- * @return string|false Image URL or false on failure.
- */
-function aimg_generate_preview( $post_id, $colors, $width, $height, $overlays = array() ) {
-	_deprecated_function( __FUNCTION__, '1.7.1', 'ArtificialImageGenerator\Templates\Repository::update_preview()' );
-
-	if ( empty( $post_id ) || empty( $colors ) || empty( $width ) || empty( $height ) ) {
-		return false;
-	}
-
-	if ( is_string( $colors ) ) {
-		$colors = array_filter( array_map( 'trim', explode( ',', $colors ) ) );
-	}
-
-	// Get absolute paths of overlay images.
-	$overlays_path = array();
-	$overlays      = is_array( $overlays ) ? $overlays : array();
-	foreach ( $overlays as $id ) {
-		$path = get_attached_file( $id );
-		if ( $path && file_exists( $path ) ) {
-			$overlays_path[] = $path;
-		}
-	}
-
-	// Keep only single overlay if multiple are provided.
-	if ( count( $overlays_path ) > 1 ) {
-		$overlays_path = array( $overlays_path[ array_rand( $overlays_path ) ] );
-	}
-
-	// Generate image.
-	$filepath = aimg_generate_thumbnail(
-		array(
-			'template_id' => $post_id,
-			'title'       => aimg_get_plain_title( $post_id ),
-			'colors'      => $colors,
-			'width'       => $width,
-			'height'      => $height,
-			'overlays'    => $overlays_path,
-		)
-	);
-
-	if ( ! $filepath || ! file_exists( $filepath ) ) {
-		return false;
-	}
-
-	$url = aimg_upload_url( $filepath );
-
-	if ( '' === $url ) {
-		return false;
-	}
-
-	// Previews now get a unique file name, so drop the one this replaces.
-	$previous = get_post_meta( $post_id, '_aimg_preview_image_url', true );
-	if ( $previous && $previous !== $url ) {
-		aimg_delete_upload_by_url( $previous );
-	}
-
-	return $url;
 }
 
 /**

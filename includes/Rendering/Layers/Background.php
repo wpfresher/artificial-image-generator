@@ -66,7 +66,7 @@ class Background implements LayerInterface {
 			$image = Image::sanitize( $fill, $canvas );
 
 			return array(
-				'fill'   => array(
+				'fill'   => Image::remote_fields( $fill ) + array(
 					'kind'        => 'image',
 					'source'      => $image['source'],
 					'attachments' => $image['attachments'],
@@ -144,7 +144,7 @@ class Background implements LayerInterface {
 	 * @return void
 	 */
 	private static function image( Canvas $canvas, $fill ) {
-		$files = Images::files( $fill, $canvas->post_id );
+		$files = Images::files( $fill, $canvas->post_id, $canvas );
 		$image = $files ? Images::load( $files[0] ) : false;
 
 		if ( ! $image ) {

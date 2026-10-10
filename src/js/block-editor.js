@@ -103,7 +103,7 @@ import {
 						el( ToolbarButton, {
 							icon: AIG_ICON,
 							label: __(
-								'Generate with Image generator & AI',
+								'Generate with Image Generator & AI',
 								'artificial-image-generator'
 							),
 							onClick: generator.open,
@@ -121,7 +121,7 @@ import {
 						choices: generator.choices,
 						onPick: generator.pick,
 						modalTitle: __(
-							'Generate Image with Image generator & AI',
+							'Generate Image with Image Generator & AI',
 							'artificial-image-generator'
 						),
 					} )
@@ -397,7 +397,7 @@ import {
 						className: 'aimg-featured__more',
 					},
 					__(
-						'Choose a template or write a prompt…',
+						'Choose a template, a stock photo or a prompt…',
 						'artificial-image-generator'
 					)
 				)

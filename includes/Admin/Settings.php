@@ -5,6 +5,7 @@ namespace ArtificialImageGenerator\Admin;
 use ArtificialImageGenerator\Generator;
 use ArtificialImageGenerator\PromptBuilder;
 use ArtificialImageGenerator\Providers\OpenAI;
+use ArtificialImageGenerator\Stock\Registry as StockRegistry;
 
 defined( 'ABSPATH' ) || exit; // Exit if accessed directly.
 
@@ -27,6 +28,28 @@ class Settings {
 
 		// Register settings.
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
+
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+	}
+
+	/**
+	 * Enqueue the settings page script.
+	 *
+	 * @param string $hook Admin page hook.
+	 *
+	 * @since 1.8.0
+	 * @return void
+	 */
+	public function enqueue_scripts( $hook ) {
+		if ( 'image-generator_page_aimg-settings' !== $hook || ! file_exists( AIMG_ASSETS_PATH . 'js/settings.asset.php' ) ) {
+			return;
+		}
+
+		$asset = include AIMG_ASSETS_PATH . 'js/settings.asset.php';
+
+		wp_enqueue_script( 'aimg-settings', AIMG_ASSETS_URL . 'js/settings.js', array_merge( $asset['dependencies'], array( 'wp-api-fetch', 'wp-dom-ready', 'wp-i18n' ) ), $asset['version'], true );
+		wp_set_script_translations( 'aimg-settings', 'artificial-image-generator', AIMG_PATH . 'languages' );
+		wp_enqueue_style( 'aimg-admin', AIMG_ASSETS_URL . 'css/admin.css', array(), AIMG_VERSION );
 	}
 
 	/**
@@ -216,6 +239,157 @@ class Settings {
 			'aimg-settings',
 			'aimg_ai_service_settings'
 		);
+
+		add_settings_section(
+			'aimg_stock_settings',
+			__( 'Stock Photos', 'artificial-image-generator' ),
+			array( $this, 'stock_settings' ),
+			'aimg-settings'
+		);
+
+		foreach ( StockRegistry::all() as $provider ) {
+			add_settings_field(
+				'aimg_' . $provider->get_id() . '_key',
+				/* translators: %s: provider name, e.g. Unsplash */
+				sprintf( __( '%s API Key', 'artificial-image-generator' ), $provider->get_label() ),
+				array( $this, 'stock_key_field' ),
+				'aimg-settings',
+				'aimg_stock_settings',
+				array( 'provider' => $provider )
+			);
+		}
+
+		$stock_fields = array(
+			'stock_provider'    => __( 'Library for Automatic Images', 'artificial-image-generator' ),
+			'stock_orientation' => __( 'Photo Orientation', 'artificial-image-generator' ),
+			'stock_size'        => __( 'Import Size', 'artificial-image-generator' ),
+			'stock_attribution' => __( 'Credit', 'artificial-image-generator' ),
+		);
+
+		foreach ( $stock_fields as $key => $label ) {
+			add_settings_field( 'aimg_' . $key, $label, array( $this, $key . '_field' ), 'aimg-settings', 'aimg_stock_settings' );
+		}
+	}
+
+	/**
+	 * Stock photos section description.
+	 *
+	 * @since 1.8.0
+	 * @return void
+	 */
+	public function stock_settings() {
+		echo '<p>' . esc_html__( 'Search free photos from Unsplash, Pexels and Pixabay in the editor and the Media Library, or use them for automatic featured images. Each library needs its own free API key.', 'artificial-image-generator' ) . '</p>';
+	}
+
+	/**
+	 * API key field of a stock photo library.
+	 *
+	 * @param array $args Field arguments, with `provider`.
+	 *
+	 * @since 1.8.0
+	 * @return void
+	 */
+	public function stock_key_field( $args ) {
+		$provider    = $args['provider'];
+		$id          = $provider->get_id();
+		$constant    = 'AIMG_' . strtoupper( $id ) . '_KEY';
+		$is_constant = defined( $constant ) && constant( $constant );
+		$key         = $provider instanceof \ArtificialImageGenerator\Stock\Provider ? $provider->get_key() : '';
+		$masked      = $key ? str_repeat( '•', 8 ) . substr( $key, -4 ) : '';
+		?>
+		<input type="hidden" name="aimg_settings[<?php echo esc_attr( $id ); ?>_key_form]" value="1" />
+		<input
+			type="password"
+			name="aimg_settings[<?php echo esc_attr( $id ); ?>_key]"
+			id="aimg_settings_<?php echo esc_attr( $id ); ?>_key"
+			value=""
+			class="regular-text"
+			autocomplete="new-password"
+			placeholder="<?php echo esc_attr( $masked ); ?>"
+			<?php disabled( $is_constant ); ?>
+		/>
+		<button type="button" class="button aimg-test-stock" data-provider="<?php echo esc_attr( $id ); ?>"><?php esc_html_e( 'Test Connection', 'artificial-image-generator' ); ?></button>
+		<span class="aimg-test-stock-result" aria-live="polite"></span>
+		<?php if ( ! $is_constant && $key ) : ?>
+			<p>
+				<label>
+					<input type="checkbox" name="aimg_settings[remove_<?php echo esc_attr( $id ); ?>_key]" value="1" />
+					<?php esc_html_e( 'Remove the saved API key', 'artificial-image-generator' ); ?>
+				</label>
+			</p>
+		<?php endif; ?>
+		<p class="description">
+			<?php
+			if ( $is_constant ) {
+				/* translators: %s: PHP constant name */
+				echo wp_kses_post( sprintf( esc_html__( 'Defined with the %s constant in wp-config.php.', 'artificial-image-generator' ), '<code>' . esc_html( $constant ) . '</code>' ) );
+			} elseif ( $key ) {
+				esc_html_e( 'A key is saved. Leave the field empty to keep it, or enter a new key to replace it.', 'artificial-image-generator' );
+			} else {
+				echo wp_kses_post(
+					sprintf(
+					/* translators: 1: link to the provider's API page, 2: PHP constant name */
+						esc_html__( 'Get a free key at %1$s, or define the %2$s constant in wp-config.php.', 'artificial-image-generator' ),
+						'<a href="' . esc_url( $provider->get_signup_url() ) . '" target="_blank" rel="noopener noreferrer">' . esc_html( $provider->get_label() ) . '</a>',
+						'<code>' . esc_html( $constant ) . '</code>'
+					)
+				);
+			}
+			?>
+		</p>
+		<?php
+	}
+
+	/**
+	 * Library used for automatic featured images.
+	 *
+	 * @since 1.8.0
+	 * @return void
+	 */
+	public function stock_provider_field() {
+		$options = array( '' => __( 'The first library with a key', 'artificial-image-generator' ) );
+
+		foreach ( StockRegistry::all() as $provider ) {
+			$options[ $provider->get_id() ] = $provider->get_label();
+		}
+
+		$this->select_field( 'stock_provider', $options, '', __( 'Used when "Generate With" is a stock photo. The photo is found with keywords from the post title.', 'artificial-image-generator' ) );
+	}
+
+	/**
+	 * Orientation of automatic stock photos.
+	 *
+	 * @since 1.8.0
+	 * @return void
+	 */
+	public function stock_orientation_field() {
+		$this->select_field( 'stock_orientation', StockRegistry::orientations(), 'landscape' );
+	}
+
+	/**
+	 * Size stock photos are imported at.
+	 *
+	 * @since 1.8.0
+	 * @return void
+	 */
+	public function stock_size_field() {
+		$this->select_field( 'stock_size', StockRegistry::sizes(), 'large' );
+	}
+
+	/**
+	 * Whether imported photos get a credit caption.
+	 *
+	 * @since 1.8.0
+	 * @return void
+	 */
+	public function stock_attribution_field() {
+		?>
+		<label>
+			<input type="checkbox" name="aimg_settings[stock_attribution]" value="1" <?php checked( aimg_get_settings( 'stock_attribution', 'yes' ), 'yes' ); ?> />
+			<?php esc_html_e( 'Add the photographer credit to the image caption', 'artificial-image-generator' ); ?>
+		</label>
+		<p class="description"><?php esc_html_e( 'Unsplash, Pexels and Pixabay ask you to credit photographers where you can. The credit is always saved with the image.', 'artificial-image-generator' ); ?></p>
+		<?php
 	}
 
 	/**
@@ -534,7 +708,7 @@ class Settings {
 		$default_bg_color = aimg_get_settings( 'default_bg_color' );
 		?>
 		<input type="text" name="aimg_settings[default_bg_color]" id="aimg_settings[default_bg_color]" value="<?php echo esc_attr( $default_bg_color ); ?>" class="regular-text" placeholder="<?php esc_attr_e( '#008000', 'artificial-image-generator' ); ?>" />
-		<p class="description"><?php esc_html_e( 'Enter the default background color for the thumbnails. This will be used as a fallback color if no specific color is set.', 'artificial-image-generator' ); ?></p>
+		<p class="description"><?php esc_html_e( 'Background color for new templates. Templates keep the colors they were saved with; change those in the Template Studio.', 'artificial-image-generator' ); ?></p>
 		<?php
 	}
 
@@ -548,7 +722,7 @@ class Settings {
 		$default_text_color = aimg_get_settings( 'default_text_color' );
 		?>
 		<input type="text" name="aimg_settings[default_text_color]" id="aimg_settings[default_text_color]" value="<?php echo esc_attr( $default_text_color ); ?>" class="regular-text" placeholder="<?php esc_attr_e( '#ffffff', 'artificial-image-generator' ); ?>" />
-		<p class="description"><?php esc_html_e( 'Enter the default text color for the thumbnails. This will be used as a fallback color if no specific color is set.', 'artificial-image-generator' ); ?></p>
+		<p class="description"><?php esc_html_e( 'Title color for new templates. Templates keep the colors they were saved with; change those in the Template Studio.', 'artificial-image-generator' ); ?></p>
 		<?php
 	}
 
@@ -668,6 +842,49 @@ class Settings {
 		$sanitized_settings['ai_prompt_template'] = isset( $settings['ai_prompt_template'] ) ? sanitize_textarea_field( $settings['ai_prompt_template'] ) : '';
 		$sanitized_settings['ai_negative_prompt'] = isset( $settings['ai_negative_prompt'] ) ? sanitize_textarea_field( $settings['ai_negative_prompt'] ) : PromptBuilder::get_default_negative();
 
-		return $sanitized_settings;
+		foreach ( array_keys( StockRegistry::all() ) as $id ) {
+			$key = $id . '_key';
+
+			if ( defined( 'AIMG_' . strtoupper( $key ) ) && constant( 'AIMG_' . strtoupper( $key ) ) ) {
+				$sanitized_settings[ $key ] = '';
+				continue;
+			}
+
+			$sanitized_settings[ $key ] = isset( $settings[ $key ] ) ? trim( sanitize_text_field( $settings[ $key ] ) ) : '';
+
+			if ( ! empty( $settings[ 'remove_' . $key ] ) ) {
+				$sanitized_settings[ $key ] = '';
+			} elseif ( '' === $sanitized_settings[ $key ] && ( ! empty( $settings[ $key . '_form' ] ) || ! isset( $settings[ $key ] ) ) ) {
+				$sanitized_settings[ $key ] = (string) aimg_get_settings( $key, '' );
+			}
+		}
+
+		$stock_choices = array(
+			'stock_provider'    => array( array_merge( array( '' ), array_keys( StockRegistry::all() ) ), '' ),
+			'stock_orientation' => array( array_keys( StockRegistry::orientations() ), 'landscape' ),
+			'stock_size'        => array( array_keys( StockRegistry::sizes() ), 'large' ),
+		);
+
+		foreach ( $stock_choices as $key => $choice ) {
+			$value                      = isset( $settings[ $key ] ) ? sanitize_key( $settings[ $key ] ) : '';
+			$sanitized_settings[ $key ] = in_array( $value, $choice[0], true ) ? $value : $choice[1];
+		}
+
+		// On by default: only the settings form (which always sends stock_size) can turn it off by leaving it out.
+		if ( isset( $settings['stock_attribution'] ) ) {
+			$sanitized_settings['stock_attribution'] = aimg_sanitize_checkbox( $settings['stock_attribution'] );
+		} else {
+			$sanitized_settings['stock_attribution'] = isset( $settings['stock_size'] ) ? 'no' : 'yes';
+		}
+
+		/**
+		 * Filter the sanitized plugin settings, e.g. to keep settings an add-on adds to the form.
+		 *
+		 * @param array $sanitized_settings Sanitized settings.
+		 * @param array $settings           Submitted settings.
+		 *
+		 * @since 1.8.0
+		 */
+		return (array) apply_filters( 'aimg_sanitize_settings', $sanitized_settings, (array) $settings );
 	}
 }

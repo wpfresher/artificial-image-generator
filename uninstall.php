@@ -26,12 +26,14 @@ function aimg_uninstall_site() {
 
 	// Queued admin notices and AI usage counters are never worth keeping.
 	delete_option( 'aimg_flash_notices' );
-	$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '\_transient\_aimg\_flash\_notices\_%' OR option_name LIKE '\_transient\_timeout\_aimg\_flash\_notices\_%' OR option_name LIKE '\_transient\_aimg\_ai\_usage\_%' OR option_name LIKE '\_transient\_timeout\_aimg\_ai\_usage\_%' OR option_name LIKE '\_transient\_aimg\_kick\_%' OR option_name LIKE '\_transient\_timeout\_aimg\_kick\_%' OR option_name LIKE '\_transient\_aimg\_previews\_%' OR option_name LIKE '\_transient\_timeout\_aimg\_previews\_%'" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+	$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '\_transient\_aimg\_flash\_notices\_%' OR option_name LIKE '\_transient\_timeout\_aimg\_flash\_notices\_%' OR option_name LIKE '\_transient\_aimg\_ai\_usage\_%' OR option_name LIKE '\_transient\_timeout\_aimg\_ai\_usage\_%' OR option_name LIKE '\_transient\_aimg\_kick\_%' OR option_name LIKE '\_transient\_timeout\_aimg\_kick\_%' OR option_name LIKE '\_transient\_aimg\_previews\_%' OR option_name LIKE '\_transient\_timeout\_aimg\_previews\_%' OR option_name LIKE '\_transient\_aimg\_stock\_%' OR option_name LIKE '\_transient\_timeout\_aimg\_stock\_%'" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 
 	// Pending background jobs would otherwise fire with no handler.
-	wp_unschedule_hook( 'aimg_generate_featured_image' );
-	if ( function_exists( 'as_unschedule_all_actions' ) ) {
-		as_unschedule_all_actions( 'aimg_generate_featured_image' );
+	foreach ( array( 'aimg_generate_featured_image', 'aimg_migrate_templates' ) as $aimg_hook ) {
+		wp_unschedule_hook( $aimg_hook );
+		if ( function_exists( 'as_unschedule_all_actions' ) ) {
+			as_unschedule_all_actions( $aimg_hook );
+		}
 	}
 	delete_post_meta_by_key( '_aimg_generation_job' );
 
@@ -82,6 +84,7 @@ function aimg_uninstall_site() {
 	delete_option( 'aimg_uploaded_fonts' );
 	delete_option( 'aimg_settings' );
 	delete_option( 'aimg_version' );
+	delete_option( 'aimg_templates_migrated' );
 }
 
 if ( is_multisite() ) {

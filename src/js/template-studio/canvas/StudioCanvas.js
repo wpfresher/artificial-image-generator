@@ -166,7 +166,7 @@ export default function StudioCanvas( {
 					/\{([a-z_]+)(?::([A-Za-z0-9_\-]+))?\}/g,
 					( match, name, key ) =>
 						name === 'custom_field' && key
-							? `[${ key }]`
+							? tags[ `custom_field:${ key }` ] ?? `[${ key }]`
 							: tags[ name ] ?? ''
 				),
 			fontFamily: ( id ) => {

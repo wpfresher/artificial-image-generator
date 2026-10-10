@@ -25,21 +25,29 @@ class Images {
 			'site_logo'     => __( 'Site logo', 'artificial-image-generator' ),
 			'site_icon'     => __( 'Site icon', 'artificial-image-generator' ),
 			'author_avatar' => __( 'Author avatar (uploaded)', 'artificial-image-generator' ),
-		);
+		) + Hybrid::sources();
 	}
 
 	/**
 	 * Files to draw for a layer: its picked attachments, or a dynamic source.
 	 *
-	 * @param array $layer   Layer with `attachments`, `pick` and optionally `source`.
-	 * @param int   $post_id Post the image is for.
+	 * @param array       $layer   Layer with `attachments`, `pick` and optionally `source`.
+	 * @param int         $post_id Post the image is for.
+	 * @param Canvas|null $canvas  Canvas being drawn, for remote sources.
 	 *
 	 * @return string[]
 	 */
-	public static function files( $layer, $post_id ) {
+	public static function files( $layer, $post_id, $canvas = null ) {
 		$source = isset( $layer['source'] ) ? $layer['source'] : 'media';
-		$ids    = 'media' === $source ? (array) $layer['attachments'] : array_filter( array( self::dynamic( $source, $post_id ) ) );
-		$files  = array();
+
+		if ( Hybrid::is_remote( $source ) ) {
+			$file = Hybrid::file( $layer, $post_id, $canvas );
+
+			return '' !== $file ? array( $file ) : array();
+		}
+
+		$ids   = 'media' === $source ? (array) $layer['attachments'] : array_filter( array( self::dynamic( $source, $post_id ) ) );
+		$files = array();
 
 		foreach ( $ids as $id ) {
 			$file = get_attached_file( $id );

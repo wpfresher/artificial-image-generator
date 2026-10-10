@@ -19,6 +19,8 @@ class Admin {
 	 */
 	public function __construct() {
 		add_action( 'admin_menu', array( $this, 'add_menu' ) );
+		add_action( 'admin_menu', array( $this, 'add_pro_menu' ), 99 );
+		add_filter( 'plugin_action_links_' . plugin_basename( AIMG_FILE ), array( __CLASS__, 'action_links' ) );
 		add_filter( 'set-screen-option', array( $this, 'screen_option' ), 10, 3 );
 		add_action( 'load-toplevel_page_image-generator', array( $this, 'handle_list_table_actions' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
@@ -52,6 +54,66 @@ class Admin {
 
 		// Load screen options.
 		add_action( 'load-' . $load, array( __CLASS__, 'load_pages' ) );
+	}
+
+	/**
+	 * Add the "Upgrade to Pro" menu item while Image Generator Pro is not active.
+	 *
+	 * @since 1.8.0
+	 * @return void
+	 */
+	public function add_pro_menu() {
+		if ( defined( 'AIMG_PRO_VERSION' ) ) {
+			return;
+		}
+
+		add_submenu_page(
+			'image-generator',
+			__( 'Upgrade to Pro', 'artificial-image-generator' ),
+			'<span style="color:#00ed77;"><span class="dashicons dashicons-star-filled" style="font-size:17px"></span> ' . esc_html__( 'Upgrade to Pro', 'artificial-image-generator' ) . '</span>',
+			'manage_options',
+			self::pro_url( 'admin-menu' )
+		);
+	}
+
+	/**
+	 * Settings and "Go Pro" links on the Plugins screen.
+	 *
+	 * @param array $links Action links.
+	 *
+	 * @since 1.8.0
+	 * @return array
+	 */
+	public static function action_links( $links ) {
+		$own = array(
+			'settings' => sprintf( '<a href="%1$s">%2$s</a>', esc_url( admin_url( 'admin.php?page=aimg-settings' ) ), esc_html__( 'Settings', 'artificial-image-generator' ) ),
+		);
+
+		if ( ! defined( 'AIMG_PRO_VERSION' ) ) {
+			$links['go_pro'] = sprintf( '<a href="%1$s" target="_blank" style="color:#39b54a;font-weight:bold;">%2$s</a>', esc_url( self::pro_url( 'plugin-action' ) ), esc_html__( 'Go Pro', 'artificial-image-generator' ) );
+		}
+
+		return array_merge( $own, $links );
+	}
+
+	/**
+	 * Image Generator Pro page, with where the link was clicked.
+	 *
+	 * @param string $campaign Link location.
+	 *
+	 * @since 1.8.0
+	 * @return string
+	 */
+	public static function pro_url( $campaign ) {
+		return add_query_arg(
+			array(
+				'utm_source'   => 'plugin',
+				'utm_medium'   => 'link',
+				'utm_campaign' => sanitize_key( $campaign ),
+				'utm_id'       => 'artificial-image-generator',
+			),
+			'https://beautifulplugins.com/plugins/image-generator-pro/'
+		);
 	}
 
 	/**
@@ -273,7 +335,6 @@ class Admin {
 
 		$logo = (int) get_theme_mod( 'custom_logo' );
 		$icon = (int) get_option( 'site_icon' );
-		$user = wp_get_current_user();
 
 		$data = array(
 			'template'      => $template,
@@ -300,18 +361,10 @@ class Admin {
 			'dynamicImages' => array(
 				'site_logo' => $logo ? (string) wp_get_attachment_image_url( $logo, 'large' ) : '',
 				'site_icon' => $icon ? (string) wp_get_attachment_image_url( $icon, 'large' ) : '',
+				'stock'     => \ArtificialImageGenerator\Rendering\Hybrid::sample_url(),
+				'ai'        => \ArtificialImageGenerator\Rendering\Hybrid::sample_url(),
 			),
-			'sampleTags'    => array(
-				'title'        => __( 'How to grow tomatoes on a small balcony', 'artificial-image-generator' ),
-				'excerpt'      => __( 'A simple guide to pots, soil, sun and watering for a big summer harvest.', 'artificial-image-generator' ),
-				'category'     => __( 'Gardening', 'artificial-image-generator' ),
-				'tags'         => __( 'Tomatoes, Balcony', 'artificial-image-generator' ),
-				'author'       => $user->display_name,
-				'date'         => wp_date( get_option( 'date_format' ) ),
-				'site_name'    => html_entity_decode( get_bloginfo( 'name' ), ENT_QUOTES | ENT_HTML5, 'UTF-8' ),
-				/* translators: %d: minutes */
-				'reading_time' => sprintf( _n( '%d min read', '%d min read', 4, 'artificial-image-generator' ), 4 ),
-			),
+			'sampleTags'    => \ArtificialImageGenerator\Templates\MergeTags::samples(),
 		);
 
 		wp_add_inline_script( 'aimg-template-studio', 'window.aimgStudio = ' . wp_json_encode( $data ) . ';', 'before' );
