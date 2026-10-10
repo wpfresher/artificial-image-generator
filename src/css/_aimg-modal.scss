@@ -311,7 +311,8 @@ $aimg-muted:         #6b7280;
 	grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
 	gap: 8px;
 	margin-top: 12px;
-	max-height: 420px;
+	max-height: min(420px, calc(min(88vh, 760px) - 380px));
+	min-height: 160px;
 	overflow-y: auto;
 }
 
@@ -384,6 +385,13 @@ $aimg-muted:         #6b7280;
 .aimg-stock__sentinel {
 	grid-column: 1 / -1;
 	height: 1px;
+}
+
+.aimg-stock__more {
+	grid-column: 1 / -1;
+	display: flex;
+	justify-content: center;
+	padding: 8px;
 }
 
 .aimg-stock__empty,

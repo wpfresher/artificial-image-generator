@@ -381,7 +381,7 @@ class Admin {
 		/**
 		 * Filter the sample values the Template Studio shows for merge tags.
 		 *
-		 * @param array $tags Values as tag name => text.
+		 * @param array $tags Values as tag name => text; custom fields as "custom_field:key".
 		 *
 		 * @since 1.8.0
 		 */

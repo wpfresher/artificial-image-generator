@@ -312,6 +312,12 @@ export function StockPanel( {
 							)
 					);
 				} ),
+				isSearching &&
+					el(
+						'div',
+						{ className: 'aimg-stock__more' },
+						el( Spinner )
+					),
 				el( 'div', {
 					ref: sentinel,
 					className: 'aimg-stock__sentinel',
@@ -319,6 +325,7 @@ export function StockPanel( {
 			),
 
 		isSearching &&
+			! ( results && results.length ) &&
 			el( 'div', { className: 'aimg-modal__loading' }, el( Spinner ) ),
 
 		! isSearching &&

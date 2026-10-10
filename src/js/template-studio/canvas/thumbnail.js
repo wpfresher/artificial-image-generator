@@ -73,7 +73,8 @@ export async function renderThumbnail(
 		merge: ( text ) =>
 			String( text ).replace(
 				/\{([a-z_]+)(?::([A-Za-z0-9_\-]+))?\}/g,
-				( match, name ) => tags[ name ] ?? ''
+				( match, name, key ) =>
+					tags[ key ? `${ name }:${ key }` : name ] ?? ''
 			),
 		fontFamily,
 		backgroundColor: () => background,
