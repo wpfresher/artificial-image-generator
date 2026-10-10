@@ -28,7 +28,7 @@ class MergeTags {
 	 * @return array
 	 */
 	public static function names() {
-		return array(
+		$names = array(
 			'title'        => __( 'Post title', 'artificial-image-generator' ),
 			'excerpt'      => __( 'Excerpt', 'artificial-image-generator' ),
 			'category'     => __( 'Categories', 'artificial-image-generator' ),
@@ -38,6 +38,15 @@ class MergeTags {
 			'site_name'    => __( 'Site name', 'artificial-image-generator' ),
 			'reading_time' => __( 'Reading time', 'artificial-image-generator' ),
 		);
+
+		/**
+		 * Filter the merge tags offered in the Template Studio. Give them values with `aimg_merge_tags`.
+		 *
+		 * @param array $names Tag names (a-z and _) as name => label.
+		 *
+		 * @since 1.8.0
+		 */
+		return (array) apply_filters( 'aimg_merge_tag_names', $names );
 	}
 
 	/**

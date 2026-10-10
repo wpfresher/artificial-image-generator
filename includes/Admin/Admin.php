@@ -378,6 +378,15 @@ class Admin {
 			),
 		);
 
+		/**
+		 * Filter the sample values the Template Studio shows for merge tags.
+		 *
+		 * @param array $tags Values as tag name => text.
+		 *
+		 * @since 1.8.0
+		 */
+		$data['sampleTags'] = (array) apply_filters( 'aimg_studio_sample_tags', $data['sampleTags'] );
+
 		wp_add_inline_script( 'aimg-template-studio', 'window.aimgStudio = ' . wp_json_encode( $data ) . ';', 'before' );
 
 		/**

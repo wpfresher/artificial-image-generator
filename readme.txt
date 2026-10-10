@@ -299,7 +299,7 @@ Searching or importing stock photos calls the library you choose: **Unsplash** (
 * New: Stock Photos settings with a Test Connection button; keys can also be set with `AIMG_UNSPLASH_KEY`, `AIMG_PEXELS_KEY` and `AIMG_PIXABAY_KEY`.
 * Enhance: Templates made before 1.7.0 are converted to the Template Studio format in the background, only when they look exactly the same; any that would change keep working as before and are listed in Site Health. Their old settings are kept.
 * Enhance: The default background and text colors in Settings now apply to new templates; existing templates keep the colors they were saved with.
-* Dev: Modal tabs can be added with the JS filter `aimgModal.tabs` (action `aimg_enqueue_modal`); new filters `aimg_stock_providers`, `aimg_stock_keywords`, `aimg_stock_stop_words`, `aimg_stock_max_bytes`, `aimg_unsplash_app_name` and `aimg_sanitize_settings`; REST endpoints under `/aimg/v1/stock`.
+* Dev: Modal tabs can be added with the JS filter `aimgModal.tabs` (action `aimg_enqueue_modal`); new filters `aimg_stock_providers`, `aimg_stock_keywords`, `aimg_stock_stop_words`, `aimg_stock_max_bytes`, `aimg_unsplash_app_name`, `aimg_sanitize_settings`, `aimg_merge_tag_names` and `aimg_studio_sample_tags`; REST endpoints under `/aimg/v1/stock`.
 * Removed: `aimg_generate_preview()`, deprecated in 1.7.1.
 
 = 1.7.1 ( 9th October 2026 ) =
