@@ -14,13 +14,23 @@ AI image generator for WordPress. Auto-create featured images, post thumbnails &
 
 [**Image Generator**](https://beautifulplugins.com/plugins/image-generator-pro/) is the all-in-one **AI image generator and automatic featured image plugin for WordPress**. Create eye-catching **featured images, post thumbnails, hero banners, and social media images** in two clicks — directly inside the **Gutenberg block editor**, or automatically every time you publish a post or page.
 
-Stop wasting hours on stock photo sites. Stop publishing posts with broken thumbnail spots. With **Image Generator** you can:
+Stop switching between design tools, AI apps and stock photo sites. Stop publishing posts with broken thumbnail spots. With **Image Generator** you can:
 
+- **Design your own image templates** in a visual **Template Studio** and turn every post title into an on-brand image — free, rendered on your own server.
 - **Generate AI images** from a custom prompt using **OpenAI GPT Image** (your own API key) — right inside the block editor.
-- **Auto-generate featured images** from reusable **image templates** whenever a post or page is saved without one.
-- **Insert AI-generated images** straight into Image and Media & Text blocks while you write.
-- **Set a Featured Image** with a single click from the new **AI Featured Image** sidebar panel.
 - **Search free stock photos** from **Unsplash, Pexels and Pixabay** without leaving WordPress, imported with the photographer's credit.
+- **Combine them**: put a stock photo or an AI image under your own template design, so each post gets a different picture with your logo, colors and title.
+- **Auto-generate featured images** whenever a post or page is saved without one — from a template, AI or a stock photo.
+- **Insert images** straight into Image and Media & Text blocks while you write, or **set the featured image** with one click from the **AI Featured Image** sidebar panel.
+
+= Where Your Images Come From =
+
+1. **Your own image templates** — designs you build in the Template Studio (or start from 10 ready-made ones). The post title and other details are filled in and the image is drawn on your server with PHP's GD library. No API key, no cost, nothing leaves your site (unless a layer uses a stock photo or AI image).
+2. **AI images** — unique images from OpenAI GPT Image, written from your prompt or from the post's title and excerpt. Needs your own OpenAI API key.
+3. **Free stock photos** — **Unsplash**, **Pexels** and **Pixabay**. Needs a free API key from the library you use.
+4. **Templates over photos** — any template's background or image layer can show a stock photo or an AI image picked for each post.
+
+Images inside your templates can come from your **Media Library**, the **post's featured image**, the **first image in the post**, your **site logo** or **site icon**, the **author's avatar** (uploaded to the Media Library), a **stock photo for the post** or an **AI image for the post**.
 
 Whether you run a blog, news site, magazine, portfolio, affiliate site, online store, or membership platform, this plugin gives every post a polished, **SEO-friendly featured image** — without the manual work.
 
@@ -28,10 +38,10 @@ Whether you run a blog, news site, magazine, portfolio, affiliate site, online s
 
 = Two Powerful Ways to Create Images =
 
-1. **Inside the block editor (on demand)**: generate an image while you're writing and drop it straight into an Image block, a Media & Text block, or set it as the post's Featured Image.
-2. **Automatic on publish (hands-off)**: when a post or page has no featured image, the plugin creates one for you — **either from your own image template** (free, instant, on-brand) **or with AI** (a unique image written from the post's title and excerpt). You choose the method in Settings, and either one can fall back to the other.
+1. **Inside the block editor or the Media Library (on demand)**: make an image from a template, an AI prompt or a stock photo while you're writing, and drop it straight into an Image block, a Media & Text block, or set it as the post's Featured Image.
+2. **Automatic on publish (hands-off)**: when a post or page has no featured image, the plugin creates one for you — **from your own image template** (free, instant, on-brand), **with AI** (a unique image written from the post's title and excerpt) or **from a stock photo** that matches the post title. You choose the method in Settings, and each one can fall back to a template.
 
-Every generated image, whether AI-created or template-rendered — is saved to the **WordPress Media Library** with proper alt text, so it works with any theme, page builder, CDN, image-optimization plugin, lazy loader, or SEO plugin.
+Every image — template-rendered, AI-created or a stock photo — is saved to the **WordPress Media Library** with proper alt text, so it works with any theme, page builder, CDN, image-optimization plugin, lazy loader, or SEO plugin.
 
 = Watch video tutorial on how to use the Image Generator plugin =
 
@@ -64,8 +74,8 @@ Plug in your **OpenAI API key** (or define the `AIMG_API_KEY` constant in `wp-co
 ✅ **Block Editor (Gutenberg) Integration**
 Adds an **"AI Generate" sparkle button** to the toolbar of core Image and Media & Text blocks, plus a dedicated **AI Featured Image panel** in the document sidebar. No setup, no shortcodes, it just shows up.
 
-✅ **Two Generation Modes in One Modal**
-A single, unified modal lets editors switch between **Templates** (fast, on-brand, free) and **Custom Prompt** (AI-generated, unique). Pick the right tool for each post.
+✅ **Templates, AI and Stock Photos in One Modal**
+A single modal lets editors switch between **Templates** (fast, on-brand, free), **Custom Prompt** (AI-generated, unique) and one tab each for **Unsplash**, **Pexels** and **Pixabay**. It opens from the block editor and from the Media Library, and remembers the tab you used last.
 
 ✅ **Free Stock Photos from Unsplash, Pexels & Pixabay**
 Search millions of free photos in the editor and the Media Library, filter by orientation and color, and insert one with a click. Each photo is downloaded into your Media Library with alt text and the photographer's credit in the caption. Stock photos can also be the automatic featured image, picked with keywords from the post title. Each library needs its own free API key.
@@ -74,13 +84,13 @@ Search millions of free photos in the editor and the Media Library, filter by or
 Use a stock photo or an AI image as a template's background or image layer, and every post gets a different picture with your logo, colors and title on top. The picture is fetched once per post in the background and reused when you regenerate.
 
 ✅ **Visual Template Studio**
-Design image templates on a canvas: drag, resize and rotate layers, with snapping guides, undo/redo and keyboard shortcuts. Combine backgrounds (colors, random palettes, gradients, your images or the post's own featured image), images with rounded or circle masks and duotone, see-through overlays and fades, shapes, patterns, frames and text. Text fits itself to its box, with 11 bundled fonts (or upload your own .ttf/.otf), outlines, shadows, highlight boxes and tags like `{title}`, `{category}`, `{author}`, `{date}` and `{custom_field:key}`. Preview with long titles or a real post, check the exact image your server will make, start from 10 ready-made designs, and import or export designs as JSON.
+Design image templates on a canvas: drag, resize and rotate layers, with snapping guides, undo/redo and keyboard shortcuts. Combine backgrounds (colors, random palettes, gradients or an image), images with rounded or circle masks, brightness, contrast, blur, black and white and duotone, see-through overlays and fades, shapes, patterns, frames and text. Background and image layers can use a Media Library image, the post's featured image, the first image in the post, the site logo or icon, the author's avatar, or a stock photo or AI image picked for each post. Text fits itself to its box, with 11 bundled fonts (or upload your own .ttf/.otf), outlines, shadows, highlight boxes and tags like `{title}`, `{category}`, `{author}`, `{date}` and `{custom_field:key}`. Preview with long titles or a real post, check the exact image your server will make, start from 10 ready-made designs, and import or export designs as JSON.
 
 ✅ **Unlimited Reusable Image Templates**
 Build as many image templates as you want. Each template is rendered server-side using PHP's GD library, no external dependency — the canvas you design on draws the same way, so what you see is what your posts get.
 
-✅ **Automatic Featured Image on Save — Template or AI**
-When a post or page is saved without a featured image, the plugin creates one: from a template (a random one, or the one you pick) using the post title, or with AI from a prompt built from the post. AI images are created in the background, so saving never waits on the AI service, and the editor shows the progress.
+✅ **Automatic Featured Image on Save — Template, AI or Stock Photo**
+When a post or page is saved without a featured image, the plugin creates one. Choose from: **Image template** (a random one, or the one you pick), **AI image**, **Stock photo** (Unsplash, Pexels or Pixabay, found with keywords from the post title), or a combination — template with AI as a fallback, AI with a template as a fallback, or a stock photo with a template as a fallback. AI images, stock photos and templates with a stock or AI layer are made in the background, so saving never waits on an outside service, and the editor shows the progress.
 
 ✅ **Smart AI Prompts**
 Write your prompt template once with tags like `{title}`, `{excerpt}`, `{category}`, `{tags}` and `{custom_field:key}`, choose a style (Photorealistic, Flat illustration, 3D render, Watercolor, Cinematic and more), and every post gets a fitting prompt. A built-in instruction keeps garbled text and watermarks out of the image.
@@ -95,19 +105,19 @@ Decide which roles can use AI and set an hourly limit per user. Automatic AI ima
 Automatic generation currently covers **posts and pages**. On-demand generation is not limited that way: the block editor panel and the Media Library modal let you generate an image and set it as the featured image on **any post type that supports featured images**, including WooCommerce products and custom post types.
 
 ✅ **Native WordPress Media Library**
-Every image, AI or template — is **sideloaded into the Media Library** with attachment ID and alt text. So image optimization plugins (Smush, ShortPixel, Imagify, EWWW), CDNs (Cloudflare, BunnyCDN, KeyCDN), and SEO plugins (Yoast, Rank Math, AIOSEO) all see it as a regular attachment.
+Every image — template, AI or stock photo — is **saved into the Media Library** with alt text. So image optimization plugins (Smush, ShortPixel, Imagify, EWWW), CDNs (Cloudflare, BunnyCDN, KeyCDN), and SEO plugins (Yoast, Rank Math, AIOSEO) all see it as a regular attachment.
 
 ✅ **REST API for Headless & Custom Workflows**
-Endpoints (`/wp-json/aimg/v1/generate`, `/templates`, `/featured/{post}`, `/status/{post}`, `/prompt`) with capability checks and nonce protection, perfect for **headless WordPress, decoupled frontends, and automation scripts**.
+Endpoints (`/wp-json/aimg/v1/generate`, `/templates`, `/featured/{post}`, `/status/{post}`, `/prompt`, `/stock/{library}/search`, `/stock/{library}/import`) with capability checks and nonce protection, perfect for **headless WordPress, decoupled frontends, and automation scripts**.
 
 ✅ **Developer-Friendly Filters**
-Add your own AI provider (`aimg_providers`), generation method (`aimg_generation_methods`, `aimg_pre_generate_for_post`) or style preset (`aimg_style_presets`), adjust prompts (`aimg_post_prompt`), and keep using `aimg_generate_endpoint` and `aimg_generate_request_body` to customize the OpenAI request.
+Add your own AI provider (`aimg_providers`), stock photo library (`aimg_stock_providers`), template layer type (`aimg_template_layers`), merge tag (`aimg_merge_tags`), modal tab (`aimgModal.tabs`), generation method (`aimg_generation_methods`, `aimg_pre_generate_for_post`) or style preset (`aimg_style_presets`), adjust prompts (`aimg_post_prompt`), and keep using `aimg_generate_endpoint` and `aimg_generate_request_body` to customize the OpenAI request.
 
 ✅ **Translation Ready (i18n)**
 Fully translatable via the bundled `.pot` file, both PHP and editor JavaScript strings are registered with `wp_set_script_translations`. Compatible with WPML, Polylang, Loco Translate, and TranslatePress.
 
 ✅ **Lightweight, Fast, and Secure**
-No bloated dependencies. Uses native WordPress components, the GD library (already part of PHP), and the REST API. API keys can be stored outside the database via the `AIMG_API_KEY` constant.
+No bloated dependencies. Uses native WordPress components, the GD library (already part of PHP), and the REST API. API keys can be stored outside the database with the `AIMG_API_KEY`, `AIMG_UNSPLASH_KEY`, `AIMG_PEXELS_KEY` and `AIMG_PIXABAY_KEY` constants, and stock photos are only downloaded from each library's own image servers.
 
 ✅ **No Coding Required**
 Simple admin UI under **Image Generator** in the WordPress dashboard. Build a template, save your settings, you're done.
@@ -121,16 +131,17 @@ Simple admin UI under **Image Generator** in the WordPress dashboard. Build a te
 3. Choose a tab in the modal:
    - **Templates**: pick a saved image template and see a preview with your post title. The title text defaults to the current post title.
    - **Custom Prompt**: describe the image you want — or click *Write a prompt from this post* — pick the shape, style, quality and number of variations, and press *Generate* (or Ctrl + Enter / ⌘ + Enter).
-4. The image is generated, added to the Media Library, and **inserted into the block** or **assigned as the featured image** automatically. With several variations, you pick one first.
+   - **Unsplash**, **Pexels** or **Pixabay**: search is filled in with keywords from the post title; filter by orientation and color, scroll for more, pick a photo and press *Insert Photo*.
+4. The image is added to the Media Library and **inserted into the block** or **assigned as the featured image** automatically. With several AI variations, you pick one first.
 
-The **AI Featured Image** panel can also (re)generate the featured image in one click using your automatic method.
+The **AI Featured Image** panel can also (re)generate the featured image in one click using your automatic method. The same modal is available from **Media → Library → Generate Image**, so you can create images with any editor.
 
 = Auto-Generate Featured Images on Publish =
 
-1. Under **Image Generator → Settings → Automatic Featured Images**, choose **Image template** or **AI image** (or one with the other as a fallback).
+1. Under **Image Generator → Settings → Automatic Featured Images**, choose **Image template**, **AI image** or **Stock photo** (or one with a fallback).
 2. Write your post or page as normal and hit **Publish** or **Update**.
 3. If you already set a featured image, nothing happens.
-4. If you didn't, a template image is rendered right away from the post title — or an AI image is created in the background from your prompt template — saved to the Media Library and attached as the post thumbnail.
+4. If you didn't, a template image is rendered right away from the post title — or an AI image or stock photo is fetched in the background — saved to the Media Library and attached as the post thumbnail.
 
 == Use Cases ==
 
@@ -157,6 +168,7 @@ Without Image Generator | With Image Generator
 
 * **Add a featured image to a new post** — Without: find a stock photo, download, upload, set as featured. With Image Generator: publish — done.
 * **Generate a unique hero image** — Without: open Midjourney/ChatGPT, save, upload, insert. With Image Generator: click ✨ in the toolbar, type a prompt, done.
+* **Use a free stock photo** — Without: search a stock site, download, upload, add the credit. With Image Generator: search in the editor, click *Insert Photo* — credit included.
 * **Keep thumbnails on-brand across the site** — Without: manual design work, every post. With Image Generator: build a template once, reused forever.
 * **Generate placeholders for 50 imported posts** — Without: tedious manual upload. With Image Generator: bulk-saving triggers auto-generation.
 
@@ -173,19 +185,26 @@ Without Image Generator | With Image Generator
 3. Activate **Image Generator** through the **Plugins** menu in WordPress.
 
 = Setup =
-1. Go to **Image Generator → Image Templates** and create at least one template (background colors, dimensions, title size, optional overlay).
-2. (Optional) Open **Image Generator → Settings** and add your **OpenAI API key** to enable AI prompt-based generation.
-3. (Optional, more secure) Define the API key in `wp-config.php` instead:
-   `define( 'AIMG_API_KEY', 'sk-your-key-here' );`
-4. Done. Generate from the block editor, or just publish a post and let the plugin handle it.
+1. Go to **Image Generator → Image Templates → Add New**, pick one of the ready-made designs (or start blank) and adjust it in the Template Studio.
+2. (Optional) Open **Image Generator → Settings** and add your **OpenAI API key** to enable AI images.
+3. (Optional) Under **Settings → Stock Photos**, add a free key from Unsplash, Pexels or Pixabay and click **Test Connection**.
+4. (Optional, more secure) Define the keys in `wp-config.php` instead:
+   `define( 'AIMG_API_KEY', 'sk-your-key-here' );` (and `AIMG_UNSPLASH_KEY`, `AIMG_PEXELS_KEY` or `AIMG_PIXABAY_KEY`)
+5. Done. Generate from the block editor or the Media Library, or just publish a post and let the plugin handle it.
 
 == Frequently Asked Questions ==
 
 = Do I need an API key to use this plugin? =
-**No — only for AI prompt-based generation and stock photos.** Template-based image creation, including the automatic featured image on publish, runs entirely on your own server using PHP's built-in GD library. No external services, no API calls, no recurring costs. Stock photos need a free API key from Unsplash, Pexels or Pixabay; you only need one.
+**No — only for AI prompt-based generation and stock photos.** Template-based image creation, including the automatic featured image on publish, runs entirely on your own server using PHP's built-in GD library. No external services, no API calls, no recurring costs — unless you give a template a stock photo or AI image layer. Stock photos need a free API key from Unsplash, Pexels or Pixabay; you only need one.
 
 = How do I get free stock photo API keys? =
 Create a free key at [Unsplash](https://unsplash.com/oauth/applications), [Pexels](https://www.pexels.com/api/new/) or [Pixabay](https://pixabay.com/api/docs/), then paste it under **Image Generator → Settings → Stock Photos** and click **Test Connection**. You can also define `AIMG_UNSPLASH_KEY`, `AIMG_PEXELS_KEY` or `AIMG_PIXABAY_KEY` in `wp-config.php`. New Unsplash keys are limited to 50 searches an hour until Unsplash approves them for production.
+
+= Can I design my own image templates? =
+**Yes.** Go to **Image Generator → Image Templates → Add New** to open the Template Studio. Start from one of 10 ready-made designs or a blank canvas, add backgrounds, images, overlays, shapes, patterns, frames and text, and use tags like `{title}`, `{category}` or `{custom_field:key}` so each post gets its own text. Templates are drawn on your server, so they cost nothing to use. You can export a template as JSON and import it on another site.
+
+= Which images can I use inside a template? =
+Background and image layers can show an image from your **Media Library**, the **post's featured image**, the **first image in the post**, the **site logo**, the **site icon**, the **author's avatar** (uploaded to the Media Library), a **stock photo picked for the post** (Unsplash, Pexels or Pixabay, searched with the post title or your own search text) or an **AI image made for the post** (from your own prompt). Stock and AI images are fetched once per post, in the background, and reused when you regenerate.
 
 = Do I need to credit stock photographers? =
 Unsplash, Pexels and Pixabay photos are free to use, and the libraries ask you to credit photographers where you can. The plugin adds a credit with links to the image caption (you can turn this off under Settings → Stock Photos) and always saves it with the image.
@@ -206,7 +225,7 @@ Automatic generation only fires when a post is saved without a featured image. *
 **Yes.** The block editor integration is the plugin's flagship feature. You'll find the ✨ button on Image and Media & Text block toolbars and a dedicated **AI Featured Image** panel in the document sidebar.
 
 = Does it work with the Classic Editor, Elementor, Divi, Beaver Builder, or Bricks? =
-The on-demand generation modal is built for Gutenberg. **Automatic featured image generation works with every editor**, because it runs whenever WordPress saves a post — so Classic Editor, Elementor, Divi, Beaver Builder, Bricks, and any other builder all benefit from auto-generated thumbnails.
+The editor buttons are built for Gutenberg, but the same modal is available in **Media → Library → Generate Image**, so you can create template, AI and stock images there and use them in any builder. **Automatic featured image generation works with every editor**, because it runs whenever WordPress saves a post — so Classic Editor, Elementor, Divi, Beaver Builder, Bricks, and any other builder all benefit from auto-generated thumbnails.
 
 = Does it work with WooCommerce products? =
 **On demand, yes.** Open a product, download, course, or any custom post type that supports featured images, and use the AI Featured Image panel or the Media Library modal to generate and assign an image. Automatic generation on save currently covers posts and pages only; extending it to every public post type is next on the roadmap.
@@ -215,16 +234,16 @@ The on-demand generation modal is built for Gutenberg. **Automatic featured imag
 **Yes.** Generated images are stored as standard Media Library attachments with proper alt text, so SEO plugins can read them, expose them in Open Graph and Twitter Card tags, and include them in sitemaps.
 
 = Will it slow down my site? =
-**No.** Template rendering uses PHP's GD library (already loaded) and only runs when a post is saved without a featured image — or when you explicitly trigger it from the editor. Automatic AI images are created in a single background task per post (Action Scheduler when available, otherwise WP-Cron), so saving a post never waits for the AI service. There's no frontend overhead.
+**No.** Template rendering uses PHP's GD library (already loaded) and only runs when a post is saved without a featured image — or when you explicitly trigger it from the editor. Automatic AI images and stock photos are fetched in a single background task per post (Action Scheduler when available, otherwise WP-Cron), so saving a post never waits for an outside service. There's no frontend overhead.
 
 = I moved a site that ran on a Windows server. Why do some older generated images point to the old folder? =
 On Windows, versions before 1.4.9 saved the full file path of generated images (for example `C:/sites/example/wp-content/uploads/2026/04/image.png`) instead of the path inside the uploads folder. They keep working on the same server. After a move, back up your database and remove the old uploads prefix, for example with WP-CLI: `wp search-replace 'C:/sites/example/wp-content/uploads/' '' wp_postmeta --dry-run` (run it again without `--dry-run` once the result looks right). Images generated with 1.4.9 or later are not affected.
 
 = Is it compatible with multisite? =
-Yes. Each site on the network can configure its own templates and API key.
+Yes. Each site on the network can configure its own templates and API keys.
 
 = Is the plugin GDPR-friendly? =
-Template-based generation runs entirely on your server, nothing leaves your site. AI generation sends only a prompt to OpenAI: the text you type, or — for automatic AI images and the *Write a prompt from this post* button — a prompt built from your prompt template, which by default contains the post's title and excerpt. No visitor data is ever sent. If your posts contain personal information, edit the prompt template so it doesn't include it.
+Template-based generation runs entirely on your server, nothing leaves your site (except for templates with a stock photo or AI image layer). Stock photo searches send only search terms (what you type, or keywords from the post title) to the library you use. AI generation sends only a prompt to OpenAI: the text you type, or — for automatic AI images and the *Write a prompt from this post* button — a prompt built from your prompt template, which by default contains the post's title and excerpt. No visitor data is ever sent. If your posts contain personal information, edit the prompt template so it doesn't include it.
 
 = Can I translate the plugin? =
 **Yes.** The plugin is fully translation-ready with a bundled `.pot` file. Both PHP and JavaScript strings are translatable.
@@ -239,7 +258,9 @@ Use the [plugin support forum on WordPress.org](https://wordpress.org/support/pl
 - **AI generation fails or times out**: check that your server can make outbound HTTPS requests, that PHP's `max_execution_time` is at least 60 seconds, and that your OpenAI API key has billing enabled.
 - **"The model … does not exist" (or similar) error**: your OpenAI account doesn't have access to the selected model. Pick another **Image Model** under **Image Generator → Settings**; GPT Image 2.5 Flare is the default.
 - **"No templates available" in the editor modal**: create at least one template under **Image Generator → Image Templates**.
-- **Image looks wrong / wrong colors**: check your template's background colors, the default text color under Settings, and your overlay PNG transparency.
+- **A stock photo tab asks for an API key**: add a free key for that library under **Image Generator → Settings → Stock Photos** and click **Test Connection**.
+- **"… has had too many requests from this site"**: the stock library's hourly limit is used up. Wait an hour, or apply for production access (Unsplash allows 50 searches an hour until then).
+- **Image looks wrong**: open the template in the Template Studio and click **Exact preview** to see the image your server makes; check layer order, colors and the image source of each layer.
 - **Cache plugins showing stale images**: clear page, object, and CDN caches after generating new images.
 - **Compatibility issues**: temporarily disable other plugins to identify conflicts and let us know via the support forum.
 
@@ -247,6 +268,7 @@ Use the [plugin support forum on WordPress.org](https://wordpress.org/support/pl
 
 ✅ Build **3–5 well-designed templates** so the random fallback always looks on-brand.
 ✅ Use **Custom Prompt** mode for hero images and standout posts; use **Templates** for everyday post thumbnails.
+✅ For photo-style thumbnails that still look like your brand, use a template with a **stock photo** background.
 ✅ Keep prompts **specific** — *"a sunlit forest path in autumn, photorealistic, soft lighting"* beats *"forest"*.
 ✅ Define `AIMG_API_KEY` in `wp-config.php` rather than storing it in the database.
 ✅ Pair this plugin with an image optimization plugin (Smush, ShortPixel, Imagify) so generated images load fast.
@@ -271,14 +293,14 @@ Source: https://fonts.google.com
 Each font's license, with its copyright notice, ships in `assets/fonts/licenses/`.
 
 = AI Image Generation =
-AI image generation calls a third-party API (**OpenAI** by default, `https://api.openai.com/v1/images/generations`). You are responsible for the API key, usage costs, and compliance with the provider's [terms of use](https://openai.com/policies/terms-of-use) and [privacy policy](https://openai.com/policies/privacy-policy). **Nothing is sent to an external service unless you add an API key and either generate from a prompt, click *Write a prompt from this post*, or choose an AI method for automatic featured images.** Template-based generation never leaves your server.
+AI image generation calls a third-party API (**OpenAI** by default, `https://api.openai.com/v1/images/generations`). You are responsible for the API key, usage costs, and compliance with the provider's [terms of use](https://openai.com/policies/terms-of-use) and [privacy policy](https://openai.com/policies/privacy-policy). **Nothing is sent to an external service unless you add an API key and either generate from a prompt, click *Write a prompt from this post*, choose an AI method for automatic featured images, or use a template with an AI image layer.** Other template-based generation never leaves your server.
 
 = Stock Photos =
 Searching or importing stock photos calls the library you choose: **Unsplash** (`api.unsplash.com`, images from `images.unsplash.com`), **Pexels** (`api.pexels.com`, images from `images.pexels.com`) or **Pixabay** (`pixabay.com/api`, images from `pixabay.com`). The plugin sends your API key and the search terms — what you type, or keywords from the post title (or the template's search text) for automatic images. **Nothing is sent unless you add a key and search, test the key, choose a stock method for automatic featured images, or use a template with a stock photo layer.** Thumbnails in search results are loaded from the library in the editor, as the libraries require; the photo you pick is downloaded to your Media Library. Unsplash: [terms](https://unsplash.com/terms), [API guidelines](https://help.unsplash.com/en/articles/2511245-unsplash-api-guidelines), [privacy](https://unsplash.com/privacy). Pexels: [terms](https://www.pexels.com/terms-of-service/), [license](https://www.pexels.com/license/), [privacy](https://www.pexels.com/privacy-policy/). Pixabay: [terms](https://pixabay.com/service/terms/), [license](https://pixabay.com/service/license-summary/), [privacy](https://pixabay.com/service/privacy/).
 
 == Privacy ==
 
-- **Template-based generation** runs entirely on your server. No data is sent to third parties.
+- **Template-based generation** runs entirely on your server. No data is sent to third parties, unless a template has a stock photo or AI image layer (then the same rules as below apply).
 - **AI generation** sends a prompt to OpenAI (or your configured endpoint): the prompt you type, or — for automatic AI images — one built from your prompt template, which by default includes the post's title and excerpt. No user or visitor data is transmitted.
 - **Stock photo searches** send search terms to the library you use (Unsplash, Pexels or Pixabay). No user or visitor data is transmitted.
 - The plugin does not set cookies, track users, or load any external scripts on the frontend.
