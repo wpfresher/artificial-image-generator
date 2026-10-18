@@ -2,84 +2,86 @@
  * Image Generator — admin notice dismissal.
  */
 
-( function ( $ ) {
-	'use strict';
+const settings = window.aimgNotices || {};
 
-	var settings = window.aimgNotices || {};
-
-	/**
-	 * Send a notice action and remove the notice on success.
-	 *
-	 * @param {jQuery} $button The clicked button.
-	 * @param {string} action  The AJAX action.
-	 */
-	function sendNoticeAction( $button, action ) {
-		var $notice = $button.closest( '.aimg-admin-notice' );
-		var errorMessage =
-			settings.error || 'Something went wrong. Please try again.';
-
-		$notice.find( 'button' ).prop( 'disabled', true );
-
-		$.post( settings.ajaxUrl, {
-			action: action,
-			nonce: settings.nonce,
-			notice_id: $button.data( 'notice-id' ),
+/**
+ * Send a notice action for a notice.
+ *
+ * @param {string} action   The AJAX action.
+ * @param {string} noticeId The notice ID.
+ * @return {Promise<Object>} The JSON response.
+ */
+const sendNoticeAction = ( action, noticeId ) =>
+	window
+		.fetch( settings.ajaxUrl, {
+			method: 'POST',
+			credentials: 'same-origin',
+			body: new window.URLSearchParams( {
+				action,
+				nonce: settings.nonce,
+				notice_id: noticeId,
+			} ),
 		} )
-			.done( function ( response ) {
-				if ( response && response.success ) {
-					$notice.fadeOut( 300, function () {
-						$( this ).remove();
-					} );
-					return;
-				}
+		.then( ( response ) => response.json() );
 
-				window.alert(
-					( response && response.data && response.data.message ) ||
-						errorMessage
-				);
-				$notice.find( 'button' ).prop( 'disabled', false );
-			} )
-			.fail( function ( xhr ) {
-				var response = xhr && xhr.responseJSON;
+/**
+ * Run a notice button's action and remove the notice on success.
+ *
+ * @param {HTMLElement} button The clicked button.
+ * @param {string}      action The AJAX action.
+ */
+const handleButton = ( button, action ) => {
+	const notice = button.closest( '.aimg-admin-notice' );
+	const buttons = notice.querySelectorAll( 'button' );
+	const fallback =
+		settings.error || 'Something went wrong. Please try again.';
 
-				window.alert(
-					( response && response.data && response.data.message ) ||
-						errorMessage
-				);
-				$notice.find( 'button' ).prop( 'disabled', false );
-			} );
+	buttons.forEach( ( item ) => ( item.disabled = true ) );
+
+	sendNoticeAction( action, button.dataset.noticeId )
+		.then( ( response ) => {
+			if ( ! response?.success ) {
+				throw new Error( response?.data?.message || fallback );
+			}
+
+			notice.remove();
+		} )
+		.catch( ( error ) => {
+			let message = notice.querySelector( '.aimg-notice-error' );
+
+			if ( ! message ) {
+				message = document.createElement( 'p' );
+				message.className = 'aimg-notice-error';
+				notice
+					.querySelector( '.aimg-notice-content' )
+					.append( message );
+			}
+
+			message.textContent =
+				error instanceof SyntaxError ? fallback : error.message;
+			buttons.forEach( ( item ) => ( item.disabled = false ) );
+		} );
+};
+
+document.addEventListener( 'click', ( event ) => {
+	const button = event.target.closest( 'button' );
+	const notice = button?.closest( '.aimg-admin-notice' );
+
+	if ( ! notice ) {
+		return;
 	}
 
-	$( function () {
-		// Dismiss a notice permanently.
-		$( document ).on( 'click', '.aimg-notice-dismiss', function ( event ) {
-			event.preventDefault();
-			sendNoticeAction( $( this ), 'aimg_dismiss_notice' );
-		} );
-
-		// Hide a notice for a few days.
-		$( document ).on(
-			'click',
-			'.aimg-notice-remind-later',
-			function ( event ) {
-				event.preventDefault();
-				sendNoticeAction( $( this ), 'aimg_remind_later_notice' );
-			}
-		);
-
+	if ( button.classList.contains( 'aimg-notice-dismiss' ) ) {
+		event.preventDefault();
+		handleButton( button, 'aimg_dismiss_notice' );
+	} else if ( button.classList.contains( 'aimg-notice-remind-later' ) ) {
+		event.preventDefault();
+		handleButton( button, 'aimg_remind_later_notice' );
+	} else if ( button.classList.contains( 'notice-dismiss' ) ) {
 		// The core "X" button hides the notice itself, so just snooze it.
-		$( document ).on(
-			'click',
-			'.aimg-admin-notice .notice-dismiss',
-			function () {
-				$.post( settings.ajaxUrl, {
-					action: 'aimg_remind_later_notice',
-					nonce: settings.nonce,
-					notice_id: $( this )
-						.closest( '.aimg-admin-notice' )
-						.data( 'notice-id' ),
-				} );
-			}
-		);
-	} );
-} )( window.jQuery );
+		sendNoticeAction(
+			'aimg_remind_later_notice',
+			notice.dataset.noticeId
+		).catch( () => {} );
+	}
+} );

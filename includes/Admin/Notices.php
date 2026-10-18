@@ -281,7 +281,7 @@ class Notices {
 			return;
 		}
 
-		wp_enqueue_script( 'aimg-notices', AIMG_ASSETS_URL . 'js/notices.js', array( 'jquery' ), AIMG_VERSION, true );
+		wp_enqueue_script( 'aimg-notices', AIMG_ASSETS_URL . 'js/notices.js', array(), AIMG_VERSION, true );
 
 		wp_localize_script(
 			'aimg-notices',
