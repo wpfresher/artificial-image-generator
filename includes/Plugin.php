@@ -251,6 +251,7 @@ class Plugin {
 			new Admin\Actions();
 			new Admin\Editor();
 			new Admin\MediaLibrary();
+			new Admin\Notices();
 		}
 	}
 }

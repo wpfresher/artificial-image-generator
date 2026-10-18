@@ -4,7 +4,7 @@ Tags: ai, ai image, image generator, featured image, block editor
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.8.1
+Stable tag: 1.8.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -324,6 +324,9 @@ Searching or importing stock photos calls the library you choose: **Unsplash** (
 16. Settings — stock photo API keys with Test Connection, and the library, orientation, size and credit options.
 
 == Changelog ==
+= 1.8.2 ( 18th October 2026 ) =
+* New: Admin notices for announcements and offers, with "Remind Me Later" and "Dismiss" options. Offers are not shown while Image Generator Pro is active.
+
 = 1.8.0 ( 11th October 2026 ) =
 * New: **Free stock photos from Unsplash, Pexels and Pixabay.** Search them in the editor and the Media Library with orientation and color filters, and insert one with a click. Photos are imported with alt text and the photographer's credit, and importing the same photo again reuses it.
 * New: Stock photos as an automatic featured image method ("Stock photo" or "Stock photo, template if none is found"), picked with keywords from the post title in the background.
