@@ -4,7 +4,7 @@ Tags: ai, ai image, image generator, featured image, block editor
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.8.1
+Stable tag: 1.8.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -34,27 +34,11 @@ Images inside your templates can come from your **Media Library**, the **post's 
 
 Whether you run a blog, news site, magazine, portfolio, affiliate site, online store, or membership platform, this plugin gives every post a polished, **SEO-friendly featured image** — without the manual work.
 
-[**🚀 Upgrade to Pro**](https://beautifulplugins.com/plugins/image-generator-pro/) | [**📄 Plugin Documentation**](https://beautifulplugins.com/docs/) | [**💻 Support**](https://beautifulplugins.com/contact/)
-
-= Two Powerful Ways to Create Images =
-
-1. **Inside the block editor or the Media Library (on demand)**: make an image from a template, an AI prompt or a stock photo while you're writing, and drop it straight into an Image block, a Media & Text block, or set it as the post's Featured Image.
-2. **Automatic on publish (hands-off)**: when a post or page has no featured image, the plugin creates one for you — **from your own image template** (free, instant, on-brand), **with AI** (a unique image written from the post's title and excerpt) or **from a stock photo** that matches the post title. You choose the method in Settings, and each one can fall back to a template.
-
-Every image — template-rendered, AI-created or a stock photo — is saved to the **WordPress Media Library** with proper alt text, so it works with any theme, page builder, CDN, image-optimization plugin, lazy loader, or SEO plugin.
+[**🚀 Upgrade to Pro**](https://beautifulplugins.com/plugins/image-generator-pro/) | [**📄 Plugin Documentation**](https://beautifulplugins.com/docs/image-generator/) | [**💻 Support**](https://beautifulplugins.com/support/)
 
 = Watch video tutorial on how to use the Image Generator plugin =
 
 [youtube https://www.youtube.com/watch?v=GmFg7iXddP8]
-
-= Why Featured Images Matter for SEO and Engagement =
-
-- **Higher search rankings**: Google rewards visually rich content with better placement in search results and Google Discover.
-- **Better click-through rates**: posts with attractive thumbnails get noticeably more clicks from search results, archive pages, and category listings.
-- **More social shares**: Facebook, Twitter/X, LinkedIn, and Pinterest all use the featured image when someone shares your URL. No featured image = no preview = fewer clicks.
-- **Pinterest traffic**: pin-worthy custom images can drive long-tail referral traffic for years.
-- **Brand consistency**: reusable templates keep every post on-brand without hiring a designer.
-- **Improved Core Web Vitals**: properly attached, optimized featured images load predictably and avoid layout shift.
 
 = Perfect For =
 
@@ -143,35 +127,6 @@ The **AI Featured Image** panel can also (re)generate the featured image in one 
 3. If you already set a featured image, nothing happens.
 4. If you didn't, a template image is rendered right away from the post title — or an AI image or stock photo is fetched in the background — saved to the Media Library and attached as the post thumbnail.
 
-== Use Cases ==
-
-= Daily Bloggers =
-Publish a post, hit Update, and walk away. Your readers and Google get a polished featured image every time, without you ever opening Canva.
-
-= News and Magazine Sites =
-Generate consistent on-brand thumbnails for breaking news pieces and category archives, no designer in the loop.
-
-= WooCommerce Stores =
-Auto-generate placeholder product images for new SKUs while real photos are still being shot. Then replace at your own pace.
-
-= Affiliate Roundups and Listicles =
-Use **Custom Prompt** mode to generate unique hero images for *"Best Standing Desks 2026"* style posts that don't look like every other affiliate site.
-
-= Agencies and Multi-Site Networks =
-Configure templates once, set them as defaults across all client sites, and stop fielding *"why doesn't this post have an image?"* tickets.
-
-= Headless and Decoupled Sites =
-Use the REST API endpoints to trigger image generation from a Next.js, Astro, or Gatsby frontend, a CLI script, or a CI pipeline.
-
-== Image Generator vs. Manual Workflows ==
-Without Image Generator | With Image Generator
-
-* **Add a featured image to a new post** — Without: find a stock photo, download, upload, set as featured. With Image Generator: publish — done.
-* **Generate a unique hero image** — Without: open Midjourney/ChatGPT, save, upload, insert. With Image Generator: click ✨ in the toolbar, type a prompt, done.
-* **Use a free stock photo** — Without: search a stock site, download, upload, add the credit. With Image Generator: search in the editor, click *Insert Photo* — credit included.
-* **Keep thumbnails on-brand across the site** — Without: manual design work, every post. With Image Generator: build a template once, reused forever.
-* **Generate placeholders for 50 imported posts** — Without: tedious manual upload. With Image Generator: bulk-saving triggers auto-generation.
-
 == Installation ==
 
 = Automatic Installation =
@@ -248,31 +203,17 @@ Template-based generation runs entirely on your server, nothing leaves your site
 = Can I translate the plugin? =
 **Yes.** The plugin is fully translation-ready with a bundled `.pot` file. Both PHP and JavaScript strings are translatable.
 
+= Any tips for the best results? =
+* Build **3–5 well-designed templates** so the random fallback always looks on-brand.
+* Use **Custom Prompt** mode for hero images and standout posts; use **Templates** for everyday post thumbnails.
+* For photo-style thumbnails that still look like your brand, use a template with a **stock photo** background.
+* Keep prompts **specific** — *"a sunlit forest path in autumn, photorealistic, soft lighting"* beats *"forest"*.
+* Define `AIMG_API_KEY` in `wp-config.php` rather than storing it in the database.
+* Pair this plugin with an image optimization plugin (Smush, ShortPixel, Imagify) so generated images load fast.
+* Set a recognizable brand color in your templates so visitors associate the look with your site.
+
 = How can I report a bug or request a feature? =
 Use the [plugin support forum on WordPress.org](https://wordpress.org/support/plugin/artificial-image-generator). We read every post.
-
-== Troubleshooting ==
-
-- **"No API key configured" notice in the editor**: add a key under **Image Generator → Settings**, or define `AIMG_API_KEY` in `wp-config.php`.
-- **Thumbnails not displaying on the frontend**: make sure your theme calls `add_theme_support( 'post-thumbnails' )` in `functions.php`.
-- **AI generation fails or times out**: check that your server can make outbound HTTPS requests, that PHP's `max_execution_time` is at least 60 seconds, and that your OpenAI API key has billing enabled.
-- **"The model … does not exist" (or similar) error**: your OpenAI account doesn't have access to the selected model. Pick another **Image Model** under **Image Generator → Settings**; GPT Image 2.5 Flare is the default.
-- **"No templates available" in the editor modal**: create at least one template under **Image Generator → Image Templates**.
-- **A stock photo tab asks for an API key**: add a free key for that library under **Image Generator → Settings → Stock Photos** and click **Test Connection**.
-- **"… has had too many requests from this site"**: the stock library's hourly limit is used up. Wait an hour, or apply for production access (Unsplash allows 50 searches an hour until then).
-- **Image looks wrong**: open the template in the Template Studio and click **Exact preview** to see the image your server makes; check layer order, colors and the image source of each layer.
-- **Cache plugins showing stale images**: clear page, object, and CDN caches after generating new images.
-- **Compatibility issues**: temporarily disable other plugins to identify conflicts and let us know via the support forum.
-
-== Best Practices ==
-
-✅ Build **3–5 well-designed templates** so the random fallback always looks on-brand.
-✅ Use **Custom Prompt** mode for hero images and standout posts; use **Templates** for everyday post thumbnails.
-✅ For photo-style thumbnails that still look like your brand, use a template with a **stock photo** background.
-✅ Keep prompts **specific** — *"a sunlit forest path in autumn, photorealistic, soft lighting"* beats *"forest"*.
-✅ Define `AIMG_API_KEY` in `wp-config.php` rather than storing it in the database.
-✅ Pair this plugin with an image optimization plugin (Smush, ShortPixel, Imagify) so generated images load fast.
-✅ Set a recognizable brand color in your templates so visitors associate the look with your site.
 
 == Third-Party Assets and Licenses ==
 
@@ -324,6 +265,9 @@ Searching or importing stock photos calls the library you choose: **Unsplash** (
 16. Settings — stock photo API keys with Test Connection, and the library, orientation, size and credit options.
 
 == Changelog ==
+= 1.8.2 ( 18th October 2026 ) =
+* New: Admin notices for announcements and offers, with "Remind Me Later" and "Dismiss" options. Offers are not shown while Image Generator Pro is active.
+
 = 1.8.0 ( 11th October 2026 ) =
 * New: **Free stock photos from Unsplash, Pexels and Pixabay.** Search them in the editor and the Media Library with orientation and color filters, and insert one with a click. Photos are imported with alt text and the photographer's credit, and importing the same photo again reuses it.
 * New: Stock photos as an automatic featured image method ("Stock photo" or "Stock photo, template if none is found"), picked with keywords from the post title in the background.
@@ -442,21 +386,3 @@ Searching or importing stock photos calls the library you choose: **Unsplash** (
 
 = 1.8.0 =
 Adds free stock photos from Unsplash, Pexels and Pixabay and photo templates. Older templates are converted to the Template Studio format in the background only when they look exactly the same. Removes aimg_generate_preview().
-
-= 1.7.1 =
-The classic template form is replaced by the Template Studio. Your templates and images are not changed.
-
-= 1.7.0 =
-Adds the visual Template Studio. Your existing templates and images are not changed; a template switches to the Studio format only when you save it in the Studio.
-
-== Support and Feedback ==
-
-Have questions, need help, or want to suggest a feature? We'd love to hear from you!
-- **Plugin Support Forum:** [https://wordpress.org/support/plugin/artificial-image-generator](https://wordpress.org/support/plugin/artificial-image-generator)
-- **Plugin Homepage:** [https://beautifulplugins.com/plugins/image-generator-pro/](https://beautifulplugins.com/plugins/image-generator-pro/)
-
-== License ==
-This plugin is released under the GPLv2 or later. See [https://www.gnu.org/licenses/gpl-2.0.html](https://www.gnu.org/licenses/gpl-2.0.html) for details.
-
-**Thank you for using Image Generator!**
-We're dedicated to helping you create visually stunning, SEO-optimized posts and pages with ease — powered by AI when you want it, and reliable image templates when you don't.
