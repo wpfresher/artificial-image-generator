@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-15T14:56:48+00:00\n"
+"POT-Creation-Date: 2026-11-15T15:11:23+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: artificial-image-generator\n"
@@ -135,15 +135,15 @@ msgid "Delete"
 msgstr ""
 
 #: includes/Admin/Notices.php:76
-msgid "🎃 Halloween Sale - Flat 60% OFF Image Generator Pro!"
+msgid "🖤 Black Friday Mega Sale - Flat 70% OFF Image Generator Pro!"
 msgstr ""
 
 #: includes/Admin/Notices.php:77
-msgid "Get 60% off <strong>Image Generator Pro</strong> with code \"<strong>SPOOKY60</strong>\". Unlock premium template designs, rating, progress bar and badge layers, WooCommerce price, discount and rating tags, and more. Hurry, the offer ends on Halloween!"
+msgid "Get a massive 70% OFF everything at BeautifulPlugins! Use code \"<strong>MEGASALE70</strong>\" at checkout to unlock your discount across all premium plugins. Don’t miss out! The Mega Sale ends December 1, 2026, at 11:59 PM."
 msgstr ""
 
 #: includes/Admin/Notices.php:78
-msgid "Claim Flat 60% Off Now"
+msgid "Claim Flat 70% Off Now"
 msgstr ""
 
 #: includes/Admin/Notices.php:198
