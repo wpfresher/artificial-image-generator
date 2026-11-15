@@ -107,6 +107,12 @@ class Plugin {
 			define( 'AIMG_ASSETS_URL', AIMG_URL . 'assets/' );
 		}
 
+		// Version of the integration API in includes/Api.php. Raised only when
+		// that contract changes; other plugins check this, not AIMG_VERSION.
+		if ( ! defined( 'AIMG_API_VERSION' ) ) {
+			define( 'AIMG_API_VERSION', Api::VERSION );
+		}
+
 		// Fallback title font size, in points, for templates saved without one.
 		if ( ! defined( 'AIMG_DEFAULT_FONT_SIZE' ) ) {
 			define( 'AIMG_DEFAULT_FONT_SIZE', 40 );

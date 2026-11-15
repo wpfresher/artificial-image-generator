@@ -71,14 +71,14 @@ class Notices {
 	public function get_notices() {
 		$notices = array(
 			array(
-				'id'          => 'halloween_sale_2026',
+				'id'          => 'black_friday_sale_2026',
 				'type'        => 'promotional',
-				'title'       => __( '🎃 Halloween Sale - Flat 60% OFF Image Generator Pro!', 'artificial-image-generator' ),
-				'description' => __( 'Get 60% off <strong>Image Generator Pro</strong> with code "<strong>SPOOKY60</strong>". Unlock premium template designs, rating, progress bar and badge layers, WooCommerce price, discount and rating tags, and more. Hurry, the offer ends on Halloween!', 'artificial-image-generator' ),
-				'button_text' => __( 'Claim Flat 60% Off Now', 'artificial-image-generator' ),
-				'button_url'  => 'https://beautifulplugins.com/plugins/image-generator-pro/?utm_source=plugin&utm_medium=notice&utm_campaign=halloween-sale&discount=SPOOKY60',
-				'start_date'  => '2026-10-17',
-				'end_date'    => '2026-10-31',
+				'title'       => __( '🖤 Black Friday Mega Sale - Flat 70% OFF Image Generator Pro!', 'artificial-image-generator' ),
+				'description' => __( 'Get a massive 70% OFF everything at BeautifulPlugins! Use code "<strong>MEGASALE70</strong>" at checkout to unlock your discount across all premium plugins. Don’t miss out! The Mega Sale ends December 1, 2026, at 11:59 PM.', 'artificial-image-generator' ),
+				'button_text' => __( 'Claim Flat 70% Off Now', 'artificial-image-generator' ),
+				'button_url'  => 'https://beautifulplugins.com/plugins/image-generator-pro/?utm_source=plugin&utm_medium=notice&utm_campaign=black-friday-mega-sale&discount=MEGASALE70',
+				'start_date'  => '2026-11-06',
+				'end_date'    => '2026-12-01',
 				'remind_days' => 2,
 			),
 		);
