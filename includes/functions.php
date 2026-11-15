@@ -497,3 +497,59 @@ function aimg_delete_upload_by_url( $url ) {
 
 	return true;
 }
+
+/**
+ * Render an image template to a file, without contacting any online service.
+ *
+ * Part of the integration API (AIMG_API_VERSION 1). See ArtificialImageGenerator\Api::render().
+ *
+ * @param int   $template_id Template ID, or 0 for the default (else random) template.
+ * @param array $args        `post_id` and `tags` (merge-tag values as name => text).
+ *
+ * @since 1.9.0
+ * @return array|WP_Error `path` and `template_id`.
+ */
+function aimg_render_template( $template_id, $args = array() ) {
+	return \ArtificialImageGenerator\Api::render( $template_id, $args );
+}
+
+/**
+ * Add a file made by aimg_render_template() to the Media Library.
+ *
+ * Part of the integration API (AIMG_API_VERSION 1). See ArtificialImageGenerator\Api::import().
+ *
+ * @param string $path Absolute path of the rendered file.
+ * @param array  $args `title`, `alt`, `caption`, `parent`, `template_id`, `source`.
+ *
+ * @since 1.9.0
+ * @return int|WP_Error Attachment ID.
+ */
+function aimg_import_rendered_image( $path, $args = array() ) {
+	return \ArtificialImageGenerator\Api::import( $path, $args );
+}
+
+/**
+ * Describe an image template: size, text layers, merge tags, whether it needs an online service.
+ *
+ * Part of the integration API (AIMG_API_VERSION 1). See ArtificialImageGenerator\Api::summary().
+ *
+ * @param int $template_id Template ID.
+ *
+ * @since 1.9.0
+ * @return array|WP_Error
+ */
+function aimg_get_template_summary( $template_id ) {
+	return \ArtificialImageGenerator\Api::summary( $template_id );
+}
+
+/**
+ * Summaries of every published image template, ordered by title.
+ *
+ * Part of the integration API (AIMG_API_VERSION 1). See ArtificialImageGenerator\Api::templates().
+ *
+ * @since 1.9.0
+ * @return array[]
+ */
+function aimg_get_template_summaries() {
+	return \ArtificialImageGenerator\Api::templates();
+}

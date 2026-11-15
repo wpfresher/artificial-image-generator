@@ -693,16 +693,47 @@ class Generator {
 	}
 
 	/**
+	 * Render a template with merge-tag values given by the caller.
+	 *
+	 * Like render(), but every tag can be overridden, not just `{title}`, so one
+	 * template can make several different images for the same post (one per
+	 * section of an article, for example). Tags not given keep the post's values.
+	 * 1.x templates only draw `{title}`, so other tags do not change them.
+	 *
+	 * Never fetches remote images: it does not enter Rendering\Hybrid::fetching(),
+	 * so `stock` and `ai` layers draw from the post's cache or the local sample.
+	 *
+	 * @param int   $template_id Template post ID.
+	 * @param array $tags        Values as tag name => text; custom fields as "custom_field:key".
+	 * @param int   $post_id     Post the image is for, or 0.
+	 *
+	 * @since 1.9.0
+	 * @return string|false Absolute path to the rendered file, or false on failure.
+	 */
+	public static function render_template( $template_id, $tags = array(), $post_id = 0 ) {
+		$tags  = is_array( $tags ) ? $tags : array();
+		$title = isset( $tags['title'] ) ? (string) $tags['title'] : '';
+
+		if ( Templates\Repository::has_document( $template_id ) ) {
+			return self::render_document( $template_id, $title, $post_id, $tags );
+		}
+
+		return self::render( $template_id, $title, $post_id );
+	}
+
+	/**
 	 * Render a template that has a v2 document.
 	 *
 	 * @param int    $template_id Template post ID.
 	 * @param string $title       Title for the `{title}` tag. Falls back to the template title.
 	 * @param int    $post_id     Post the image is for, or 0.
+	 * @param array  $tags        Other merge-tag values to use instead of the post's.
 	 *
 	 * @since 1.7.0
+	 * @since 1.9.0 Added `$tags`.
 	 * @return string|false Absolute path to the rendered file, or false on failure.
 	 */
-	private static function render_document( $template_id, $title, $post_id = 0 ) {
+	private static function render_document( $template_id, $title, $post_id = 0, $tags = array() ) {
 		$template = aimg_get_template( $template_id );
 
 		if ( ! $template || 'publish' !== $template->post_status ) {
@@ -721,7 +752,7 @@ class Generator {
 		 * @since 1.7.0
 		 */
 		$document = apply_filters( 'aimg_template_document', Templates\Repository::get_document( $template_id ), $template_id, $title );
-		$image    = Rendering\GdRenderer::render( $document, Templates\MergeTags::values( $post_id, array( 'title' => $title ) ), $post_id );
+		$image    = Rendering\GdRenderer::render( $document, Templates\MergeTags::values( $post_id, array_merge( $tags, array( 'title' => $title ) ) ), $post_id );
 
 		if ( ! $image ) {
 			return false;

@@ -4,7 +4,7 @@ Tags: ai, ai image, image generator, featured image, block editor
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.8.4
+Stable tag: 1.8.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,6 +13,8 @@ AI image generator for WordPress. Auto-create featured images, post thumbnails &
 == Description ==
 
 [**Image Generator**](https://beautifulplugins.com/plugins/image-generator-pro/) is the all-in-one **AI image generator and automatic featured image plugin for WordPress**. Create eye-catching **featured images, post thumbnails, hero banners, and social media images** in two clicks — directly inside the **Gutenberg block editor**, or automatically every time you publish a post or page.
+
+[**🚀 Upgrade to Pro**](https://beautifulplugins.com/plugins/image-generator-pro/) | [**💻 Live Demo Site**](https://demo.beautifulplugins.com/image-generator/) | [**📄 Plugin Documentation**](https://beautifulplugins.com/docs/image-generator/) | [**🎧 Support**](https://beautifulplugins.com/support/)
 
 Stop switching between design tools, AI apps and stock photo sites. Stop publishing posts with broken thumbnail spots. With **Image Generator** you can:
 
@@ -34,7 +36,7 @@ Images inside your templates can come from your **Media Library**, the **post's 
 
 Whether you run a blog, news site, magazine, portfolio, affiliate site, online store, or membership platform, this plugin gives every post a polished, **SEO-friendly featured image** — without the manual work.
 
-[**🚀 Upgrade to Pro**](https://beautifulplugins.com/plugins/image-generator-pro/) | [**📄 Plugin Documentation**](https://beautifulplugins.com/docs/image-generator/) | [**💻 Support**](https://beautifulplugins.com/support/)
+[**🚀 Upgrade to Pro**](https://beautifulplugins.com/plugins/image-generator-pro/) | [**💻 Live Demo Site**](https://demo.beautifulplugins.com/image-generator/) | [**📄 Plugin Documentation**](https://beautifulplugins.com/docs/image-generator/) | [**🎧 Support**](https://beautifulplugins.com/support/)
 
 = Watch video tutorial on how to use the Image Generator plugin =
 
@@ -265,10 +267,13 @@ Searching or importing stock photos calls the library you choose: **Unsplash** (
 16. Settings — stock photo API keys with Test Connection, and the library, orientation, size and credit options.
 
 == Changelog ==
-= 1.8.2 ( 18th October 2026 ) =
+= 1.8.5 =
+* New: Support Sokket MCP Connector for generating images directly from ChatGPT, Claude, Gemini, and other providers.
+
+= 1.8.2 =
 * New: Admin notices for announcements and offers, with "Remind Me Later" and "Dismiss" options. Offers are not shown while Image Generator Pro is active.
 
-= 1.8.0 ( 11th October 2026 ) =
+= 1.8.0 =
 * New: **Free stock photos from Unsplash, Pexels and Pixabay.** Search them in the editor and the Media Library with orientation and color filters, and insert one with a click. Photos are imported with alt text and the photographer's credit, and importing the same photo again reuses it.
 * New: Stock photos as an automatic featured image method ("Stock photo" or "Stock photo, template if none is found"), picked with keywords from the post title in the background.
 * New: **Hybrid templates.** A background or image layer can show a stock photo or an AI image made for each post, with your design on top. Two new starters use it.
@@ -278,7 +283,7 @@ Searching or importing stock photos calls the library you choose: **Unsplash** (
 * Dev: Modal tabs can be added with the JS filter `aimgModal.tabs` (action `aimg_enqueue_modal`); new filters `aimg_stock_providers`, `aimg_stock_keywords`, `aimg_stock_stop_words`, `aimg_stock_max_bytes`, `aimg_unsplash_app_name`, `aimg_sanitize_settings`, `aimg_merge_tag_names` and `aimg_studio_sample_tags`; REST endpoints under `/aimg/v1/stock`.
 * Removed: `aimg_generate_preview()`, deprecated in 1.7.1.
 
-= 1.7.1 ( 9th October 2026 ) =
+= 1.7.1 =
 * Enhance: The Template Studio is now the only template editor. Templates made before 1.7.0 open in the Studio and look exactly the same; saving them there keeps their old settings too, so downgrading still works.
 * Enhance: Duplicating an older template now creates a Studio copy.
 * Removed: The classic template form and its save handler.
@@ -288,7 +293,7 @@ Searching or importing stock photos calls the library you choose: **Unsplash** (
 * Enhance: AI requests now wait up to 3 minutes instead of 2, so slow or high-quality images are not cut off. The `aimg_generate_timeout` filter also receives the model and quality.
 * Deprecated: `aimg_generate_preview()`; use `ArtificialImageGenerator\Templates\Repository::update_preview()`. It will be removed in 1.8.0.
 
-= 1.7.0 ( 7th October 2026 ) =
+= 1.7.0 =
 * New: **Visual Template Studio.** Design templates on a canvas with layers you can drag, resize and rotate, with snapping guides, undo/redo and keyboard shortcuts.
 * New: Layer types for backgrounds (color, random palette, gradients, images, the post's featured or first image), images (rounded or circle masks, brightness, contrast, blur, black and white, duotone), overlays and gradient fades, shapes, patterns, frames and text.
 * New: Text fits its box, with max lines, letter case, letter spacing, outline, shadow and highlight boxes, plus tags `{title}`, `{excerpt}`, `{category}`, `{tags}`, `{author}`, `{date}`, `{site_name}`, `{reading_time}` and `{custom_field:key}`, and layers that show only when a tag has a value.
@@ -300,7 +305,7 @@ Searching or importing stock photos calls the library you choose: **Unsplash** (
 * Enhance: Template images made from the editor are now attached to their post in the Media Library.
 * Compatibility: Existing templates look exactly as before and keep their settings; they switch to the Studio only when you save them there. The classic form stays available for templates you haven't changed.
 
-= 1.6.0 ( 6th October 2026 ) =
+= 1.6.0 =
 * New: **Template or AI for automatic featured images.** Choose under Settings → Automatic Featured Images: an image template (default, as before), an AI image, or either one with the other as a fallback.
 * New: Pick which template automatic images use, instead of a random one.
 * New: AI prompt template with tags (`{title}`, `{excerpt}`, `{category}`, `{tags}`, `{site_name}`, `{custom_field:key}`), style presets, and instructions that keep text and watermarks out of AI images.
@@ -322,7 +327,7 @@ Searching or importing stock photos calls the library you choose: **Unsplash** (
 * Fix: Users who can't upload files (such as Contributors) no longer see generate buttons that would only show a permission error, and the panel is hidden on post types without featured images.
 * Fix: AI request timeouts now show a plain message instead of a technical error.
 
-= 1.5.4 ( 6th October 2026 ) =
+= 1.5.4 =
 * New: **Who Can Generate AI Images** setting — allow AI images for Authors and above (default), Editors and above, or Administrators only. Template images stay available to everyone who can upload files.
 * New: **Hourly Limit per User** setting for AI images (default 20, 0 for no limit) to keep API costs under control.
 * New: Developer filters `aimg_can_generate_from_prompt`, `aimg_ai_hourly_limit` and `aimg_generate_timeout`.
@@ -336,7 +341,7 @@ Searching or importing stock photos calls the library you choose: **Unsplash** (
 * Fix: Template settings are now checked against the allowed values when saving.
 * Fix: The template font size is now correctly labelled in points.
 
-= 1.5.3 ( 5th October 2026 ) =
+= 1.5.3 =
 * Fix: Resolved a few minor issues.
 
 = 1.5.0 ( 6th September 2026 ) =
@@ -345,27 +350,27 @@ Searching or importing stock photos calls the library you choose: **Unsplash** (
 * Fix: Template dimensions and title font size are now validated on save, preventing a malformed template from rendering a blank image.
 * Fix: Resolved a few minor issues.
 
-= 1.4.8 ( 21st August 2026 ) =
+= 1.4.8 =
 * Compatibility: Tested up to WordPress 7.1.
 
-= 1.4.5 ( 20th July 2026 ) =
+= 1.4.5 =
 * Fix: Resolved a few minor issues.
 
 = 1.4.3 ( 16th July 2026 ) =
 * Fix: The model 'dall-e-3' does not exist error for new OpenAI accounts. Switched default model to GPT Image 1.
 * New: Added new settings option to select the AI image model (GPT Image 1, GPT Image 1 Mini, DALL·E 2, DALL·E 3).
 
-= 1.4.1 ( 14th July 2026 ) =
+= 1.4.1 =
 * Fix: Resolved a few minor issues.
 
-= 1.4.0 ( 14th June 2026 ) =
+= 1.4.0 =
 * New: Added **image generation** in the Media Library via the "Generate Image" button, allowing users to create images without opening a post or page.
 * New: Added updated plugin screenshots to the WordPress.org plugin page.
 * Enhance: Improved template editor with live preview and better color contrast checks.
 * Fix: Resolved a few minor issues.
 * Compatibility: Tested up to WordPress 7.0.
 
-= 1.3.0 ( 9th May 2026 ) =
+= 1.3.0 =
 * New: Full **block editor (Gutenberg) integration** — toolbar button on Image and Media & Text blocks, plus an AI Featured Image panel in the document sidebar.
 * New: Generate images directly inside the editor from a saved template or a custom AI prompt.
 * New: **AI image generation via OpenAI DALL·E 3** (configurable API key, swappable endpoint and model via filters).
@@ -374,12 +379,12 @@ Searching or importing stock photos calls the library you choose: **Unsplash** (
 * Fix: Resolved minor bugs in the template image generation pipeline.
 * Compatibility: Tested up to WordPress 6.9.
 
-= 1.1.0 ( 3rd March 2026 ) =
+= 1.1.0 =
 * New: Unlimited image templates with custom styles, dimensions, and overlay images.
 * Fix: Compatibility issues with the latest WordPress release.
 * Enhance: Faster image generation with reduced server load.
 
-= 1.0.0 ( 22nd December 2025 ) =
+= 1.0.0 =
 * Initial release.
 
 == Upgrade Notice ==

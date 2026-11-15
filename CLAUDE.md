@@ -52,6 +52,7 @@ for asset-only rebuilds during development use `npx wp-scripts build --webpack-s
 | Class | File | Role |
 |---|---|---|
 | `Plugin` | `includes/Plugin.php` | Singleton bootstrap; defines `AIMG_*` constants; manages flash notice queue |
+| `Api` | `includes/Api.php` | **Stable integration contract** (`AIMG_API_VERSION`, used by the Sokket MCP connector): `templates()`, `summary()`, `render()` (any merge tag overridable, never outbound, refuses `stock`/`ai` layers), `import()` (uploads-only path, provenance `source`). Wrappers: `aimg_render_template()`, `aimg_import_rendered_image()`, `aimg_get_template_summary()`, `aimg_get_template_summaries()`. Change a signature or return shape only together with `Api::VERSION`; `tests/test-api.php` |
 | `PostTypes` | `includes/PostTypes.php` | Registers the hidden `aimg_template` custom post type |
 | `Generator` | `includes/Generator.php` | `generate_for_post()` (all methods), template rendering, `generate_ai()`, Media Library import; stamps provenance meta |
 | `PromptBuilder` | `includes/PromptBuilder.php` | Builds AI prompts from a post: prompt template + merge tags, style presets, negative instructions |

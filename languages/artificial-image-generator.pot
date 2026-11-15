@@ -2,14 +2,14 @@
 # This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Image Generator 1.8.2\n"
+"Project-Id-Version: Image Generator 1.8.5\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/artificial-image-generator\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-18T20:40:53+00:00\n"
+"POT-Creation-Date: 2026-11-15T14:56:48+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: artificial-image-generator\n"
@@ -583,6 +583,63 @@ msgstr ""
 msgid "Delete this template? Images already made with it stay in the Media Library."
 msgstr ""
 
+#: includes/Api.php:100
+msgid "Image template not found."
+msgstr ""
+
+#: includes/Api.php:193
+msgid "This server cannot render images: the GD extension with FreeType support is required."
+msgstr ""
+
+#: includes/Api.php:197
+msgid "The post the image is for does not exist."
+msgstr ""
+
+#: includes/Api.php:212
+#: includes/Generator.php:279
+msgid "There is no published image template to use."
+msgstr ""
+
+#: includes/Api.php:219
+msgid "Image template not found or not published."
+msgstr ""
+
+#: includes/Api.php:223
+msgid "This template uses a stock photo or AI image layer, which needs an online service. Use a template without those layers."
+msgstr ""
+
+#: includes/Api.php:233
+#: includes/Generator.php:289
+#: includes/RestAPI.php:521
+msgid "Failed to generate image from template."
+msgstr ""
+
+#: includes/Api.php:279
+msgid "The generated image could not be found in the uploads directory."
+msgstr ""
+
+#: includes/Api.php:321
+msgid "Merge tags must be an object of name => text."
+msgstr ""
+
+#. translators: %d: maximum number of merge tags
+#: includes/Api.php:326
+#, php-format
+msgid "At most %d merge tags can be given."
+msgstr ""
+
+#. translators: %s: merge tag name
+#: includes/Api.php:336
+#, php-format
+msgid "Invalid merge tag name \"%s\". Use a-z and _, or custom_field:key."
+msgstr ""
+
+#. translators: %s: merge tag name
+#: includes/Api.php:341
+#, php-format
+msgid "The value of merge tag \"%s\" must be text."
+msgstr ""
+
 #. translators: %d: number of AI images the user can still generate this hour
 #: includes/functions.php:325
 #, php-format
@@ -623,15 +680,6 @@ msgstr ""
 msgid "Stock photo, template if none is found"
 msgstr ""
 
-#: includes/Generator.php:279
-msgid "There is no published image template to use."
-msgstr ""
-
-#: includes/Generator.php:289
-#: includes/RestAPI.php:521
-msgid "Failed to generate image from template."
-msgstr ""
-
 #: includes/Generator.php:319
 msgid "Add an Unsplash, Pexels or Pixabay API key on the Image Generator settings page."
 msgstr ""
@@ -665,7 +713,7 @@ msgstr ""
 msgid "Could not write the generated image to a temporary file."
 msgstr ""
 
-#: includes/Generator.php:780
+#: includes/Generator.php:811
 msgid "The generated image could not be found on disk."
 msgstr ""
 
