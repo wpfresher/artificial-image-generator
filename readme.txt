@@ -4,7 +4,7 @@ Tags: ai, ai image, image generator, featured image, block editor
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.8.5
+Stable tag: 1.9.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -267,6 +267,12 @@ Searching or importing stock photos calls the library you choose: **Unsplash** (
 16. Settings — stock photo API keys with Test Connection, and the library, orientation, size and credit options.
 
 == Changelog ==
+= 1.9.0 =
+* New: The integration API can make images for other plugins: `Api::generate()` makes one image with the configured method (AI, stock photo or template) and `Api::sources()` reports which methods are ready. AI Content Writer uses it when "Image Generator plugin" is its image source. The existing template methods used by Sokket are unchanged and still make no network requests.
+* New: GPT Image 2.6 Flare and GPT Image 2.6 Sunburst models.
+* Update: Removed GPT Image 2, which OpenAI shuts down on 10 February 2027; sites that selected it use the default model automatically.
+* Dev: `Generator::generate_stock_for_post()` accepts optional search terms.
+
 = 1.8.5 =
 * New: Support Sokket MCP Connector for generating images directly from ChatGPT, Claude, Gemini, and other providers.
 

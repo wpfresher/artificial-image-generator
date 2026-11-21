@@ -64,7 +64,8 @@ class OpenAI implements ProviderInterface {
 		return array(
 			'gpt-image-2.5-flare'    => __( 'GPT Image 2.5 Flare (recommended, fast)', 'artificial-image-generator' ),
 			'gpt-image-2.5-sunburst' => __( 'GPT Image 2.5 Sunburst (most capable)', 'artificial-image-generator' ),
-			'gpt-image-2'            => __( 'GPT Image 2', 'artificial-image-generator' ),
+			'gpt-image-2.6-flare'    => __( 'GPT Image 2.6 Flare', 'artificial-image-generator' ),
+			'gpt-image-2.6-sunburst' => __( 'GPT Image 2.6 Sunburst', 'artificial-image-generator' ),
 		);
 	}
 

@@ -60,7 +60,7 @@ class Test_Providers extends AIMG_TestCase {
 	}
 
 	public function test_only_current_openai_models_are_offered() {
-		$this->assertSame( array( 'gpt-image-2.5-flare', 'gpt-image-2.5-sunburst', 'gpt-image-2' ), array_keys( ( new OpenAI() )->get_models() ) );
+		$this->assertSame( array( 'gpt-image-2.5-flare', 'gpt-image-2.5-sunburst', 'gpt-image-2.6-flare', 'gpt-image-2.6-sunburst' ), array_keys( ( new OpenAI() )->get_models() ) );
 		$this->assertSame( array_keys( ( new OpenAI() )->get_models() ), array_keys( ArtificialImageGenerator\Admin\Settings::get_models() ) );
 	}
 
@@ -82,12 +82,12 @@ class Test_Providers extends AIMG_TestCase {
 
 	public function test_sizes_and_quality() {
 		$this->assertSame( '1536x1024', $this->body( 'gpt-image-2.5-sunburst', array( 'size' => 'landscape' ) )['size'] );
-		$this->assertSame( '1024x1536', $this->body( 'gpt-image-2', array( 'size' => 'portrait' ) )['size'] );
+		$this->assertSame( '1024x1536', $this->body( 'gpt-image-2.6-flare', array( 'size' => 'portrait' ) )['size'] );
 		$this->assertSame( 'high', $this->body( 'gpt-image-2.5-flare', array( 'quality' => 'high' ) )['quality'] );
 		$this->assertArrayNotHasKey( 'quality', $this->body( 'gpt-image-2.5-flare', array( 'quality' => 'auto' ) ) );
 		$this->assertSame( 'xhigh', $this->body( 'gpt-image-2.5-flare', array( 'quality' => 'xhigh' ) )['quality'] );
 		$this->assertSame( 'max', $this->body( 'gpt-image-2.5-sunburst', array( 'quality' => 'max' ) )['quality'] );
-		$this->assertSame( 'high', $this->body( 'gpt-image-2', array( 'quality' => 'max' ) )['quality'], 'GPT Image 2 has no xhigh/max.' );
+		$this->assertSame( 'high', $this->body( 'gpt-image-2.6-flare', array( 'quality' => 'max' ) )['quality'], 'Only GPT Image 2.5 takes xhigh/max.' );
 		$this->assertArrayNotHasKey( 'quality', $this->body( 'gpt-image-2.5-flare', array( 'quality' => 'ultra' ) ) );
 	}
 
@@ -109,8 +109,8 @@ class Test_Providers extends AIMG_TestCase {
 	}
 
 	public function test_limits() {
-		$this->assertSame( 4, $this->body( 'gpt-image-2', array( 'n' => 4 ) )['n'] );
-		$this->assertSame( 10, $this->body( 'gpt-image-2', array( 'n' => 50 ) )['n'] );
+		$this->assertSame( 4, $this->body( 'gpt-image-2.6-flare', array( 'n' => 4 ) )['n'] );
+		$this->assertSame( 10, $this->body( 'gpt-image-2.6-flare', array( 'n' => 50 ) )['n'] );
 
 		$body = ( new OpenAI() )->get_request_body(
 			str_repeat( 'a', 33000 ),
