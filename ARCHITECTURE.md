@@ -21,12 +21,12 @@ artificial-image-generator/
 │   └── Admin/
 │       ├── Admin.php                # Menu, page routing, script enqueuing
 │       ├── Actions.php              # admin_post_aimg_update_template handler
-│       ├── Settings.php             # Settings page and option validation
+│       ├── Settings.php             # Settings app schema, values, save, option validation
+│       ├── SettingsController.php   # GET/POST aimg/v1/settings
 │       ├── Editor.php               # Block editor asset enqueuing
 │       ├── MediaLibrary.php         # upload.php / media-new.php asset enqueuing
-│       ├── ListTables/
-│       │   └── TemplatesTable.php   # WP_List_Table for templates
 │       └── views/
+│           ├── header.php           # Plugin header on every plugin page
 │           ├── img-templates.php    # List screen
 │           ├── add-img-template.php # Add screen
 │           └── edit-img-template.php# Edit screen

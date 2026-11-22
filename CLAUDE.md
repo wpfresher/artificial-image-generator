@@ -65,11 +65,11 @@ for asset-only rebuilds during development use `npx wp-scripts build --webpack-s
 | `RestAPI` | `includes/RestAPI.php` | `aimg/v1/generate`, `/templates`, `/templates/{id}/preview`, `/prompt`, `/status/{post}`, `/featured/{post}` |
 | `Templates\RestController` | `includes/Templates/RestController.php` | Template CRUD (`POST /templates`, `GET/PUT/PATCH/DELETE /templates/{id}`), `POST /templates/preview` (unsaved document → data URI, 60/min per user), `GET /capabilities`; capability filter `aimg_manage_templates_capability` (default `manage_options`) |
 | `Admin\Admin` | `includes/Admin/Admin.php` | Admin menu, page routing (list / add / edit), script enqueuing |
-| `Admin\Settings` | `includes/Admin/Settings.php` | Settings page UI and option validation |
+| `Admin\Settings` | `includes/Admin/Settings.php` | Settings app: `schema()` (tabs + fields, `show_if`, filter `aimg_settings_schema`), `values()` (API keys never included), `save()`, `sanitize_settings()` (still the `register_setting` sanitizer) |
+| `Admin\SettingsController` | `includes/Admin/SettingsController.php` | `GET/POST aimg/v1/settings` (`manage_options`); empty API key fields keep the key, `remove_{id}` clears it |
 | `Admin\Actions` | `includes/Admin/Actions.php` | Template list actions (duplicate, set default, export, delete) via `admin_post_aimg_template_action` |
 | `Admin\Editor` | `includes/Admin/Editor.php` | Enqueues the block editor integration |
 | `Admin\MediaLibrary` | `includes/Admin/MediaLibrary.php` | Enqueues the generator modal on `upload.php` / `media-new.php` |
-| `Admin\ListTables\TemplatesTable` | `includes/Admin/ListTables/TemplatesTable.php` | Since 1.7.0 only used for bulk-delete handling; the list is a card grid (`views/img-templates.php`, actions via `Admin\Actions::template_action()`) |
 | `Templates\Starters` | `includes/Templates/Starters.php` | Starter designs for new templates (`aimg_template_starters`) |
 | `Templates\Schema` | `includes/Templates/Schema.php` | Template document v2 and its sanitizer; layer type registry (`aimg_template_layers`) |
 | `Templates\Repository` | `includes/Templates/Repository.php` | v2 document in `_aimg_template_data`; falls back to `Migration::from_template()` (never writes on read) |
@@ -164,15 +164,20 @@ Webpack is configured in `webpack.config.js` extending `@wordpress/scripts`:
   tabs come from the JS filter `aimgModal.tabs` (core: Templates, Custom Prompt, one per stock library in
   `stock-panel.js`); add-ons enqueue on `aimg_enqueue_modal`. A tab's payload `{ endpoint, data }` is POSTed
   and must return `{ id, url, alt }`.
-- `src/js/settings.js` → Test Connection buttons on the settings page.
+- **Settings app** (`src/js/settings/` → `assets/js/settings.js`, plus `src/css/settings.scss`): React on the
+  `wp.*` globals (no `@wordpress/*` imports; dependencies are listed in `Settings::enqueue_scripts()`), mounts on
+  `#aimg-settings`; tabbed card + sidebar modelled on Forming's settings. Add-ons render extra controls with the JS
+  filter `aimg.settings.tab` from a script enqueued on `aimg_enqueue_settings`.
+- **Header**: `views/header.php`, printed on `in_admin_header` for every plugin page (`Admin::current_page()`),
+  nav filter `aimg_admin_nav`; styles in `admin.scss`.
 
 The `assets/` directory is **built output** — do not edit files there directly.
 
 ### Admin UI Structure
 
 - **Image Generator** (top-level menu, `dashicons-format-image`)
-  - **Image Templates** — list, add, and edit templates; bulk delete; search by title
-  - **Settings** — default BG/text colors; auto-generation; AI service; Stock Photos (keys, Test Connection)
+  - **Image Templates** — card grid, add, and edit templates; bulk delete; search by title (no list table, no Screen Options)
+  - **Settings** — tabs: General (default colors, uninstall), Automatic Images, AI Service, Stock Photos (keys, Test Connection)
   - **Upgrade to Pro** — external link, only while `AIMG_PRO_VERSION` is undefined (also a "Go Pro" plugin action link)
 
 Templates are saved through the REST API (`Templates\RestController`); list actions use

@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Image Generator banner</title>
+<style>
+	html, body { margin: 0; padding: 0; width: 1544px; height: 500px; overflow: hidden; }
+	body {
+		font-family: "Segoe UI Variable Display", "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+		background: linear-gradient(120deg, #1E1065 0%, #4C1D95 45%, #6D3DF5 100%);
+		color: #fff;
+		position: relative;
+	}
+	.glow { position: absolute; border-radius: 50%; }
+	.g1 { width: 620px; height: 620px; right: -160px; top: -260px; background: radial-gradient(circle, rgba(244,114,182,.34), rgba(244,114,182,0) 70%); }
+	.g2 { width: 640px; height: 640px; left: -260px; bottom: -420px; background: radial-gradient(circle, rgba(255,255,255,.10), rgba(255,255,255,0) 70%); }
+	.grid { position: absolute; inset: 0; background-image: radial-gradient(rgba(255,255,255,.07) 1.5px, transparent 1.5px); background-size: 28px 28px; mask-image: linear-gradient(90deg, transparent, #000 40%, #000 60%, transparent); }
+
+	.brand { position: absolute; left: 84px; top: 50%; transform: translateY(-50%); width: 760px; }
+	.logo-row { display: flex; align-items: center; gap: 26px; }
+	.logo-row img { width: 104px; height: 104px; border-radius: 24px; box-shadow: 0 14px 34px rgba(10,5,40,.45); }
+	h1 { font-size: 76px; line-height: 1; font-weight: 800; letter-spacing: -2.5px; margin: 0; white-space: nowrap; }
+	.tagline { font-size: 30px; font-weight: 600; color: #E9E3FF; margin: 24px 0 0; letter-spacing: -.4px; line-height: 1.25; }
+	.pills { display: flex; flex-wrap: nowrap; gap: 10px; margin-top: 28px; }
+	.pill { font-size: 17px; font-weight: 600; padding: 8px 15px; white-space: nowrap; border-radius: 999px; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.22); color: #fff; }
+	.pill b { color: #FBBF24; margin-right: 8px; }
+
+	.stack { position: absolute; right: 70px; top: 50%; transform: translateY(-50%); width: 600px; height: 430px; }
+	.card { position: absolute; border-radius: 20px; box-shadow: 0 30px 70px rgba(10,5,40,.5); overflow: hidden; box-sizing: border-box; }
+	.label { position: absolute; left: 14px; top: 14px; font-size: 14px; font-weight: 700; padding: 5px 11px; border-radius: 999px; background: rgba(255,255,255,.92); color: #4C1D95; letter-spacing: .3px; }
+
+	/* Back card: stock photo */
+	.stock { width: 300px; height: 200px; right: 0; top: 0; transform: rotate(6deg);
+		background:
+			radial-gradient(circle at 72% 30%, #FFF7D6 0 22px, transparent 23px),
+			linear-gradient(170deg, transparent 58%, #1E3A5F 58.5%) ,
+			linear-gradient(160deg, transparent 50%, #2F6F7E 50.5%),
+			linear-gradient(#F9C784, #F4845F 70%); }
+
+	/* Middle card: AI image */
+	.ai { width: 300px; height: 200px; right: 30px; bottom: 0; transform: rotate(-4deg);
+		background:
+			radial-gradient(circle at 74% 62%, #FDE68A 0 22px, rgba(253,230,138,.35) 23px 34px, transparent 35px),
+			radial-gradient(ellipse 70% 45% at 18% 108%, #6D28D9 0 98%, transparent 100%),
+			radial-gradient(ellipse 65% 40% at 92% 112%, #3730A3 0 98%, transparent 100%),
+			linear-gradient(200deg, #F9A8D4, #C084FC 55%, #818CF8); }
+	.ai .label { left: auto; right: 14px; background: #FBBF24; color: #1E1065; }
+	.ai .spark { position: absolute; left: 40px; bottom: 58px; font-size: 44px; line-height: 1; color: #fff; text-shadow: 0 4px 14px rgba(76,29,149,.45); }
+
+	/* Front card: template */
+	.tpl { width: 440px; height: 231px; left: 0; top: 96px; padding: 30px 32px;
+		background: linear-gradient(135deg, #312E81 0%, #6D28D9 60%, #DB2777 100%); color: #fff; display: flex; flex-direction: column; justify-content: space-between; }
+	.tpl .chip { align-self: flex-start; font-size: 14px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; padding: 5px 11px; border-radius: 6px; background: #FBBF24; color: #1E1065; }
+	.tpl h2 { margin: 0; font-size: 38px; line-height: 1.1; font-weight: 800; letter-spacing: -1px; }
+	.tpl .site { display: flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 600; opacity: .9; }
+	.tpl .site i { width: 26px; height: 26px; border-radius: 50%; background: #fff; display: inline-block; }
+	.size { position: absolute; left: 24px; top: 344px; font-size: 15px; font-weight: 600; padding: 8px 14px; border-radius: 10px; background: #fff; color: #4C1D95; box-shadow: 0 14px 30px rgba(10,5,40,.4); display: flex; align-items: center; gap: 8px; }
+	.size b { color: #16A34A; font-size: 18px; }
+</style>
+</head>
+<body>
+	<div class="glow g1"></div>
+	<div class="glow g2"></div>
+	<div class="grid"></div>
+
+	<div class="brand">
+		<div class="logo-row">
+			<img src="icon.svg" alt="">
+			<h1>Image Generator</h1>
+		</div>
+		<p class="tagline">Featured images for every post, from your own templates, AI or stock photos</p>
+		<div class="pills">
+			<span class="pill"><b>&#9638;</b>Template Studio</span>
+			<span class="pill"><b>&#10022;</b>AI images</span>
+			<span class="pill"><b>&#9673;</b>Stock photos</span>
+			<span class="pill"><b>&#10003;</b>Automatic</span>
+		</div>
+	</div>
+
+	<div class="stack">
+		<div class="card stock"><span class="label">Stock photo</span></div>
+		<div class="card ai"><span class="label">AI</span><span class="spark">&#10022;</span></div>
+		<div class="card tpl">
+			<span class="chip">Guide</span>
+			<h2>10 simple habits for a calmer morning</h2>
+			<div class="site"><i></i>yoursite.com</div>
+		</div>
+		<div class="size"><b>&#10003;</b>Featured image set · 1200 × 630</div>
+	</div>
+</body>
+</html>

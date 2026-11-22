@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+	<title>Image Generator</title>
+	<defs>
+		<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+			<stop offset="0" stop-color="#8B5CF6"/>
+			<stop offset="0.55" stop-color="#6D3DF5"/>
+			<stop offset="1" stop-color="#4338CA"/>
+		</linearGradient>
+		<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+			<stop offset="0" stop-color="#C4B5FD"/>
+			<stop offset="1" stop-color="#FBCFE8"/>
+		</linearGradient>
+		<linearGradient id="hill" x1="0" y1="0" x2="1" y2="1">
+			<stop offset="0" stop-color="#7C3AED"/>
+			<stop offset="1" stop-color="#4338CA"/>
+		</linearGradient>
+		<linearGradient id="spark" x1="0" y1="0" x2="1" y2="1">
+			<stop offset="0" stop-color="#FDE68A"/>
+			<stop offset="1" stop-color="#F59E0B"/>
+		</linearGradient>
+		<radialGradient id="pink">
+			<stop offset="0" stop-color="#F472B6" stop-opacity="0.55"/>
+			<stop offset="1" stop-color="#F472B6" stop-opacity="0"/>
+		</radialGradient>
+		<filter id="shadow" x="-20%" y="-20%" width="140%" height="160%">
+			<feDropShadow dx="0" dy="6" stdDeviation="7" flood-color="#1E1065" flood-opacity="0.38"/>
+		</filter>
+		<clipPath id="shape"><rect width="256" height="256" rx="56"/></clipPath>
+		<clipPath id="photo"><rect x="60" y="82" width="136" height="104" rx="10"/></clipPath>
+	</defs>
+
+	<!-- Background -->
+	<rect width="256" height="256" rx="56" fill="url(#bg)"/>
+	<circle cx="226" cy="30" r="120" fill="url(#pink)" clip-path="url(#shape)"/>
+
+	<!-- Template layer behind -->
+	<rect x="66" y="52" width="140" height="132" rx="16" fill="#FFFFFF" opacity="0.32" transform="rotate(8 136 118)"/>
+
+	<!-- Image card -->
+	<g filter="url(#shadow)">
+		<rect x="48" y="70" width="160" height="148" rx="18" fill="#FFFFFF"/>
+	</g>
+	<g clip-path="url(#photo)">
+		<rect x="60" y="82" width="136" height="104" fill="url(#sky)"/>
+		<circle cx="160" cy="112" r="13" fill="#FFFFFF"/>
+		<path d="M60 186 L104 132 L132 164 L150 146 L196 186 Z" fill="url(#hill)"/>
+	</g>
+	<!-- Title line, drawn by the template -->
+	<rect x="60" y="196" width="78" height="10" rx="5" fill="#6D3DF5"/>
+	<rect x="146" y="196" width="34" height="10" rx="5" fill="#DDD6FE"/>
+
+	<!-- AI sparkle -->
+	<path d="M196 34 C199 56 206 63 228 66 C206 69 199 76 196 98 C193 76 186 69 164 66 C186 63 193 56 196 34 Z" fill="url(#spark)" stroke="#FFFFFF" stroke-width="5" stroke-linejoin="round"/>
+	<path d="M228 98 C229.5 106 232 108.5 240 110 C232 111.5 229.5 114 228 122 C226.5 114 224 111.5 216 110 C224 108.5 226.5 106 228 98 Z" fill="#FFFFFF"/>
+</svg>

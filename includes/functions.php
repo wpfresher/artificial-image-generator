@@ -506,7 +506,7 @@ function aimg_delete_upload_by_url( $url ) {
  * @param int   $template_id Template ID, or 0 for the default (else random) template.
  * @param array $args        `post_id` and `tags` (merge-tag values as name => text).
  *
- * @since 1.9.0
+ * @since 1.8.5
  * @return array|WP_Error `path` and `template_id`.
  */
 function aimg_render_template( $template_id, $args = array() ) {
@@ -521,7 +521,7 @@ function aimg_render_template( $template_id, $args = array() ) {
  * @param string $path Absolute path of the rendered file.
  * @param array  $args `title`, `alt`, `caption`, `parent`, `template_id`, `source`.
  *
- * @since 1.9.0
+ * @since 1.8.5
  * @return int|WP_Error Attachment ID.
  */
 function aimg_import_rendered_image( $path, $args = array() ) {
@@ -535,7 +535,7 @@ function aimg_import_rendered_image( $path, $args = array() ) {
  *
  * @param int $template_id Template ID.
  *
- * @since 1.9.0
+ * @since 1.8.5
  * @return array|WP_Error
  */
 function aimg_get_template_summary( $template_id ) {
@@ -547,7 +547,7 @@ function aimg_get_template_summary( $template_id ) {
  *
  * Part of the integration API (AIMG_API_VERSION 1). See ArtificialImageGenerator\Api::templates().
  *
- * @since 1.9.0
+ * @since 1.8.5
  * @return array[]
  */
 function aimg_get_template_summaries() {

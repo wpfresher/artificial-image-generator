@@ -17,13 +17,16 @@ defined( 'ABSPATH' ) || exit; // Exit if accessed directly.
 
 $aimg_default = absint( aimg_get_settings( 'default_template_id', 0 ) );
 ?>
-<div class="wrap aimg-templates">
-	<h1 class="wp-heading-inline">
-		<?php esc_html_e( 'Image Templates', 'artificial-image-generator' ); ?>
-		<a href="<?php echo esc_url( admin_url( 'admin.php?page=image-generator&add' ) ); ?>" class="page-title-action">
-			<?php esc_html_e( 'Add New', 'artificial-image-generator' ); ?>
+<div class="wrap aimg-page aimg-templates">
+	<div class="aimg-page__header">
+		<div>
+			<h1 class="aimg-page__title"><?php esc_html_e( 'Image Templates', 'artificial-image-generator' ); ?></h1>
+			<p class="aimg-page__subtitle"><?php esc_html_e( 'Designs for featured images. Each one is drawn with the post title, image and other details.', 'artificial-image-generator' ); ?></p>
+		</div>
+		<a href="<?php echo esc_url( admin_url( 'admin.php?page=image-generator&add' ) ); ?>" class="button button-primary aimg-page__action">
+			<span class="dashicons dashicons-plus-alt2" aria-hidden="true"></span><?php esc_html_e( 'Add New Template', 'artificial-image-generator' ); ?>
 		</a>
-	</h1>
+	</div>
 	<hr class="wp-header-end">
 
 	<form method="get" action="<?php echo esc_url( admin_url( 'admin.php' ) ); ?>">

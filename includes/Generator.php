@@ -307,19 +307,21 @@ class Generator {
 	 * Import a stock photo found with keywords from the post: the first result not
 	 * already in the Media Library, or the first result when all of them are.
 	 *
-	 * @param int $post_id Post ID.
+	 * @param int    $post_id Post ID.
+	 * @param string $query   Optional. Search terms; defaults to keywords from the post.
 	 *
 	 * @since 1.8.0
+	 * @since 1.9.0 Added the `$query` parameter.
 	 * @return int|\WP_Error Attachment ID.
 	 */
-	public static function generate_stock_for_post( $post_id ) {
+	public static function generate_stock_for_post( $post_id, $query = '' ) {
 		$provider = Stock\Registry::get_default();
 
 		if ( ! $provider ) {
 			return new \WP_Error( 'aimg_stock_no_key', __( 'Add an Unsplash, Pexels or Pixabay API key on the Image Generator settings page.', 'artificial-image-generator' ), array( 'status' => 400 ) );
 		}
 
-		$query = Stock\Keywords::for_post( $post_id );
+		$query = '' !== trim( (string) $query ) ? trim( (string) $query ) : Stock\Keywords::for_post( $post_id );
 
 		if ( '' === $query ) {
 			return new \WP_Error( 'aimg_stock_no_keywords', __( 'No search terms could be found in the post title.', 'artificial-image-generator' ), array( 'status' => 400 ) );
