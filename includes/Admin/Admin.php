@@ -2,8 +2,6 @@
 
 namespace ArtificialImageGenerator\Admin;
 
-use ArtificialImageGenerator\Admin\ListTables\TemplatesTable;
-
 defined( 'ABSPATH' ) || exit; // Exit if accessed directly.
 
 /**
@@ -21,9 +19,89 @@ class Admin {
 		add_action( 'admin_menu', array( $this, 'add_menu' ) );
 		add_action( 'admin_menu', array( $this, 'add_pro_menu' ), 99 );
 		add_filter( 'plugin_action_links_' . plugin_basename( AIMG_FILE ), array( __CLASS__, 'action_links' ) );
-		add_filter( 'set-screen-option', array( $this, 'screen_option' ), 10, 3 );
 		add_action( 'load-toplevel_page_image-generator', array( $this, 'handle_list_table_actions' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+		add_action( 'in_admin_header', array( $this, 'render_header' ) );
+		add_filter( 'admin_body_class', array( $this, 'body_class' ) );
+	}
+
+	/**
+	 * The plugin page being viewed: 'templates', 'studio', 'settings' or ''.
+	 *
+	 * @since 1.9.0
+	 * @return string
+	 */
+	public static function current_page() {
+		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+		$id     = $screen ? $screen->id : '';
+
+		if ( 'toplevel_page_image-generator' === $id ) {
+			return self::is_add_screen() || self::is_edit_screen() ? 'studio' : 'templates';
+		}
+
+		return Settings::HOOK === $id ? 'settings' : '';
+	}
+
+	/**
+	 * Mark plugin pages for the header styles.
+	 *
+	 * @param string $classes Body classes.
+	 *
+	 * @since 1.9.0
+	 * @return string
+	 */
+	public function body_class( $classes ) {
+		return self::current_page() ? $classes . ' aimg-admin' : $classes;
+	}
+
+	/**
+	 * Print the plugin header above the notices on every plugin page.
+	 *
+	 * @since 1.9.0
+	 * @return void
+	 */
+	public function render_header() {
+		$page = self::current_page();
+
+		if ( ! $page ) {
+			return;
+		}
+
+		$nav = array(
+			'templates' => array( __( 'Templates', 'artificial-image-generator' ), admin_url( 'admin.php?page=image-generator' ) ),
+			'studio'    => array( __( 'Add New', 'artificial-image-generator' ), admin_url( 'admin.php?page=image-generator&add' ) ),
+			'settings'  => array( __( 'Settings', 'artificial-image-generator' ), admin_url( 'admin.php?page=aimg-settings' ) ),
+		);
+
+		/**
+		 * Filter the plugin header navigation.
+		 *
+		 * @param array  $nav  Items as slug => [ label, url ].
+		 * @param string $page Current page slug.
+		 *
+		 * @since 1.9.0
+		 */
+		$nav   = (array) apply_filters( 'aimg_admin_nav', $nav, $page );
+		$links = self::links( 'header' );
+
+		include __DIR__ . '/views/header.php';
+	}
+
+	/**
+	 * Pro, documentation, support and review links.
+	 *
+	 * @param string $campaign Where the Pro link is shown.
+	 *
+	 * @since 1.9.0
+	 * @return array
+	 */
+	public static function links( $campaign ) {
+		return array(
+			'pro'     => self::pro_url( $campaign ),
+			'docs'    => 'https://beautifulplugins.com/docs/image-generator/',
+			'support' => 'https://beautifulplugins.com/support/',
+			'review'  => 'https://wordpress.org/support/plugin/artificial-image-generator/reviews/#new-post',
+		);
 	}
 
 	/**
@@ -43,7 +121,7 @@ class Admin {
 			26
 		);
 
-		$load = add_submenu_page(
+		add_submenu_page(
 			'image-generator',
 			__( 'Image Templates', 'artificial-image-generator' ),
 			__( 'Image Templates', 'artificial-image-generator' ),
@@ -51,9 +129,6 @@ class Admin {
 			'image-generator',
 			array( $this, 'img_templates_page' ),
 		);
-
-		// Load screen options.
-		add_action( 'load-' . $load, array( __CLASS__, 'load_pages' ) );
 	}
 
 	/**
@@ -117,51 +192,6 @@ class Admin {
 	}
 
 	/**
-	 * Set screen option.
-	 *
-	 * @param mixed  $status Screen option value. Default false.
-	 * @param string $option Option name.
-	 * @param mixed  $value New option value.
-	 *
-	 * @since 1.0.0
-	 * @return mixed
-	 */
-	public function screen_option( $status, $option, $value ) {
-		$options = apply_filters(
-			'aimg_set_screen_options',
-			array(
-				'aimg_img_templates_per_page',
-			)
-		);
-		if ( in_array( $option, $options, true ) ) {
-			return $value;
-		}
-
-		return $status;
-	}
-
-	/**
-	 * Load pages & set screen options.
-	 *
-	 * @since 1.0.0
-	 * @return void
-	 */
-	public static function load_pages() {
-		$screen = get_current_screen();
-
-		if ( 'toplevel_page_image-generator' === $screen->id ) {
-			add_screen_option(
-				'per_page',
-				array(
-					'label'   => __( 'Image templates per page', 'artificial-image-generator' ),
-					'default' => 20,
-					'option'  => 'aimg_img_templates_per_page',
-				)
-			);
-		}
-	}
-
-	/**
 	 * Render image templates page.
 	 *
 	 * @since 1.0.0
@@ -194,6 +224,23 @@ class Admin {
 			);
 			include __DIR__ . '/views/img-templates.php';
 		}
+	}
+
+	/**
+	 * The bulk action picked in either bulk-actions dropdown.
+	 *
+	 * @since 1.9.0
+	 * @return string
+	 */
+	private static function bulk_action() {
+		foreach ( array( 'action', 'action2' ) as $key ) {
+			$action = isset( $_REQUEST[ $key ] ) ? sanitize_key( wp_unslash( $_REQUEST[ $key ] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- The nonce is checked before acting.
+			if ( '' !== $action && '-1' !== $action ) {
+				return $action;
+			}
+		}
+
+		return '';
 	}
 
 	/**
@@ -231,9 +278,7 @@ class Admin {
 			exit;
 		}
 
-		$list_table = new TemplatesTable();
-
-		if ( 'delete' === $list_table->current_action() ) {
+		if ( 'delete' === self::bulk_action() ) {
 			check_admin_referer( 'bulk-templates' );
 
 			$ids       = isset( $_GET['ids'] ) ? map_deep( wp_unslash( $_GET['ids'] ), 'intval' ) : array();

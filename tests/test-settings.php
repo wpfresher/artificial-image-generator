@@ -28,15 +28,55 @@ class Test_Settings extends AIMG_TestCase {
 		$this->settings = new Settings();
 	}
 
-	public function test_api_key_is_not_printed() {
+	public function test_api_key_is_not_sent_to_the_browser() {
 		update_option( 'aimg_settings', array( 'api_key' => 'sk-secret-value-ABCD' ) );
 
-		ob_start();
-		$this->settings->api_key_field();
-		$html = ob_get_clean();
+		$response = rest_do_request( new WP_REST_Request( 'GET', '/aimg/v1/settings' ) );
+		$json     = wp_json_encode( $response->get_data() );
 
-		$this->assertStringNotContainsString( 'sk-secret-value', $html );
-		$this->assertStringContainsString( 'ABCD', $html );
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertStringNotContainsString( 'sk-secret-value', $json );
+		$this->assertTrue( $response->get_data()['secrets']['api_key']['saved'] );
+		$this->assertStringEndsWith( 'ABCD', $response->get_data()['secrets']['api_key']['masked'] );
+		$this->assertSame( '', $response->get_data()['values']['api_key'] );
+	}
+
+	public function test_settings_app_save_keeps_and_removes_keys() {
+		update_option(
+			'aimg_settings',
+			array(
+				'api_key'    => 'sk-saved',
+				'pexels_key' => 'px-saved',
+			)
+		);
+
+		$request = new WP_REST_Request( 'POST', '/aimg/v1/settings' );
+		$request->set_param(
+			'values',
+			array_merge(
+				Settings::values(),
+				array(
+					'remove_pexels_key' => true,
+					'is_page_thumbnail' => true,
+					'remove_data'       => false,
+					'ai_hourly_limit'   => 5,
+				)
+			)
+		);
+		$this->assertSame( 200, rest_do_request( $request )->get_status() );
+
+		$saved = get_option( 'aimg_settings' );
+		$this->assertSame( 'sk-saved', $saved['api_key'], 'An empty key field keeps the key.' );
+		$this->assertSame( '', $saved['pexels_key'], 'Remove clears the key.' );
+		$this->assertSame( 'yes', $saved['is_page_thumbnail'] );
+		$this->assertSame( 'no', $saved['remove_data'] );
+		$this->assertSame( 5, $saved['ai_hourly_limit'] );
+	}
+
+	public function test_settings_routes_need_manage_options() {
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'editor' ) ) );
+
+		$this->assertSame( 403, rest_do_request( new WP_REST_Request( 'GET', '/aimg/v1/settings' ) )->get_status() );
 	}
 
 	public function test_api_key_handling() {

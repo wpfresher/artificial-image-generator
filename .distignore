@@ -68,6 +68,7 @@ Thumbs.db
 
 # Action related files
 .wordpress-org
+.wordpress-org/source
 
 #Assets
 *.*.map

@@ -94,7 +94,9 @@ jobs:
         run: |
           if [[ -d ".wordpress-org" ]]; then
             echo "➤ Copying assets..."
-            rsync -rc .wordpress-org/ svn/assets/ --delete --delete-excluded
+            # Design source files (banner.html, icon.svg ...) are for the repo only, not WordPress.org.
+            rsync -rc .wordpress-org/ svn/assets/ --delete --delete-excluded \
+              --exclude='/source/' --exclude='/sources/'
 
             # Fix screenshots getting force downloaded when clicking them
             # https://developer.wordpress.org/plugins/wordpress-org/plugin-assets/

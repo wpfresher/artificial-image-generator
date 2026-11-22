@@ -1,0 +1,277 @@
+// Settings app: tabbed card and sidebar.
+$aimg-accent: #6d3df5;
+
+.aimg-settings {
+
+	&__layout {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) 300px;
+		gap: 24px;
+		align-items: start;
+		margin-bottom: 48px;
+	}
+
+	&__loading {
+		padding: 48px;
+		text-align: center;
+	}
+
+	&__content .components-notice {
+		margin: 0 0 16px;
+	}
+
+	&__card {
+		background: #fff;
+		border: 1px solid #e0e0e0;
+		border-radius: 8px;
+		overflow: hidden;
+	}
+
+	&__tabs .components-tab-panel__tabs {
+		padding: 0 16px;
+		border-bottom: 1px solid #f0f0f0;
+	}
+
+	&__panel {
+		padding: 8px 24px 0;
+	}
+
+	&__setting {
+		max-width: 640px;
+		padding: 18px 0;
+		border-bottom: 1px solid #f0f0f0;
+
+		&:last-of-type {
+			border-bottom: 0;
+		}
+
+		.components-base-control__label,
+		.components-input-control__label {
+			font-size: 11px;
+			font-weight: 500;
+			text-transform: uppercase;
+		}
+
+		.components-toggle-control .components-toggle-control__label,
+		.components-checkbox-control__label {
+			font-size: 13px;
+			text-transform: none;
+		}
+	}
+
+	&__footer {
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		gap: 16px;
+		margin: 0 -24px;
+		padding: 16px 24px;
+		border-top: 1px solid #f0f0f0;
+	}
+
+	&__unsaved {
+		color: #757575;
+	}
+
+	&__color {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		max-width: 260px;
+
+		.components-base-control {
+			flex: 1;
+		}
+	}
+
+	&__swatch.components-button {
+		width: 40px;
+		height: 40px;
+		padding: 0;
+		justify-content: center;
+		border: 1px solid #949494;
+		border-radius: 2px;
+
+		.component-color-indicator {
+			width: 24px;
+			height: 24px;
+			margin: 0;
+		}
+	}
+
+	&__secret-row {
+		display: flex;
+		align-items: flex-end;
+		gap: 8px;
+
+		.components-base-control {
+			flex: 1;
+		}
+	}
+
+	&__secret .components-checkbox-control {
+		margin-top: 8px;
+	}
+
+	&__status {
+		display: inline-block;
+		margin-left: 8px;
+		padding: 1px 6px;
+		font-size: 10px;
+		border-radius: 999px;
+
+		&.is-success {
+			color: #00701c;
+			background: #e5f5e8;
+		}
+	}
+
+	&__test {
+		margin: 8px 0 0;
+
+		&.is-success {
+			color: #00701c;
+		}
+
+		&.is-error {
+			color: #d63638;
+		}
+	}
+
+	&__aside {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		position: sticky;
+		top: 48px;
+	}
+
+	&__aside-card {
+		padding: 20px;
+		background: #fff;
+		border: 1px solid #e0e0e0;
+		border-radius: 8px;
+
+		h3 {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			margin: 0 0 8px;
+			font-size: 14px;
+		}
+
+		p {
+			margin: 0 0 12px;
+			color: #50575e;
+		}
+
+		&--pro {
+			background: linear-gradient(160deg, #f4efff 0%, #fff 60%);
+			border-color: #d9cbff;
+
+			h3 {
+				font-size: 16px;
+			}
+		}
+	}
+
+	&__aside-badge {
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
+		margin-bottom: 10px;
+		padding: 2px 8px;
+		font-size: 12px;
+		font-weight: 600;
+		color: $aimg-accent;
+		background: #ede7ff;
+		border-radius: 999px;
+
+		.dashicons {
+			font-size: 14px;
+			width: 14px;
+			height: 14px;
+		}
+	}
+
+	&__aside-list {
+		margin: 0 0 16px;
+
+		li {
+			display: flex;
+			gap: 4px;
+			margin-bottom: 6px;
+		}
+
+		.dashicons {
+			flex: none;
+			color: #00a32a;
+		}
+	}
+
+	&__aside-button.components-button.is-primary {
+		justify-content: center;
+		width: 100%;
+		background: $aimg-accent;
+
+		&:hover:not(:disabled),
+		&:focus:not(:disabled) {
+			color: #fff;
+			background: #5a2ee0;
+		}
+	}
+
+	&__aside-links {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+
+		a {
+			text-decoration: none;
+		}
+	}
+
+	&__aside-plugins {
+		margin: 0;
+
+		li {
+			margin: 0;
+			border-top: 1px solid #f0f0f0;
+
+			&:first-child {
+				border-top: 0;
+			}
+		}
+
+		a {
+			display: flex;
+			flex-direction: column;
+			padding: 8px 0;
+			text-decoration: none;
+		}
+
+		span {
+			font-size: 12px;
+			color: #757575;
+		}
+	}
+}
+
+@media (max-width: 1100px) {
+
+	.aimg-settings__layout {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.aimg-settings__aside {
+		position: static;
+	}
+}
+
+@media (max-width: 600px) {
+
+	.aimg-settings__secret-row {
+		flex-direction: column;
+		align-items: stretch;
+	}
+}

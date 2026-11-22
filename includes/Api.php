@@ -337,6 +337,8 @@ final class Api {
 	 * templates, which are designed for featured images. Does not set the featured image.
 	 *
 	 * @param array $args {
+	 *     Image arguments.
+	 *
 	 *     @type string $context  `featured` (default) or `inline`.
 	 *     @type int    $post_id  Post the image is for. Required.
 	 *     @type string $prompt   AI prompt; defaults to the prompt template in the settings.
@@ -376,7 +378,14 @@ final class Api {
 		}
 
 		if ( empty( $steps ) && 'inline' === $args['context'] ) {
-			$steps = array_keys( array_filter( array( 'ai' => $sources['ai'], 'stock' => $sources['stock'] ) ) );
+			$steps = array_keys(
+				array_filter(
+					array(
+						'ai'    => $sources['ai'],
+						'stock' => $sources['stock'],
+					)
+				)
+			);
 		}
 
 		if ( empty( $steps ) ) {
