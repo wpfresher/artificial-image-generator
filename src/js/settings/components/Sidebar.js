@@ -51,10 +51,7 @@ const PLUGINS = [
 	},
 	{
 		title: __( 'Bidra', 'artificial-image-generator' ),
-		desc: __(
-			'Auctions for WooCommerce',
-			'artificial-image-generator'
-		),
+		desc: __( 'Auctions for WooCommerce', 'artificial-image-generator' ),
 		url: 'https://wordpress.org/plugins/bidra-auctions-for-woocommerce/',
 	},
 ];
