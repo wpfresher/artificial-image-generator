@@ -41,6 +41,22 @@ const PLUGINS = [
 		),
 		url: 'https://wordpress.org/plugins/utm-manager/',
 	},
+	{
+		title: __( 'Send Emails', 'artificial-image-generator' ),
+		desc: __(
+			'Newsletters, Automation & Email Marketing for WordPress',
+			'artificial-image-generator'
+		),
+		url: 'https://wordpress.org/plugins/send-emails/',
+	},
+	{
+		title: __( 'Bidra', 'artificial-image-generator' ),
+		desc: __(
+			'Auctions for WooCommerce',
+			'artificial-image-generator'
+		),
+		url: 'https://wordpress.org/plugins/bidra-auctions-for-woocommerce/',
+	},
 ];
 
 const PRO_FEATURES = [
