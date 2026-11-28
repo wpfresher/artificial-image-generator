@@ -83,8 +83,8 @@ class GenerateImages {
 		$post_type = get_post_type( $post_id );
 
 		if ( ! $post_type || ! Generator::get_post_type_rule( $post_type )['enabled'] ) {
-          return;
-        }
+			return;
+		}
 
 		// Check autosave.
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
