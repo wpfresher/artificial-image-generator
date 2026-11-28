@@ -96,13 +96,7 @@ class Runner {
 	 * @return array
 	 */
 	public static function post_types() {
-		$types = array();
-
-		foreach ( get_post_types( array( 'show_ui' => true ), 'objects' ) as $type ) {
-			if ( 'attachment' !== $type->name && post_type_supports( $type->name, 'thumbnail' ) ) {
-				$types[ $type->name ] = $type->labels->name;
-			}
-		}
+		$types = Generator::get_post_types();
 
 		/**
 		 * Filter the post types offered for bulk generation.

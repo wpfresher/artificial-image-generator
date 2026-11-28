@@ -57,7 +57,9 @@ class Test_Settings extends AIMG_TestCase {
 				Settings::values(),
 				array(
 					'remove_pexels_key' => true,
-					'is_page_thumbnail' => true,
+					'auto_post_types'   => array(
+						'page' => array( 'enabled' => true ),
+					),
 					'remove_data'       => false,
 					'ai_hourly_limit'   => 5,
 				)

@@ -219,6 +219,96 @@ function SecretField( {
 	);
 }
 
+// Methods that can draw a template, so a template choice matters.
+const TEMPLATE_METHODS = [
+	'template',
+	'template_ai',
+	'ai_template',
+	'stock_template',
+];
+
+function PostTypesField( { field, value, values, onChange } ) {
+	const rules = value || {};
+
+	const update = ( postType, key, next ) =>
+		onChange( {
+			...rules,
+			[ postType ]: { ...( rules[ postType ] || {} ), [ key ]: next },
+		} );
+
+	return (
+		<BaseControl
+			__nextHasNoMarginBottom
+			id={ `aimg-setting-${ field.id }` }
+			label={ field.label }
+			help={ field.help }
+		>
+			<div className="aimg-settings__post-types">
+				{ field.postTypes.map( ( type ) => {
+					const rule = rules[ type.value ] || {};
+					const method = rule.method || values.generation_method;
+
+					return (
+						<div
+							key={ type.value }
+							className="aimg-settings__post-type"
+						>
+							<ToggleControl
+								__nextHasNoMarginBottom
+								label={ type.label }
+								checked={ !! rule.enabled }
+								onChange={ ( next ) =>
+									update( type.value, 'enabled', next )
+								}
+							/>
+							{ rule.enabled && (
+								<div className="aimg-settings__post-type-options">
+									<SelectControl
+										__nextHasNoMarginBottom
+										__next40pxDefaultSize
+										label={ __(
+											'Method',
+											'artificial-image-generator'
+										) }
+										hideLabelFromVision
+										value={ rule.method || '' }
+										options={ field.methods }
+										onChange={ ( next ) =>
+											update( type.value, 'method', next )
+										}
+									/>
+									{ TEMPLATE_METHODS.includes( method ) && (
+										<SelectControl
+											__nextHasNoMarginBottom
+											__next40pxDefaultSize
+											label={ __(
+												'Template',
+												'artificial-image-generator'
+											) }
+											hideLabelFromVision
+											value={ String(
+												rule.template || '0'
+											) }
+											options={ field.templates }
+											onChange={ ( next ) =>
+												update(
+													type.value,
+													'template',
+													next
+												)
+											}
+										/>
+									) }
+								</div>
+							) }
+						</div>
+					);
+				} ) }
+			</div>
+		</BaseControl>
+	);
+}
+
 export default function Field( props ) {
 	const { field, value, onChange } = props;
 	const common = {
@@ -274,6 +364,8 @@ export default function Field( props ) {
 			return <ColorField { ...props } />;
 		case 'secret':
 			return <SecretField { ...props } />;
+		case 'post_types':
+			return <PostTypesField { ...props } />;
 		default:
 			return (
 				<TextControl

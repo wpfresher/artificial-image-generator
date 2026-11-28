@@ -191,24 +191,20 @@ class Settings {
 				'help'  => __( 'Leave this off to keep your image templates if you delete and later reinstall the plugin. Images already added to the Media Library are never removed.', 'artificial-image-generator' ),
 			),
 			array(
-				'id'    => 'is_post_thumbnail',
-				'tab'   => 'automatic',
-				'type'  => 'toggle',
-				'label' => __( 'Generate featured images for posts', 'artificial-image-generator' ),
-				'help'  => __( 'When a post is saved without a featured image, one is generated for it.', 'artificial-image-generator' ),
-			),
-			array(
-				'id'    => 'is_page_thumbnail',
-				'tab'   => 'automatic',
-				'type'  => 'toggle',
-				'label' => __( 'Generate featured images for pages', 'artificial-image-generator' ),
-				'help'  => __( 'When a page is saved without a featured image, one is generated for it.', 'artificial-image-generator' ),
+				'id'        => 'auto_post_types',
+				'tab'       => 'automatic',
+				'type'      => 'post_types',
+				'label'     => __( 'Post types', 'artificial-image-generator' ),
+				'help'      => __( 'When an item of a turned-on type is saved without a featured image, one is generated for it. Each type can use its own method and template.', 'artificial-image-generator' ),
+				'postTypes' => self::options( Generator::get_post_types() ),
+				'methods'   => self::options( array_merge( array( '' => __( 'Default method', 'artificial-image-generator' ) ), Generator::get_methods() ) ),
+				'templates' => self::options( array( 0 => __( 'Default template', 'artificial-image-generator' ) ) + array_slice( $templates, 1, null, true ) ),
 			),
 			array(
 				'id'      => 'generation_method',
 				'tab'     => 'automatic',
 				'type'    => 'select',
-				'label'   => __( 'Generate with', 'artificial-image-generator' ),
+				'label'   => __( 'Default method', 'artificial-image-generator' ),
 				'options' => Generator::get_methods(),
 				'help'    => __( 'AI images are created in the background once a post is published or scheduled, and use your API key. Templates are free and instant.', 'artificial-image-generator' ),
 			),
@@ -216,7 +212,7 @@ class Settings {
 				'id'      => 'default_template_id',
 				'tab'     => 'automatic',
 				'type'    => 'select',
-				'label'   => __( 'Image template', 'artificial-image-generator' ),
+				'label'   => __( 'Default template', 'artificial-image-generator' ),
 				'options' => $templates,
 				'show_if' => array( 'generation_method' => $template_methods ),
 			),
@@ -423,6 +419,19 @@ class Settings {
 				$values[ $id ] = 'yes' === aimg_sanitize_checkbox( isset( $values[ $id ] ) ? $values[ $id ] : '' );
 			} elseif ( 'select' === $field['type'] ) {
 				$values[ $id ] = isset( $values[ $id ] ) ? (string) $values[ $id ] : '';
+			} elseif ( 'post_types' === $field['type'] ) {
+				$values[ $id ] = array();
+
+				foreach ( array_keys( Generator::get_post_types() ) as $post_type ) {
+					$rule                        = Generator::get_post_type_rule( $post_type );
+					$values[ $id ][ $post_type ] = array(
+						'enabled'  => $rule['enabled'],
+						'method'   => $rule['method'],
+						'template' => (string) $rule['template'],
+					);
+				}
+
+				$values[ $id ] = (object) $values[ $id ];
 			}
 		}
 
@@ -532,6 +541,32 @@ class Settings {
 			'placeholder' => $placeholder,
 			'test'        => $test,
 		);
+	}
+
+	/**
+	 * Clean the post type settings: { type: { enabled: yes|no, method: '' or a method, template: ID } }.
+	 *
+	 * @param array $input Submitted post type settings.
+	 *
+	 * @return array
+	 */
+	private static function sanitize_post_types( $input ) {
+		$clean = array();
+
+		foreach ( array_keys( Generator::get_post_types() ) as $post_type ) {
+			$rule     = isset( $input[ $post_type ] ) && is_array( $input[ $post_type ] ) ? $input[ $post_type ] : array();
+			$enabled  = isset( $rule['enabled'] ) ? $rule['enabled'] : false;
+			$method   = isset( $rule['method'] ) ? sanitize_key( $rule['method'] ) : '';
+			$template = isset( $rule['template'] ) ? absint( $rule['template'] ) : 0;
+
+			$clean[ $post_type ] = array(
+				'enabled'  => true === $enabled || 'yes' === $enabled || '1' === (string) $enabled ? 'yes' : 'no',
+				'method'   => isset( Generator::get_methods()[ $method ] ) ? $method : '',
+				'template' => $template && aimg_get_template( $template ) ? $template : 0,
+			);
+		}
+
+		return $clean;
 	}
 
 	/**
@@ -652,6 +687,21 @@ class Settings {
 
 		$template_id                               = isset( $settings['default_template_id'] ) ? absint( $settings['default_template_id'] ) : 0;
 		$sanitized_settings['default_template_id'] = $template_id && aimg_get_template( $template_id ) ? $template_id : 0;
+
+		// Saved once the post types field is used; until then the 1.x post/page settings above decide.
+		if ( isset( $settings['auto_post_types'] ) && is_array( $settings['auto_post_types'] ) ) {
+			$sanitized_settings['auto_post_types'] = self::sanitize_post_types( $settings['auto_post_types'] );
+
+			// Kept in step for downgrades to versions that only know these two.
+			foreach ( array(
+				'post' => 'is_post_thumbnail',
+				'page' => 'is_page_thumbnail',
+			) as $post_type => $key ) {
+				if ( isset( $sanitized_settings['auto_post_types'][ $post_type ] ) ) {
+					$sanitized_settings[ $key ] = $sanitized_settings['auto_post_types'][ $post_type ]['enabled'];
+				}
+			}
+		}
 
 		$sanitized_settings['ai_prompt_template'] = isset( $settings['ai_prompt_template'] ) ? sanitize_textarea_field( $settings['ai_prompt_template'] ) : '';
 		$sanitized_settings['ai_negative_prompt'] = isset( $settings['ai_negative_prompt'] ) ? sanitize_textarea_field( $settings['ai_negative_prompt'] ) : PromptBuilder::get_default_negative();

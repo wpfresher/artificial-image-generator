@@ -105,9 +105,15 @@ Generated attachments are stamped with `_aimg_generated` (`'1'`, queryable) and
 ### Image Generation Pipeline
 
 1. `GenerateImages` catches `wp_after_insert_post` (not `save_post`: the block editor sets the chosen
-   featured image after `save_post`) for posts/pages (per settings) that have no featured image and
+   featured image after `save_post`) for items of turned-on post types that have no featured image and
    no `_aimg_disable_auto` opt-out. Removing a generated featured image sets that opt-out.
-   The `generation_method` setting decides what happens: `template` (default) renders inline, as
+   Post types come from `Generator::get_post_types()` (types with thumbnails, filter `aimg_post_types`);
+   `Generator::get_post_type_rule()` reads `auto_post_types` ({ type: { enabled yes|no, method, template } }),
+   falling back to the 1.x `is_post_thumbnail` / `is_page_thumbnail` for post/page until that is saved;
+   saving mirrors post/page back into those keys for downgrades. A type's method / template override
+   `generation_method` / `default_template_id` (`get_method_for_post()`, `get_template_id_for_post()`),
+   which are used everywhere a post's image is made (auto, editor button, post list, `generate_for_post()`).
+   The method then decides what happens: `template` (default) renders inline, as
    before; `ai` / `ai_template` / `stock` / `stock_template` queue a background job via `Queue` (only for
    published/scheduled posts); `template_ai` renders inline and queues AI when no template exists.
    A template with a `stock`/`ai` layer source is queued too (`Generator::runs_in_background_for_post()`). Jobs run

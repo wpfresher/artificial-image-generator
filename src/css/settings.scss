@@ -99,6 +99,33 @@ $aimg-accent: #6d3df5;
 		}
 	}
 
+	&__post-types {
+		margin-top: 8px;
+		border: 1px solid #f0f0f0;
+		border-radius: 6px;
+	}
+
+	&__post-type {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+		min-height: 40px;
+		padding: 10px 14px;
+		border-bottom: 1px solid #f0f0f0;
+
+		&:last-child {
+			border-bottom: 0;
+		}
+	}
+
+	&__post-type-options {
+		display: flex;
+		gap: 8px;
+		min-width: 0;
+	}
+
 	&__secret-row {
 		display: flex;
 		align-items: flex-end;

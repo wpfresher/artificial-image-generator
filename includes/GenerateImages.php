@@ -82,17 +82,9 @@ class GenerateImages {
 	public function generate_thumbnails( $post_id ) {
 		$post_type = get_post_type( $post_id );
 
-		if ( ! in_array( $post_type, array( 'post', 'page' ), true ) ) {
-			return;
-		}
-
-		if ( 'post' === $post_type && 'yes' !== aimg_get_settings( 'is_post_thumbnail', 'yes' ) ) {
-			return;
-		}
-
-		if ( 'page' === $post_type && 'yes' !== aimg_get_settings( 'is_page_thumbnail' ) ) {
-			return;
-		}
+		if ( ! $post_type || ! Generator::get_post_type_rule( $post_type )['enabled'] ) {
+          return;
+        }
 
 		// Check autosave.
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
@@ -123,7 +115,7 @@ class GenerateImages {
 			return;
 		}
 
-		$method = Generator::get_runnable_method();
+		$method = Generator::get_runnable_method( Generator::get_method_for_post( $post_id ) );
 
 		if ( '' === $method ) {
 			return;

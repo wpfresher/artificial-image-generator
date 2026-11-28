@@ -176,7 +176,7 @@ class PostList {
 	 * @return array
 	 */
 	public function row_actions( $actions, $post ) {
-		if ( ! current_user_can( 'edit_post', $post->ID ) || 'trash' === $post->post_status || '' === Generator::get_runnable_method() ) {
+		if ( ! current_user_can( 'edit_post', $post->ID ) || 'trash' === $post->post_status || '' === Generator::get_runnable_method( Generator::get_method_for_post( $post->ID ) ) ) {
 			return $actions;
 		}
 
@@ -238,7 +238,7 @@ class PostList {
 	 * @return string|\WP_Error 'done' or 'queued'.
 	 */
 	public static function regenerate( $post_id ) {
-		$method = Generator::get_runnable_method();
+		$method = Generator::get_runnable_method( Generator::get_method_for_post( $post_id ) );
 
 		if ( '' === $method ) {
 			return new \WP_Error( 'aimg_no_method', __( 'The image method in Settings needs an API key.', 'artificial-image-generator' ) );

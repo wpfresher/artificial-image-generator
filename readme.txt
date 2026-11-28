@@ -88,7 +88,7 @@ Choose square, landscape or portrait images and the quality level (and so the co
 Decide which roles can use AI and set an hourly limit per user. Automatic AI images wait until a post is published, so drafts don't spend credit.
 
 ✅ **Works Anywhere You Edit**
-Automatic generation currently covers **posts and pages**. On-demand generation is not limited that way: the block editor panel and the Media Library modal let you generate an image and set it as the featured image on **any post type that supports featured images**, including WooCommerce products and custom post types.
+Automatic, bulk and on-demand generation work on **any post type that supports featured images**, including WooCommerce products and custom post types: turn each one on under Settings → Automatic Images, use Bulk Generate for existing items, or the block editor panel and the Media Library modal for one image.
 
 ✅ **Native WordPress Media Library**
 Every image — template, AI or stock photo — is **saved into the Media Library** with alt text. So image optimization plugins (Smush, ShortPixel, Imagify, EWWW), CDNs (Cloudflare, BunnyCDN, KeyCDN), and SEO plugins (Yoast, Rank Math, AIOSEO) all see it as a regular attachment.
@@ -124,7 +124,7 @@ The **AI Featured Image** panel can also (re)generate the featured image in one 
 
 = Auto-Generate Featured Images on Publish =
 
-1. Under **Image Generator → Settings → Automatic Featured Images**, choose **Image template**, **AI image** or **Stock photo** (or one with a fallback).
+1. Under **Image Generator → Settings → Automatic Images**, turn on the post types that should get images (posts, pages, products or any custom post type with featured images) and choose the default method: **Image template**, **AI image** or **Stock photo** (or one with a fallback). Each post type can use its own method and template.
 2. Write your post or page as normal and hit **Publish** or **Update**.
 3. If you already set a featured image, nothing happens.
 4. If you didn't, a template image is rendered right away from the post title — or an AI image or stock photo is fetched in the background — saved to the Media Library and attached as the post thumbnail.
@@ -192,7 +192,7 @@ Yes. Go to **Image Generator → Bulk Generate**, choose which posts (post type,
 The editor buttons are built for Gutenberg, but the same modal is available in **Media → Library → Generate Image**, so you can create template, AI and stock images there and use them in any builder. **Automatic featured image generation works with every editor**, because it runs whenever WordPress saves a post — so Classic Editor, Elementor, Divi, Beaver Builder, Bricks, and any other builder all benefit from auto-generated thumbnails.
 
 = Does it work with WooCommerce products? =
-**On demand, yes.** Open a product, download, course, or any custom post type that supports featured images, and use the AI Featured Image panel or the Media Library modal to generate and assign an image. Automatic generation on save currently covers posts and pages only; extending it to every public post type is next on the roadmap.
+**Yes.** Turn on **Products** (or any custom post type that supports featured images) under **Settings → Automatic Images**, optionally with its own method and template, and products saved without an image get one. Use **Bulk Generate** for existing products, or the AI Featured Image panel and the Media Library modal for a single one.
 
 = Does it work with SEO plugins like Yoast SEO, Rank Math, and All in One SEO? =
 **Yes.** Generated images are stored as standard Media Library attachments with proper alt text, so SEO plugins can read them, expose them in Open Graph and Twitter Card tags, and include them in sitemaps.
@@ -278,6 +278,8 @@ Searching or importing stock photos calls the library you choose: **Unsplash** (
 * New: **Bulk Generate** page for featured images on existing posts, pages and other post types: filter by status, category and date, pick the method, preview the matching posts (with the number of paid AI requests), then let it run in the background with pause, resume and cancel. Only posts without a featured image are included unless you choose to replace them; old images are never deleted. AI runs wait when the hourly AI limit is reached.
 * New: **Image** column on post lists with the featured image and where a generated one came from (Template, AI or Stock), or "Generating…" / "Failed" for background jobs.
 * New: **Generate image** / **Regenerate image** row action, and a **Regenerate featured images** bulk action that starts a Bulk Generate run for the selected posts.
+* New: **Automatic images for any post type** with featured images (products, custom post types), each with its own method and template, or the defaults. Existing post and page settings carry over.
+* Dev: `Generator::get_post_types()`, `get_post_type_rule()` and `get_method_for_post()`; filter `aimg_post_types`; setting `auto_post_types`.
 * Dev: REST endpoints `GET/POST aimg/v1/bulk`, `POST aimg/v1/bulk/preview` and `POST aimg/v1/bulk/{pause|resume|cancel|clear}`; filters `aimg_bulk_post_types`, `aimg_bulk_query_args` and `aimg_bulk_capability`; action `aimg_bulk_finished`.
 
 = 1.9.0 =
