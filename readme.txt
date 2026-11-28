@@ -276,6 +276,8 @@ Searching or importing stock photos calls the library you choose: **Unsplash** (
 == Changelog ==
 = 1.9.1 =
 * New: **Bulk Generate** page for featured images on existing posts, pages and other post types: filter by status, category and date, pick the method, preview the matching posts (with the number of paid AI requests), then let it run in the background with pause, resume and cancel. Only posts without a featured image are included unless you choose to replace them; old images are never deleted. AI runs wait when the hourly AI limit is reached.
+* New: **Image** column on post lists with the featured image and where a generated one came from (Template, AI or Stock), or "Generating…" / "Failed" for background jobs.
+* New: **Generate image** / **Regenerate image** row action, and a **Regenerate featured images** bulk action that starts a Bulk Generate run for the selected posts.
 * Dev: REST endpoints `GET/POST aimg/v1/bulk`, `POST aimg/v1/bulk/preview` and `POST aimg/v1/bulk/{pause|resume|cancel|clear}`; filters `aimg_bulk_post_types`, `aimg_bulk_query_args` and `aimg_bulk_capability`; action `aimg_bulk_finished`.
 
 = 1.9.0 =

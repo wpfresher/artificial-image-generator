@@ -125,6 +125,7 @@ class Runner {
 			'future'  => __( 'Scheduled', 'artificial-image-generator' ),
 			'private' => __( 'Private', 'artificial-image-generator' ),
 			'draft'   => __( 'Draft', 'artificial-image-generator' ),
+			'pending' => __( 'Pending', 'artificial-image-generator' ),
 		);
 	}
 
@@ -154,6 +155,7 @@ class Runner {
 			'category'   => absint( $args['category'] ?? 0 ),
 			'after'      => $date( $args['after'] ?? '' ),
 			'before'     => $date( $args['before'] ?? '' ),
+			'ids'        => array_slice( array_values( array_filter( array_map( 'absint', (array) ( $args['ids'] ?? array() ) ) ) ), 0, self::MAX_POSTS ),
 		);
 	}
 
@@ -162,6 +164,7 @@ class Runner {
 	 *
 	 * Without "replace", posts that have a featured image are left out, and so are posts whose
 	 * author removed a generated one (`_aimg_disable_auto`).
+	 * With `ids` (the post list's bulk action), only those posts.
 	 *
 	 * @param array $args Sanitized run arguments.
 	 *
@@ -178,6 +181,10 @@ class Runner {
 			'update_post_term_cache' => false,
 			'suppress_filters'       => true,
 		);
+
+		if ( $args['ids'] ) {
+			$query['post__in'] = $args['ids'];
+		}
 
 		if ( ! $args['replace'] ) {
 			$query['meta_query'] = array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- One query per preview or run.

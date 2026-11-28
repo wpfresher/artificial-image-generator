@@ -255,6 +255,7 @@ class Plugin {
 		if ( is_admin() ) {
 			new Admin\Admin();
 			new Admin\Bulk();
+			new Admin\PostList();
 			new Admin\Settings();
 			new Admin\Actions();
 			new Admin\Editor();
