@@ -57,6 +57,8 @@ for asset-only rebuilds during development use `npx wp-scripts build --webpack-s
 | `Generator` | `includes/Generator.php` | `generate_for_post()` (all methods), template rendering, `generate_ai()`, Media Library import; stamps provenance meta |
 | `PromptBuilder` | `includes/PromptBuilder.php` | Builds AI prompts from a post: prompt template + merge tags, style presets, negative instructions |
 | `Queue` | `includes/Queue.php` | Background jobs for AI featured images: started at once by a non-blocking loopback (`aimg_run_job`, single-use token), with Action Scheduler or WP-Cron as backup; atomic queued→running claim; status in post meta |
+| `Bulk\Runner` / `Bulk\RestController` | `includes/Bulk/` | Bulk Generate for existing posts: one run in option `aimg_bulk_run` (queue of IDs), timed batches (`aimg_bulk_batch`, Action Scheduler or WP-Cron) under the `aimg_bulk_lock` option lock, loopback kick while the page polls `GET /bulk`; waits on `aimg_rate_limited`; skips posts with a thumbnail or `_aimg_disable_auto` unless `replace`; never deletes old images. REST `/bulk`, `/bulk/preview`, `/bulk/{pause|resume|cancel|clear}` (`aimg_bulk_capability`) |
+| `Admin\Bulk` | `includes/Admin/Bulk.php` | Bulk Generate page (`aimg-bulk`), mounts the React app on `#aimg-bulk` |
 | `Providers\*` | `includes/Providers/` | `ProviderInterface`, `Result`, `OpenAI`, `Registry` (`aimg_providers` filter) |
 | `Stock\*` | `includes/Stock/` | Stock photos: `Unsplash`, `Pexels`, `Pixabay` (base `Provider`: key from `AIMG_{ID}_KEY` or `{id}_key` setting, cached GETs; Pixabay 24 h as its terms require), `Registry` (`aimg_stock_providers`), `Importer` (allowlisted hosts, size/type check, reuse by `_aimg_stock_key`, credit in caption + `_aimg_stock_data`), `Keywords`, `RestController` (`/stock`, `/stock/keywords`, `/stock/{p}/search`, `/import`, `/test`) |
 | `Rendering\Hybrid` | `includes/Rendering/Hybrid.php` | `stock` / `ai` layer sources: fetched only inside `Hybrid::fetching()` (generation), cached per post in `_aimg_hybrid_images`; previews and the Studio use a GD-made sample in `uploads/aimg-cache/` |
@@ -164,6 +166,7 @@ Webpack is configured in `webpack.config.js` extending `@wordpress/scripts`:
   tabs come from the JS filter `aimgModal.tabs` (core: Templates, Custom Prompt, one per stock library in
   `stock-panel.js`); add-ons enqueue on `aimg_enqueue_modal`. A tab's payload `{ endpoint, data }` is POSTed
   and must return `{ id, url, alt }`.
+- **Bulk Generate app** (`src/js/bulk/` → `assets/js/bulk.js`, plus `src/css/bulk.scss`): React on the `wp.*` globals, polls `GET aimg/v1/bulk` every 3 s while a run is active.
 - **Settings app** (`src/js/settings/` → `assets/js/settings.js`, plus `src/css/settings.scss`): React on the
   `wp.*` globals (no `@wordpress/*` imports; dependencies are listed in `Settings::enqueue_scripts()`), mounts on
   `#aimg-settings`; tabbed card + sidebar modelled on Forming's settings. Add-ons render extra controls with the JS
@@ -177,6 +180,7 @@ The `assets/` directory is **built output** — do not edit files there directly
 
 - **Image Generator** (top-level menu, `dashicons-format-image`)
   - **Image Templates** — card grid, add, and edit templates; bulk delete; search by title (no list table, no Screen Options)
+  - **Bulk Generate** — filters, dry-run preview (AI request count), background run with progress, pause/resume/cancel
   - **Settings** — tabs: General (default colors, uninstall), Automatic Images, AI Service, Stock Photos (keys, Test Connection)
   - **Upgrade to Pro** — external link, only while `AIMG_PRO_VERSION` is undefined (also a "Go Pro" plugin action link)
 

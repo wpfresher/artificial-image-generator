@@ -247,12 +247,14 @@ class Plugin {
 		new PostTypes();
 		new GenerateImages();
 		new Queue();
+		new Bulk\Runner();
 		new Templates\Migrator();
 		new RestAPI();
 
 		// Load the admin classes if it's an admin area.
 		if ( is_admin() ) {
 			new Admin\Admin();
+			new Admin\Bulk();
 			new Admin\Settings();
 			new Admin\Actions();
 			new Admin\Editor();

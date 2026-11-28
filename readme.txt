@@ -129,6 +129,13 @@ The **AI Featured Image** panel can also (re)generate the featured image in one 
 3. If you already set a featured image, nothing happens.
 4. If you didn't, a template image is rendered right away from the post title — or an AI image or stock photo is fetched in the background — saved to the Media Library and attached as the post thumbnail.
 
+= Bulk Generate Images for Existing Posts =
+
+1. Go to **Image Generator → Bulk Generate**.
+2. Pick the post types, statuses, category and date range, and the method (template, AI or stock photo).
+3. Click **Preview** to see how many posts match and, for AI, how many paid requests it makes.
+4. Click **Generate**. Images are made in the background, so you can leave the page; pause, resume or cancel at any time.
+
 == Installation ==
 
 = Automatic Installation =
@@ -176,7 +183,7 @@ You pay OpenAI directly for usage, based on the model, image size and quality; s
 By default, it's stored in the `aimg_settings` option in the WordPress database. **For maximum security**, define `AIMG_API_KEY` in `wp-config.php` instead — the settings UI will detect the constant and disable the input field, so the key never sits in the database.
 
 = Will this plugin generate featured images for existing posts? =
-Automatic generation only fires when a post is saved without a featured image. **For existing content**, open the post in the block editor and use the **AI Featured Image** panel to generate one on demand. Bulk generation across the entire site is on the roadmap.
+Yes. Go to **Image Generator → Bulk Generate**, choose which posts (post type, status, category, date range) and the method, preview the list, and start. By default only posts without a featured image are included. Single posts can still get one from the **AI Featured Image** panel in the block editor.
 
 = Does it work with the Gutenberg block editor? =
 **Yes.** The block editor integration is the plugin's flagship feature. You'll find the ✨ button on Image and Media & Text block toolbars and a dedicated **AI Featured Image** panel in the document sidebar.
@@ -267,6 +274,10 @@ Searching or importing stock photos calls the library you choose: **Unsplash** (
 16. Settings — stock photo API keys with Test Connection, and the library, orientation, size and credit options.
 
 == Changelog ==
+= 1.9.1 =
+* New: **Bulk Generate** page for featured images on existing posts, pages and other post types: filter by status, category and date, pick the method, preview the matching posts (with the number of paid AI requests), then let it run in the background with pause, resume and cancel. Only posts without a featured image are included unless you choose to replace them; old images are never deleted. AI runs wait when the hourly AI limit is reached.
+* Dev: REST endpoints `GET/POST aimg/v1/bulk`, `POST aimg/v1/bulk/preview` and `POST aimg/v1/bulk/{pause|resume|cancel|clear}`; filters `aimg_bulk_post_types`, `aimg_bulk_query_args` and `aimg_bulk_capability`; action `aimg_bulk_finished`.
+
 = 1.9.0 =
 * New: The integration API can make images for other plugins: `Api::generate()` makes one image with the configured method (AI, stock photo or template) and `Api::sources()` reports which methods are ready. AI Content Writer uses it when "Image Generator plugin" is its image source. The existing template methods used by Sokket are unchanged and still make no network requests.
 * New: GPT Image 2.6 Flare and GPT Image 2.6 Sunburst models.
