@@ -1,6 +1,6 @@
-=== Image Generator – AI Auto Featured Images, Thumbnails & Post Images ===
+=== Image Generator – AI Featured Images, Auto Thumbnails & Bulk Generate ===
 Contributors: beautifulplugins
-Tags: ai, ai image, image generator, featured image, block editor
+Tags: featured image, auto featured image, ai image generator, thumbnail, stock photos
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 7.4
@@ -8,7 +8,7 @@ Stable tag: 1.9.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-AI image generator for WordPress. Auto-create featured images, post thumbnails & post images with templates or custom AI prompts.
+Auto featured images for any post type from your own templates, AI or free stock photos. Bulk generate images for old posts.
 
 == Description ==
 
@@ -149,6 +149,8 @@ The **AI Featured Image** panel can also (re)generate the featured image in one 
 3. Activate **Image Generator** through the **Plugins** menu in WordPress.
 
 = Setup =
+A fresh install starts with a ready-made template, so new posts get a featured image right away. A notice links to a short setup screen (also under **Settings → Run setup**) that walks through the steps below.
+
 1. Go to **Image Generator → Image Templates → Add New**, pick one of the ready-made designs (or start blank) and adjust it in the Template Studio.
 2. (Optional) Open **Image Generator → Settings** and add your **OpenAI API key** to enable AI images.
 3. (Optional) Under **Settings → Stock Photos**, add a free key from Unsplash, Pexels or Pixabay and click **Test Connection**.
@@ -184,6 +186,12 @@ By default, it's stored in the `aimg_settings` option in the WordPress database.
 
 = Will this plugin generate featured images for existing posts? =
 Yes. Go to **Image Generator → Bulk Generate**, choose which posts (post type, status, category, date range) and the method, preview the list, and start. By default only posts without a featured image are included. Single posts can still get one from the **AI Featured Image** panel in the block editor.
+
+= Can I undo a bulk run? =
+Yes. A bulk run never deletes images. When you choose to replace existing featured images, the old ones stay in the Media Library, so you can set them back on any post. You can also pause or cancel a run at any time.
+
+= Can different categories or authors get different designs? =
+Yes. Under **Settings → Automatic Images → Template rules**, pick a template for a category, a tag, a product category or an author. The first rule a post matches decides; posts that match no rule use their post type's template, then the default template.
 
 = Does it work with the Gutenberg block editor? =
 **Yes.** The block editor integration is the plugin's flagship feature. You'll find the ✨ button on Image and Media & Text block toolbars and a dedicated **AI Featured Image** panel in the document sidebar.
@@ -268,6 +276,10 @@ Searching or importing stock photos calls the library you choose: **Unsplash** (
 10. Start from a design — ready-made templates, including stock photo designs (the review, sale, course, recipe and price tag designs come with Pro).
 11. Template Studio — edit layers on a canvas; text fits its box and uses tags like {title} and {category}.
 12. Template Studio — a background that shows a stock photo picked for each post, with your design on top.
+13. Bulk Generate — pick post types, statuses, category and dates, preview the matching posts and the number of paid AI requests, then let it run in the background.
+14. Automatic Images settings — turn on any post type with its own method and template, and add template rules by category, tag or author.
+15. Post list — the Image column shows each featured image and where it came from, with a one-click Regenerate image action.
+16. Setup — pick where images come from, add a key if needed, choose a design and preview it on your latest post.
 13. Template Studio — layer types: background, image, overlay, text, shape, pattern and frame (Rating, Progress bar and Badge come with Pro).
 14. Settings — automatic featured images with a template, AI or a stock photo, and the AI prompt and style.
 15. Settings — AI service: API key, model, image shape and quality, who can use AI and an hourly limit.
@@ -279,7 +291,12 @@ Searching or importing stock photos calls the library you choose: **Unsplash** (
 * New: **Image** column on post lists with the featured image and where a generated one came from (Template, AI or Stock), or "Generating…" / "Failed" for background jobs.
 * New: **Generate image** / **Regenerate image** row action, and a **Regenerate featured images** bulk action that starts a Bulk Generate run for the selected posts.
 * New: **Automatic images for any post type** with featured images (products, custom post types), each with its own method and template, or the defaults. Existing post and page settings carry over.
+* New: **Template rules**: pick a template by category, tag (or any taxonomy) or author. The first matching rule wins, then the post type's template, then the default template.
+* New: A fresh install starts with a ready-made template, so automatic featured images work right away. Sites that already have templates are not changed.
+* New: **Setup screen** for new installs: choose where images come from, add a key if needed, pick a design and preview it on your latest post. Open it again any time from **Settings → Run setup**.
+* Enhance: Compatible with WooCommerce High-Performance Order Storage and the Cart and Checkout blocks. Tested with PHP 8.4.
 * Dev: `Generator::get_post_types()`, `get_post_type_rule()` and `get_method_for_post()`; filter `aimg_post_types`; setting `auto_post_types`.
+* Dev: `Generator::get_rule_templates_for_post()` and `get_rule_taxonomies()`; filters `aimg_rule_taxonomies` and `aimg_install_starter`; setting `template_rules`.
 * Dev: REST endpoints `GET/POST aimg/v1/bulk`, `POST aimg/v1/bulk/preview` and `POST aimg/v1/bulk/{pause|resume|cancel|clear}`; filters `aimg_bulk_post_types`, `aimg_bulk_query_args` and `aimg_bulk_capability`; action `aimg_bulk_finished`.
 
 = 1.9.0 =

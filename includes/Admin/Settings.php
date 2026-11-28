@@ -61,6 +61,7 @@ class Settings {
 				array(
 					'proActive' => defined( 'AIMG_PRO_VERSION' ),
 					'links'     => Admin::links( 'sidebar' ),
+					'setupUrl'  => Setup::url(),
 				)
 			) . ';',
 			'before'
@@ -199,6 +200,15 @@ class Settings {
 				'postTypes' => self::options( Generator::get_post_types() ),
 				'methods'   => self::options( array_merge( array( '' => __( 'Default method', 'artificial-image-generator' ) ), Generator::get_methods() ) ),
 				'templates' => self::options( array( 0 => __( 'Default template', 'artificial-image-generator' ) ) + array_slice( $templates, 1, null, true ) ),
+			),
+			array(
+				'id'         => 'template_rules',
+				'tab'        => 'automatic',
+				'type'       => 'template_rules',
+				'label'      => __( 'Template rules', 'artificial-image-generator' ),
+				'help'       => __( 'The first rule a post matches picks its template. Posts that match no rule use their post type\'s template, then the default template.', 'artificial-image-generator' ),
+				'conditions' => self::rule_conditions(),
+				'templates'  => self::options( array_slice( $templates, 1, null, true ) ),
 			),
 			array(
 				'id'      => 'generation_method',
@@ -432,10 +442,144 @@ class Settings {
 				}
 
 				$values[ $id ] = (object) $values[ $id ];
+			} elseif ( 'template_rules' === $field['type'] ) {
+				$values[ $id ] = self::rule_values( isset( $saved[ $id ] ) ? $saved[ $id ] : array() );
 			}
 		}
 
 		return $values;
+	}
+
+	/**
+	 * What template rules can match: each rule taxonomy, then authors.
+	 *
+	 * @return array[] { value, label, path } where path is the REST route used to search.
+	 */
+	private static function rule_conditions() {
+		$conditions = array();
+
+		foreach ( Generator::get_rule_taxonomies() as $name => $taxonomy ) {
+			if ( empty( $taxonomy->show_in_rest ) ) {
+				continue;
+			}
+
+			$conditions[] = array(
+				'value' => $name,
+				'label' => $taxonomy->labels->singular_name,
+				'path'  => '/' . ( $taxonomy->rest_namespace ? $taxonomy->rest_namespace : 'wp/v2' ) . '/' . ( $taxonomy->rest_base ? $taxonomy->rest_base : $name ),
+			);
+		}
+
+		$conditions[] = array(
+			'value' => 'author',
+			'label' => __( 'Author', 'artificial-image-generator' ),
+			'path'  => '/wp/v2/users',
+		);
+
+		return $conditions;
+	}
+
+	/**
+	 * Saved template rules for the settings app, with the names of their terms and authors.
+	 *
+	 * @param mixed $rules Saved rules.
+	 *
+	 * @return array[]
+	 */
+	private static function rule_values( $rules ) {
+		$values = array();
+
+		foreach ( self::sanitize_template_rules( $rules ) as $rule ) {
+			if ( 'author' === $rule['type'] ) {
+				$user      = get_userdata( $rule['author'] );
+				$condition = 'author';
+				$item      = $rule['author'];
+				$label     = $user ? $user->display_name : '';
+			} else {
+				$term      = get_term( $rule['term'], $rule['taxonomy'] );
+				$condition = $rule['taxonomy'];
+				$item      = $rule['term'];
+				$label     = $term && ! is_wp_error( $term ) ? $term->name : '';
+			}
+
+			$values[] = array(
+				'condition' => $condition,
+				'item'      => (string) $item,
+				'itemLabel' => $label,
+				'template'  => (string) $rule['template'],
+			);
+		}
+
+		return $values;
+	}
+
+	/**
+	 * Clean template rules. Rules from the settings app use { condition, item, template };
+	 * stored rules use { type, taxonomy, term, author, template }. Incomplete rules are dropped.
+	 *
+	 * @param mixed $input Rules.
+	 *
+	 * @return array[]
+	 */
+	private static function sanitize_template_rules( $input ) {
+		$clean      = array();
+		$taxonomies = Generator::get_rule_taxonomies();
+
+		foreach ( array_slice( (array) $input, 0, 100 ) as $rule ) {
+			if ( ! is_array( $rule ) ) {
+				continue;
+			}
+
+			if ( isset( $rule['condition'] ) ) {
+				$condition = sanitize_key( $rule['condition'] );
+				$item      = isset( $rule['item'] ) ? absint( $rule['item'] ) : 0;
+				$rule      = 'author' === $condition
+					? array(
+						'type'     => 'author',
+						'author'   => $item,
+						'template' => isset( $rule['template'] ) ? $rule['template'] : 0,
+					)
+					: array(
+						'type'     => 'term',
+						'taxonomy' => $condition,
+						'term'     => $item,
+						'template' => isset( $rule['template'] ) ? $rule['template'] : 0,
+					);
+			}
+
+			$type     = isset( $rule['type'] ) ? $rule['type'] : '';
+			$template = isset( $rule['template'] ) ? absint( $rule['template'] ) : 0;
+
+			if ( ! $template || ! aimg_get_template( $template ) ) {
+				continue;
+			}
+
+			if ( 'author' === $type ) {
+				$author = isset( $rule['author'] ) ? absint( $rule['author'] ) : 0;
+
+				if ( $author && get_userdata( $author ) ) {
+					$clean[] = array(
+						'type'     => 'author',
+						'author'   => $author,
+						'template' => $template,
+					);
+				}
+			} elseif ( 'term' === $type ) {
+				$taxonomy = isset( $rule['taxonomy'] ) ? sanitize_key( $rule['taxonomy'] ) : '';
+				$term     = isset( $rule['term'] ) ? absint( $rule['term'] ) : 0;
+
+				if ( isset( $taxonomies[ $taxonomy ] ) && $term && term_exists( $term, $taxonomy ) ) {
+					$clean[] = array(
+						'type'     => 'term',
+						'taxonomy' => $taxonomy,
+						'term'     => $term,
+						'template' => $template,
+					);
+				}
+			}
+		}
+
+		return $clean;
 	}
 
 	/**
@@ -701,6 +845,10 @@ class Settings {
 					$sanitized_settings[ $key ] = $sanitized_settings['auto_post_types'][ $post_type ]['enabled'];
 				}
 			}
+		}
+
+		if ( isset( $settings['template_rules'] ) ) {
+			$sanitized_settings['template_rules'] = self::sanitize_template_rules( $settings['template_rules'] );
 		}
 
 		$sanitized_settings['ai_prompt_template'] = isset( $settings['ai_prompt_template'] ) ? sanitize_textarea_field( $settings['ai_prompt_template'] ) : '';

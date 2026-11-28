@@ -6,6 +6,8 @@
  * Version:           1.9.0
  * Requires at least: 6.0
  * Requires PHP:      7.4
+ * Tested up to:      7.1
+ * WC tested up to:   11.3
  * Author:            BeautifulPlugins
  * Author URI:        https://beautifulplugins.com
  * License:           GPL v2 or later

@@ -39,6 +39,7 @@ class RestAPI {
 		( new Stock\RestController() )->register_routes( self::REST_NAMESPACE );
 		( new Admin\SettingsController() )->register_routes( self::REST_NAMESPACE );
 		( new Bulk\RestController() )->register_routes( self::REST_NAMESPACE );
+		Admin\Setup::register_routes( self::REST_NAMESPACE );
 
 		register_rest_route(
 			self::REST_NAMESPACE,

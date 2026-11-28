@@ -43,6 +43,10 @@ class Admin {
 			return 'bulk';
 		}
 
+		if ( Setup::HOOK === $id ) {
+			return 'setup';
+		}
+
 		return Settings::HOOK === $id ? 'settings' : '';
 	}
 

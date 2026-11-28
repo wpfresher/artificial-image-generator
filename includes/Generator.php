@@ -113,6 +113,72 @@ class Generator {
 	}
 
 	/**
+	 * Taxonomies template rules can match, as name => taxonomy object.
+	 *
+	 * @since 1.9.1
+	 * @return \WP_Taxonomy[]
+	 */
+	public static function get_rule_taxonomies() {
+		$taxonomies = array();
+
+		foreach ( get_taxonomies( array( 'show_ui' => true ), 'objects' ) as $taxonomy ) {
+			if ( array_intersect( (array) $taxonomy->object_type, array_keys( self::get_post_types() ) ) ) {
+				$taxonomies[ $taxonomy->name ] = $taxonomy;
+			}
+		}
+
+		/**
+		 * Filter the taxonomies template rules can match.
+		 *
+		 * @param \WP_Taxonomy[] $taxonomies Taxonomies as name => object.
+		 *
+		 * @since 1.9.1
+		 */
+		return (array) apply_filters( 'aimg_rule_taxonomies', $taxonomies );
+	}
+
+	/**
+	 * Templates of the template rules a post matches, in rule order.
+	 *
+	 * Rules are { type: term|author, taxonomy, term, author, template } in `template_rules`.
+	 *
+	 * @param int $post_id Post ID.
+	 *
+	 * @since 1.9.1
+	 * @return int[]
+	 */
+	public static function get_rule_templates_for_post( $post_id ) {
+		$post      = get_post( $post_id );
+		$templates = array();
+
+		if ( ! $post ) {
+			return $templates;
+		}
+
+		foreach ( (array) aimg_get_settings( 'template_rules', array() ) as $rule ) {
+			if ( ! is_array( $rule ) || empty( $rule['template'] ) ) {
+				continue;
+			}
+
+			$type = isset( $rule['type'] ) ? $rule['type'] : '';
+
+			if ( 'author' === $type ) {
+				$match = ! empty( $rule['author'] ) && absint( $rule['author'] ) === (int) $post->post_author;
+			} elseif ( 'term' === $type ) {
+				$match = ! empty( $rule['taxonomy'] ) && ! empty( $rule['term'] ) && taxonomy_exists( $rule['taxonomy'] ) && has_term( absint( $rule['term'] ), $rule['taxonomy'], $post );
+			} else {
+				$match = false;
+			}
+
+			if ( $match ) {
+				$templates[] = absint( $rule['template'] );
+			}
+		}
+
+		return $templates;
+	}
+
+	/**
 	 * Automatic featured image settings of a post type.
 	 *
 	 * Posts and pages fall back to the 1.x `is_post_thumbnail` / `is_page_thumbnail` settings
@@ -310,7 +376,8 @@ class Generator {
 	}
 
 	/**
-	 * Template to use for a post: the configured default when it is published, otherwise a random one.
+	 * Template to use for a post, the first published one of: its matching template rules, its
+	 * post type's template, the default template. Otherwise a random one.
 	 *
 	 * @param int $post_id Post ID.
 	 *
@@ -319,9 +386,12 @@ class Generator {
 	 */
 	public static function get_template_id_for_post( $post_id ) {
 		$template_id = 0;
-		$candidates  = array(
-			self::get_post_type_rule( (string) get_post_type( $post_id ) )['template'],
-			absint( aimg_get_settings( 'default_template_id', 0 ) ),
+		$candidates  = array_merge(
+			self::get_rule_templates_for_post( $post_id ),
+			array(
+				self::get_post_type_rule( (string) get_post_type( $post_id ) )['template'],
+				absint( aimg_get_settings( 'default_template_id', 0 ) ),
+			)
 		);
 
 		foreach ( $candidates as $candidate ) {

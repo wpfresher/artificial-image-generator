@@ -59,6 +59,8 @@ for asset-only rebuilds during development use `npx wp-scripts build --webpack-s
 | `Queue` | `includes/Queue.php` | Background jobs for AI featured images: started at once by a non-blocking loopback (`aimg_run_job`, single-use token), with Action Scheduler or WP-Cron as backup; atomic queued→running claim; status in post meta |
 | `Bulk\Runner` / `Bulk\RestController` | `includes/Bulk/` | Bulk Generate for existing posts: one run in option `aimg_bulk_run` (queue of IDs), timed batches (`aimg_bulk_batch`, Action Scheduler or WP-Cron) under the `aimg_bulk_lock` option lock, loopback kick while the page polls `GET /bulk`; waits on `aimg_rate_limited`; skips posts with a thumbnail or `_aimg_disable_auto` unless `replace`; never deletes old images. REST `/bulk`, `/bulk/preview`, `/bulk/{pause|resume|cancel|clear}` (`aimg_bulk_capability`) |
 | `Admin\Bulk` | `includes/Admin/Bulk.php` | Bulk Generate page (`aimg-bulk`), mounts the React app on `#aimg-bulk` |
+| `Admin\Setup` | `includes/Admin/Setup.php` | First-run setup (`aimg-setup`, no menu item; React app `src/js/setup/` on `#aimg-setup`): method (template / AI→template / stock→template), post types, key, design, preview via `/templates/{id}/preview`; saves through `POST /settings`, then `POST /setup/done`. Fresh installs get option `aimg_setup_pending` → notice on the dashboard, Plugins and plugin pages until finished or dismissed; "Run setup" button in Settings |
+| `Templates\Installer` | `includes/Templates/Installer.php` | First activation only (`aimg_version` absent): option `aimg_install_starter` → on `init` creates the published "Classic centered" starter when the site has no templates |
 | `Admin\PostList` | `includes/Admin/PostList.php` | Post lists of types with thumbnails: "Image" column (thumb + Template/AI/Stock badge from `_aimg_generated_data`, queue status), "Generate/Regenerate image" row action (`admin_post_aimg_regenerate`; inline for templates, `Queue::enqueue( …, true )` for remote methods), "Regenerate featured images" bulk action → `Runner::start()` with `ids` + `replace` |
 | `Providers\*` | `includes/Providers/` | `ProviderInterface`, `Result`, `OpenAI`, `Registry` (`aimg_providers` filter) |
 | `Stock\*` | `includes/Stock/` | Stock photos: `Unsplash`, `Pexels`, `Pixabay` (base `Provider`: key from `AIMG_{ID}_KEY` or `{id}_key` setting, cached GETs; Pixabay 24 h as its terms require), `Registry` (`aimg_stock_providers`), `Importer` (allowlisted hosts, size/type check, reuse by `_aimg_stock_key`, credit in caption + `_aimg_stock_data`), `Keywords`, `RestController` (`/stock`, `/stock/keywords`, `/stock/{p}/search`, `/import`, `/test`) |
@@ -118,8 +120,12 @@ Generated attachments are stamped with `_aimg_generated` (`'1'`, queryable) and
    published/scheduled posts); `template_ai` renders inline and queues AI when no template exists.
    A template with a `stock`/`ai` layer source is queued too (`Generator::runs_in_background_for_post()`). Jobs run
    `Generator::generate_for_post()`, which also backs the editor's Generate button.
-2. `Generator::get_template_id_for_post()` uses the `default_template_id` setting or a random
-   published template; `Generator::get_render_args()`
+2. `Generator::get_template_id_for_post()` takes the first published template of: the post's matching
+   template rules (`template_rules`, [{ type term|author, taxonomy, term, author, template }], in order;
+   `get_rule_templates_for_post()`, taxonomies from `get_rule_taxonomies()` / `aimg_rule_taxonomies`),
+   its post type's template, `default_template_id`; else a random published template. A fresh install
+   gets one published starter (`Templates\Installer`, once, only with no templates, filter
+   `aimg_install_starter`). `Generator::get_render_args()`
    maps its meta to render arguments (this mapping lives only here — the REST endpoint uses it too);
    it returns `false` for templates that are not published.
 3. `Generator::render()` renders a template's v2 document when it has one (`Repository`);
