@@ -140,6 +140,20 @@ class Plugin {
 		register_deactivation_hook( AIMG_FILE, array( $this, 'deactivate' ) );
 		add_action( 'admin_notices', array( $this, 'display_flash_notices' ), 12 );
 		add_action( 'init', array( $this, 'init' ), 0 );
+		add_action( 'before_woocommerce_init', array( $this, 'declare_woocommerce_compatibility' ) );
+	}
+
+	/**
+	 * Declare WooCommerce compatibility. The plugin never reads orders or the cart.
+	 *
+	 * @since 1.9.1
+	 * @return void
+	 */
+	public function declare_woocommerce_compatibility() {
+		if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', AIMG_FILE, true );
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'cart_checkout_blocks', AIMG_FILE, true );
+		}
 	}
 
 	/**
@@ -150,6 +164,9 @@ class Plugin {
 	 * @return void
 	 */
 	public function activate(): void {
+		$fresh = false === get_option( 'aimg_version' );
+		Templates\Installer::activated( $fresh );
+		Admin\Setup::activated( $fresh );
 		update_option( 'aimg_version', AIMG_VERSION );
 
 		// Flash rewrite rules.
@@ -247,12 +264,17 @@ class Plugin {
 		new PostTypes();
 		new GenerateImages();
 		new Queue();
+		new Bulk\Runner();
 		new Templates\Migrator();
+		new Templates\Installer();
 		new RestAPI();
 
 		// Load the admin classes if it's an admin area.
 		if ( is_admin() ) {
 			new Admin\Admin();
+			new Admin\Bulk();
+			new Admin\Setup();
+			new Admin\PostList();
 			new Admin\Settings();
 			new Admin\Actions();
 			new Admin\Editor();

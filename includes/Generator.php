@@ -88,6 +88,145 @@ class Generator {
 	}
 
 	/**
+	 * Post types with featured images, as name => label.
+	 *
+	 * @since 1.9.1
+	 * @return array
+	 */
+	public static function get_post_types() {
+		$types = array();
+
+		foreach ( get_post_types( array( 'show_ui' => true ), 'objects' ) as $type ) {
+			if ( 'attachment' !== $type->name && post_type_supports( $type->name, 'thumbnail' ) ) {
+				$types[ $type->name ] = $type->labels->name;
+			}
+		}
+
+		/**
+		 * Filter the post types that can get generated featured images.
+		 *
+		 * @param array $types Post types as name => label.
+		 *
+		 * @since 1.9.1
+		 */
+		return (array) apply_filters( 'aimg_post_types', $types );
+	}
+
+	/**
+	 * Taxonomies template rules can match, as name => taxonomy object.
+	 *
+	 * @since 1.9.1
+	 * @return \WP_Taxonomy[]
+	 */
+	public static function get_rule_taxonomies() {
+		$taxonomies = array();
+
+		foreach ( get_taxonomies( array( 'show_ui' => true ), 'objects' ) as $taxonomy ) {
+			if ( array_intersect( (array) $taxonomy->object_type, array_keys( self::get_post_types() ) ) ) {
+				$taxonomies[ $taxonomy->name ] = $taxonomy;
+			}
+		}
+
+		/**
+		 * Filter the taxonomies template rules can match.
+		 *
+		 * @param \WP_Taxonomy[] $taxonomies Taxonomies as name => object.
+		 *
+		 * @since 1.9.1
+		 */
+		return (array) apply_filters( 'aimg_rule_taxonomies', $taxonomies );
+	}
+
+	/**
+	 * Templates of the template rules a post matches, in rule order.
+	 *
+	 * Rules are { type: term|author, taxonomy, term, author, template } in `template_rules`.
+	 *
+	 * @param int $post_id Post ID.
+	 *
+	 * @since 1.9.1
+	 * @return int[]
+	 */
+	public static function get_rule_templates_for_post( $post_id ) {
+		$post      = get_post( $post_id );
+		$templates = array();
+
+		if ( ! $post ) {
+			return $templates;
+		}
+
+		foreach ( (array) aimg_get_settings( 'template_rules', array() ) as $rule ) {
+			if ( ! is_array( $rule ) || empty( $rule['template'] ) ) {
+				continue;
+			}
+
+			$type = isset( $rule['type'] ) ? $rule['type'] : '';
+
+			if ( 'author' === $type ) {
+				$match = ! empty( $rule['author'] ) && absint( $rule['author'] ) === (int) $post->post_author;
+			} elseif ( 'term' === $type ) {
+				$match = ! empty( $rule['taxonomy'] ) && ! empty( $rule['term'] ) && taxonomy_exists( $rule['taxonomy'] ) && has_term( absint( $rule['term'] ), $rule['taxonomy'], $post );
+			} else {
+				$match = false;
+			}
+
+			if ( $match ) {
+				$templates[] = absint( $rule['template'] );
+			}
+		}
+
+		return $templates;
+	}
+
+	/**
+	 * Automatic featured image settings of a post type.
+	 *
+	 * Posts and pages fall back to the 1.x `is_post_thumbnail` / `is_page_thumbnail` settings
+	 * until the post type settings are saved.
+	 *
+	 * @param string $post_type Post type.
+	 *
+	 * @since 1.9.1
+	 * @return array { @type bool $enabled, @type string $method ('' = default), @type int $template (0 = default) }
+	 */
+	public static function get_post_type_rule( $post_type ) {
+		$saved = (array) aimg_get_settings( 'auto_post_types', array() );
+		$rule  = isset( $saved[ $post_type ] ) && is_array( $saved[ $post_type ] ) ? $saved[ $post_type ] : array();
+
+		if ( isset( $rule['enabled'] ) ) {
+			$enabled = 'yes' === $rule['enabled'];
+		} elseif ( 'post' === $post_type ) {
+			$enabled = 'yes' === aimg_get_settings( 'is_post_thumbnail', 'yes' );
+		} elseif ( 'page' === $post_type ) {
+			$enabled = 'yes' === aimg_get_settings( 'is_page_thumbnail', 'no' );
+		} else {
+			$enabled = false;
+		}
+
+		$method = isset( $rule['method'] ) ? (string) $rule['method'] : '';
+
+		return array(
+			'enabled'  => $enabled && isset( self::get_post_types()[ $post_type ] ),
+			'method'   => isset( self::get_methods()[ $method ] ) ? $method : '',
+			'template' => isset( $rule['template'] ) ? absint( $rule['template'] ) : 0,
+		);
+	}
+
+	/**
+	 * The method for a post's featured image: its post type's, else the default one.
+	 *
+	 * @param int $post_id Post ID.
+	 *
+	 * @since 1.9.1
+	 * @return string
+	 */
+	public static function get_method_for_post( $post_id ) {
+		$method = self::get_post_type_rule( (string) get_post_type( $post_id ) )['method'];
+
+		return '' !== $method ? $method : self::get_method();
+	}
+
+	/**
 	 * Whether a method calls the AI provider first.
 	 *
 	 * @param string $method Method.
@@ -187,13 +326,13 @@ class Generator {
 	 * Does not set it as the featured image; callers decide that.
 	 *
 	 * @param int    $post_id Post ID.
-	 * @param string $method  Generation method. Defaults to the configured one.
+	 * @param string $method  Generation method. Defaults to the post type's method, else the configured one.
 	 *
 	 * @since 1.6.0
 	 * @return int|\WP_Error Attachment ID.
 	 */
 	public static function generate_for_post( $post_id, $method = '' ) {
-		$method = '' !== $method ? $method : self::get_method();
+		$method = '' !== $method ? $method : self::get_method_for_post( $post_id );
 
 		/**
 		 * Short-circuit generating an image for a post, e.g. for a custom method.
@@ -237,7 +376,8 @@ class Generator {
 	}
 
 	/**
-	 * Template to use for a post: the configured default when it is published, otherwise a random one.
+	 * Template to use for a post, the first published one of: its matching template rules, its
+	 * post type's template, the default template. Otherwise a random one.
 	 *
 	 * @param int $post_id Post ID.
 	 *
@@ -245,10 +385,25 @@ class Generator {
 	 * @return int Template ID, or 0 when none is available.
 	 */
 	public static function get_template_id_for_post( $post_id ) {
-		$template_id = absint( aimg_get_settings( 'default_template_id', 0 ) );
-		$template    = $template_id ? aimg_get_template( $template_id ) : false;
+		$template_id = 0;
+		$candidates  = array_merge(
+			self::get_rule_templates_for_post( $post_id ),
+			array(
+				self::get_post_type_rule( (string) get_post_type( $post_id ) )['template'],
+				absint( aimg_get_settings( 'default_template_id', 0 ) ),
+			)
+		);
 
-		if ( ! $template || 'publish' !== $template->post_status ) {
+		foreach ( $candidates as $candidate ) {
+			$template = $candidate ? aimg_get_template( $candidate ) : false;
+
+			if ( $template && 'publish' === $template->post_status ) {
+				$template_id = $candidate;
+				break;
+			}
+		}
+
+		if ( ! $template_id ) {
 			$template_id = self::get_random_template_id();
 		}
 

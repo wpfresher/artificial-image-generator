@@ -17,6 +17,10 @@ module.exports = [
             'js/template-studio': './src/js/template-studio/index.js',
             'js/settings': './src/js/settings/index.js',
             'css/settings': './src/css/settings.scss',
+            'js/bulk': './src/js/bulk/index.js',
+            'css/bulk': './src/css/bulk.scss',
+            'js/setup': './src/js/setup/index.js',
+            'css/setup': './src/css/setup.scss',
             'js/notices': './src/js/notices.js',
         },
         // Fonts are copied for the server and loaded only when a layer uses one; keep size hints for bundles.

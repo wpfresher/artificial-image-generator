@@ -1,11 +1,12 @@
 const { __, sprintf } = wp.i18n;
-const { createInterpolateElement, useState } = wp.element;
+const { createInterpolateElement, useEffect, useRef, useState } = wp.element;
 const apiFetch = wp.apiFetch;
 const {
 	BaseControl,
 	Button,
 	CheckboxControl,
 	ColorIndicator,
+	ComboboxControl,
 	ColorPicker,
 	Dropdown,
 	SelectControl,
@@ -219,6 +220,318 @@ function SecretField( {
 	);
 }
 
+// Methods that can draw a template, so a template choice matters.
+const TEMPLATE_METHODS = [
+	'template',
+	'template_ai',
+	'ai_template',
+	'stock_template',
+];
+
+function PostTypesField( { field, value, values, onChange } ) {
+	const rules = value || {};
+
+	const update = ( postType, key, next ) =>
+		onChange( {
+			...rules,
+			[ postType ]: { ...( rules[ postType ] || {} ), [ key ]: next },
+		} );
+
+	return (
+		<BaseControl
+			__nextHasNoMarginBottom
+			id={ `aimg-setting-${ field.id }` }
+			label={ field.label }
+			help={ field.help }
+		>
+			<div className="aimg-settings__post-types">
+				{ field.postTypes.map( ( type ) => {
+					const rule = rules[ type.value ] || {};
+					const method = rule.method || values.generation_method;
+
+					return (
+						<div
+							key={ type.value }
+							className="aimg-settings__post-type"
+						>
+							<ToggleControl
+								__nextHasNoMarginBottom
+								label={ type.label }
+								checked={ !! rule.enabled }
+								onChange={ ( next ) =>
+									update( type.value, 'enabled', next )
+								}
+							/>
+							{ rule.enabled && (
+								<div className="aimg-settings__post-type-options">
+									<SelectControl
+										__nextHasNoMarginBottom
+										__next40pxDefaultSize
+										label={ __(
+											'Method',
+											'artificial-image-generator'
+										) }
+										hideLabelFromVision
+										value={ rule.method || '' }
+										options={ field.methods }
+										onChange={ ( next ) =>
+											update( type.value, 'method', next )
+										}
+									/>
+									{ TEMPLATE_METHODS.includes( method ) && (
+										<SelectControl
+											__nextHasNoMarginBottom
+											__next40pxDefaultSize
+											label={ __(
+												'Template',
+												'artificial-image-generator'
+											) }
+											hideLabelFromVision
+											value={ String(
+												rule.template || '0'
+											) }
+											options={ field.templates }
+											onChange={ ( next ) =>
+												update(
+													type.value,
+													'template',
+													next
+												)
+											}
+										/>
+									) }
+								</div>
+							) }
+						</div>
+					);
+				} ) }
+			</div>
+		</BaseControl>
+	);
+}
+
+function RuleItemPicker( { condition, rule, onChange } ) {
+	const selected = rule.item
+		? [ { value: rule.item, label: rule.itemLabel || `#${ rule.item }` } ]
+		: [];
+	const [ found, setFound ] = useState( [] );
+	const timer = useRef();
+
+	const search = ( query ) => {
+		clearTimeout( timer.current );
+		timer.current = setTimeout( () => {
+			apiFetch( {
+				path: `${ condition.path }?search=${ encodeURIComponent(
+					query || ''
+				) }&per_page=20&_fields=id,name`,
+			} )
+				.then( ( items ) =>
+					setFound(
+						items.map( ( item ) => ( {
+							value: String( item.id ),
+							label: item.name,
+						} ) )
+					)
+				)
+				.catch( () => setFound( [] ) );
+		}, 250 );
+	};
+
+	useEffect( () => {
+		search( '' );
+		return () => clearTimeout( timer.current );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ condition.path ] );
+
+	const options = [
+		...selected,
+		...found.filter( ( option ) => option.value !== rule.item ),
+	];
+
+	return (
+		<ComboboxControl
+			__nextHasNoMarginBottom
+			__next40pxDefaultSize
+			label={ condition.label }
+			hideLabelFromVision
+			placeholder={ sprintf(
+				/* translators: %s: taxonomy or "Author" */
+				__( 'Search %s…', 'artificial-image-generator' ),
+				condition.label.toLowerCase()
+			) }
+			value={ rule.item || null }
+			options={ options }
+			onFilterValueChange={ search }
+			onChange={ ( value ) =>
+				onChange( {
+					item: value || '',
+					itemLabel:
+						options.find( ( option ) => option.value === value )
+							?.label || '',
+				} )
+			}
+		/>
+	);
+}
+
+function TemplateRulesField( { field, value, onChange } ) {
+	const rules = Array.isArray( value ) ? value : [];
+	const first = field.conditions[ 0 ]?.value || 'author';
+	const firstTemplate = field.templates[ 0 ]?.value || '';
+
+	const update = ( index, patch ) =>
+		onChange(
+			rules.map( ( rule, i ) =>
+				i === index ? { ...rule, ...patch } : rule
+			)
+		);
+	const move = ( index, by ) => {
+		const next = [ ...rules ];
+		const [ rule ] = next.splice( index, 1 );
+		next.splice( index + by, 0, rule );
+		onChange( next );
+	};
+
+	return (
+		<BaseControl
+			__nextHasNoMarginBottom
+			id={ `aimg-setting-${ field.id }` }
+			label={ field.label }
+			help={ field.help }
+		>
+			<div className="aimg-settings__rules">
+				{ ! field.templates.length && (
+					<p className="aimg-settings__rules-empty">
+						{ __(
+							'Publish a template first to add rules.',
+							'artificial-image-generator'
+						) }
+					</p>
+				) }
+				{ rules.map( ( rule, index ) => {
+					const condition =
+						field.conditions.find(
+							( option ) => option.value === rule.condition
+						) || field.conditions[ 0 ];
+
+					return (
+						<div
+							key={ index }
+							className="aimg-settings__rule"
+							role="group"
+							aria-label={ sprintf(
+								/* translators: %d: rule number */
+								__( 'Rule %d', 'artificial-image-generator' ),
+								index + 1
+							) }
+						>
+							<SelectControl
+								__nextHasNoMarginBottom
+								__next40pxDefaultSize
+								label={ __(
+									'Match',
+									'artificial-image-generator'
+								) }
+								hideLabelFromVision
+								value={ condition.value }
+								options={ field.conditions.map(
+									( { value: v, label } ) => ( {
+										value: v,
+										label,
+									} )
+								) }
+								onChange={ ( next ) =>
+									update( index, {
+										condition: next,
+										item: '',
+										itemLabel: '',
+									} )
+								}
+							/>
+							<RuleItemPicker
+								condition={ condition }
+								rule={ rule }
+								onChange={ ( patch ) => update( index, patch ) }
+							/>
+							<SelectControl
+								__nextHasNoMarginBottom
+								__next40pxDefaultSize
+								label={ __(
+									'Template',
+									'artificial-image-generator'
+								) }
+								hideLabelFromVision
+								value={ String( rule.template || '' ) }
+								options={ field.templates }
+								onChange={ ( next ) =>
+									update( index, { template: next } )
+								}
+							/>
+							<div className="aimg-settings__rule-actions">
+								<Button
+									icon="arrow-up-alt2"
+									size="small"
+									label={ __(
+										'Move up',
+										'artificial-image-generator'
+									) }
+									disabled={ 0 === index }
+									onClick={ () => move( index, -1 ) }
+								/>
+								<Button
+									icon="arrow-down-alt2"
+									size="small"
+									label={ __(
+										'Move down',
+										'artificial-image-generator'
+									) }
+									disabled={ rules.length - 1 === index }
+									onClick={ () => move( index, 1 ) }
+								/>
+								<Button
+									icon="trash"
+									size="small"
+									isDestructive
+									label={ __(
+										'Remove rule',
+										'artificial-image-generator'
+									) }
+									onClick={ () =>
+										onChange(
+											rules.filter(
+												( r, i ) => i !== index
+											)
+										)
+									}
+								/>
+							</div>
+						</div>
+					);
+				} ) }
+				{ field.templates.length > 0 && (
+					<Button
+						variant="secondary"
+						__next40pxDefaultSize
+						onClick={ () =>
+							onChange( [
+								...rules,
+								{
+									condition: first,
+									item: '',
+									itemLabel: '',
+									template: firstTemplate,
+								},
+							] )
+						}
+					>
+						{ __( 'Add rule', 'artificial-image-generator' ) }
+					</Button>
+				) }
+			</div>
+		</BaseControl>
+	);
+}
+
 export default function Field( props ) {
 	const { field, value, onChange } = props;
 	const common = {
@@ -274,6 +587,10 @@ export default function Field( props ) {
 			return <ColorField { ...props } />;
 		case 'secret':
 			return <SecretField { ...props } />;
+		case 'post_types':
+			return <PostTypesField { ...props } />;
+		case 'template_rules':
+			return <TemplateRulesField { ...props } />;
 		default:
 			return (
 				<TextControl

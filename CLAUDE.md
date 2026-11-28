@@ -57,6 +57,11 @@ for asset-only rebuilds during development use `npx wp-scripts build --webpack-s
 | `Generator` | `includes/Generator.php` | `generate_for_post()` (all methods), template rendering, `generate_ai()`, Media Library import; stamps provenance meta |
 | `PromptBuilder` | `includes/PromptBuilder.php` | Builds AI prompts from a post: prompt template + merge tags, style presets, negative instructions |
 | `Queue` | `includes/Queue.php` | Background jobs for AI featured images: started at once by a non-blocking loopback (`aimg_run_job`, single-use token), with Action Scheduler or WP-Cron as backup; atomic queued→running claim; status in post meta |
+| `Bulk\Runner` / `Bulk\RestController` | `includes/Bulk/` | Bulk Generate for existing posts: one run in option `aimg_bulk_run` (queue of IDs), timed batches (`aimg_bulk_batch`, Action Scheduler or WP-Cron) under the `aimg_bulk_lock` option lock, loopback kick while the page polls `GET /bulk`; waits on `aimg_rate_limited`; skips posts with a thumbnail or `_aimg_disable_auto` unless `replace`; never deletes old images. REST `/bulk`, `/bulk/preview`, `/bulk/{pause|resume|cancel|clear}` (`aimg_bulk_capability`) |
+| `Admin\Bulk` | `includes/Admin/Bulk.php` | Bulk Generate page (`aimg-bulk`), mounts the React app on `#aimg-bulk` |
+| `Admin\Setup` | `includes/Admin/Setup.php` | First-run setup (`aimg-setup`, no menu item; React app `src/js/setup/` on `#aimg-setup`): method (template / AI→template / stock→template), post types, key, design, preview via `/templates/{id}/preview`; saves through `POST /settings`, then `POST /setup/done`. Fresh installs get option `aimg_setup_pending` → notice on the dashboard, Plugins and plugin pages until finished or dismissed; "Run setup" button in Settings |
+| `Templates\Installer` | `includes/Templates/Installer.php` | First activation only (`aimg_version` absent): option `aimg_install_starter` → on `init` creates the published "Classic centered" starter when the site has no templates |
+| `Admin\PostList` | `includes/Admin/PostList.php` | Post lists of types with thumbnails: "Image" column (thumb + Template/AI/Stock badge from `_aimg_generated_data`, queue status), "Generate/Regenerate image" row action (`admin_post_aimg_regenerate`; inline for templates, `Queue::enqueue( …, true )` for remote methods), "Regenerate featured images" bulk action → `Runner::start()` with `ids` + `replace` |
 | `Providers\*` | `includes/Providers/` | `ProviderInterface`, `Result`, `OpenAI`, `Registry` (`aimg_providers` filter) |
 | `Stock\*` | `includes/Stock/` | Stock photos: `Unsplash`, `Pexels`, `Pixabay` (base `Provider`: key from `AIMG_{ID}_KEY` or `{id}_key` setting, cached GETs; Pixabay 24 h as its terms require), `Registry` (`aimg_stock_providers`), `Importer` (allowlisted hosts, size/type check, reuse by `_aimg_stock_key`, credit in caption + `_aimg_stock_data`), `Keywords`, `RestController` (`/stock`, `/stock/keywords`, `/stock/{p}/search`, `/import`, `/test`) |
 | `Rendering\Hybrid` | `includes/Rendering/Hybrid.php` | `stock` / `ai` layer sources: fetched only inside `Hybrid::fetching()` (generation), cached per post in `_aimg_hybrid_images`; previews and the Studio use a GD-made sample in `uploads/aimg-cache/` |
@@ -102,15 +107,25 @@ Generated attachments are stamped with `_aimg_generated` (`'1'`, queryable) and
 ### Image Generation Pipeline
 
 1. `GenerateImages` catches `wp_after_insert_post` (not `save_post`: the block editor sets the chosen
-   featured image after `save_post`) for posts/pages (per settings) that have no featured image and
+   featured image after `save_post`) for items of turned-on post types that have no featured image and
    no `_aimg_disable_auto` opt-out. Removing a generated featured image sets that opt-out.
-   The `generation_method` setting decides what happens: `template` (default) renders inline, as
+   Post types come from `Generator::get_post_types()` (types with thumbnails, filter `aimg_post_types`);
+   `Generator::get_post_type_rule()` reads `auto_post_types` ({ type: { enabled yes|no, method, template } }),
+   falling back to the 1.x `is_post_thumbnail` / `is_page_thumbnail` for post/page until that is saved;
+   saving mirrors post/page back into those keys for downgrades. A type's method / template override
+   `generation_method` / `default_template_id` (`get_method_for_post()`, `get_template_id_for_post()`),
+   which are used everywhere a post's image is made (auto, editor button, post list, `generate_for_post()`).
+   The method then decides what happens: `template` (default) renders inline, as
    before; `ai` / `ai_template` / `stock` / `stock_template` queue a background job via `Queue` (only for
    published/scheduled posts); `template_ai` renders inline and queues AI when no template exists.
    A template with a `stock`/`ai` layer source is queued too (`Generator::runs_in_background_for_post()`). Jobs run
    `Generator::generate_for_post()`, which also backs the editor's Generate button.
-2. `Generator::get_template_id_for_post()` uses the `default_template_id` setting or a random
-   published template; `Generator::get_render_args()`
+2. `Generator::get_template_id_for_post()` takes the first published template of: the post's matching
+   template rules (`template_rules`, [{ type term|author, taxonomy, term, author, template }], in order;
+   `get_rule_templates_for_post()`, taxonomies from `get_rule_taxonomies()` / `aimg_rule_taxonomies`),
+   its post type's template, `default_template_id`; else a random published template. A fresh install
+   gets one published starter (`Templates\Installer`, once, only with no templates, filter
+   `aimg_install_starter`). `Generator::get_render_args()`
    maps its meta to render arguments (this mapping lives only here — the REST endpoint uses it too);
    it returns `false` for templates that are not published.
 3. `Generator::render()` renders a template's v2 document when it has one (`Repository`);
@@ -164,6 +179,7 @@ Webpack is configured in `webpack.config.js` extending `@wordpress/scripts`:
   tabs come from the JS filter `aimgModal.tabs` (core: Templates, Custom Prompt, one per stock library in
   `stock-panel.js`); add-ons enqueue on `aimg_enqueue_modal`. A tab's payload `{ endpoint, data }` is POSTed
   and must return `{ id, url, alt }`.
+- **Bulk Generate app** (`src/js/bulk/` → `assets/js/bulk.js`, plus `src/css/bulk.scss`): React on the `wp.*` globals, polls `GET aimg/v1/bulk` every 3 s while a run is active.
 - **Settings app** (`src/js/settings/` → `assets/js/settings.js`, plus `src/css/settings.scss`): React on the
   `wp.*` globals (no `@wordpress/*` imports; dependencies are listed in `Settings::enqueue_scripts()`), mounts on
   `#aimg-settings`; tabbed card + sidebar modelled on Forming's settings. Add-ons render extra controls with the JS
@@ -177,6 +193,7 @@ The `assets/` directory is **built output** — do not edit files there directly
 
 - **Image Generator** (top-level menu, `dashicons-format-image`)
   - **Image Templates** — card grid, add, and edit templates; bulk delete; search by title (no list table, no Screen Options)
+  - **Bulk Generate** — filters, dry-run preview (AI request count), background run with progress, pause/resume/cancel
   - **Settings** — tabs: General (default colors, uninstall), Automatic Images, AI Service, Stock Photos (keys, Test Connection)
   - **Upgrade to Pro** — external link, only while `AIMG_PRO_VERSION` is undefined (also a "Go Pro" plugin action link)
 

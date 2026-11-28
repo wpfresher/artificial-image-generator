@@ -39,6 +39,14 @@ class Admin {
 			return self::is_add_screen() || self::is_edit_screen() ? 'studio' : 'templates';
 		}
 
+		if ( Bulk::HOOK === $id ) {
+			return 'bulk';
+		}
+
+		if ( Setup::HOOK === $id ) {
+			return 'setup';
+		}
+
 		return Settings::HOOK === $id ? 'settings' : '';
 	}
 
@@ -70,6 +78,7 @@ class Admin {
 		$nav = array(
 			'templates' => array( __( 'Templates', 'artificial-image-generator' ), admin_url( 'admin.php?page=image-generator' ) ),
 			'studio'    => array( __( 'Add New', 'artificial-image-generator' ), admin_url( 'admin.php?page=image-generator&add' ) ),
+			'bulk'      => array( __( 'Bulk Generate', 'artificial-image-generator' ), admin_url( 'admin.php?page=aimg-bulk' ) ),
 			'settings'  => array( __( 'Settings', 'artificial-image-generator' ), admin_url( 'admin.php?page=aimg-settings' ) ),
 		);
 

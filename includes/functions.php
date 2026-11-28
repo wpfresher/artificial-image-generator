@@ -78,7 +78,9 @@ function aimg_get_settings( $option, $default_value = null ) {
 function aimg_get_js_data() {
 	$provider = \ArtificialImageGenerator\Providers\Registry::get();
 	$model    = (string) aimg_get_settings( 'api_model', '' );
-	$method   = \ArtificialImageGenerator\Generator::get_method();
+	$screen   = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+	$rule     = $screen && $screen->post_type ? \ArtificialImageGenerator\Generator::get_post_type_rule( $screen->post_type ) : array( 'method' => '' );
+	$method   = '' !== $rule['method'] ? $rule['method'] : \ArtificialImageGenerator\Generator::get_method();
 	$methods  = \ArtificialImageGenerator\Generator::get_methods();
 	$runnable = \ArtificialImageGenerator\Generator::get_runnable_method( $method );
 

@@ -61,6 +61,7 @@ class Settings {
 				array(
 					'proActive' => defined( 'AIMG_PRO_VERSION' ),
 					'links'     => Admin::links( 'sidebar' ),
+					'setupUrl'  => Setup::url(),
 				)
 			) . ';',
 			'before'
@@ -191,24 +192,29 @@ class Settings {
 				'help'  => __( 'Leave this off to keep your image templates if you delete and later reinstall the plugin. Images already added to the Media Library are never removed.', 'artificial-image-generator' ),
 			),
 			array(
-				'id'    => 'is_post_thumbnail',
-				'tab'   => 'automatic',
-				'type'  => 'toggle',
-				'label' => __( 'Generate featured images for posts', 'artificial-image-generator' ),
-				'help'  => __( 'When a post is saved without a featured image, one is generated for it.', 'artificial-image-generator' ),
+				'id'        => 'auto_post_types',
+				'tab'       => 'automatic',
+				'type'      => 'post_types',
+				'label'     => __( 'Post types', 'artificial-image-generator' ),
+				'help'      => __( 'When an item of a turned-on type is saved without a featured image, one is generated for it. Each type can use its own method and template.', 'artificial-image-generator' ),
+				'postTypes' => self::options( Generator::get_post_types() ),
+				'methods'   => self::options( array_merge( array( '' => __( 'Default method', 'artificial-image-generator' ) ), Generator::get_methods() ) ),
+				'templates' => self::options( array( 0 => __( 'Default template', 'artificial-image-generator' ) ) + array_slice( $templates, 1, null, true ) ),
 			),
 			array(
-				'id'    => 'is_page_thumbnail',
-				'tab'   => 'automatic',
-				'type'  => 'toggle',
-				'label' => __( 'Generate featured images for pages', 'artificial-image-generator' ),
-				'help'  => __( 'When a page is saved without a featured image, one is generated for it.', 'artificial-image-generator' ),
+				'id'         => 'template_rules',
+				'tab'        => 'automatic',
+				'type'       => 'template_rules',
+				'label'      => __( 'Template rules', 'artificial-image-generator' ),
+				'help'       => __( 'The first rule a post matches picks its template. Posts that match no rule use their post type\'s template, then the default template.', 'artificial-image-generator' ),
+				'conditions' => self::rule_conditions(),
+				'templates'  => self::options( array_slice( $templates, 1, null, true ) ),
 			),
 			array(
 				'id'      => 'generation_method',
 				'tab'     => 'automatic',
 				'type'    => 'select',
-				'label'   => __( 'Generate with', 'artificial-image-generator' ),
+				'label'   => __( 'Default method', 'artificial-image-generator' ),
 				'options' => Generator::get_methods(),
 				'help'    => __( 'AI images are created in the background once a post is published or scheduled, and use your API key. Templates are free and instant.', 'artificial-image-generator' ),
 			),
@@ -216,7 +222,7 @@ class Settings {
 				'id'      => 'default_template_id',
 				'tab'     => 'automatic',
 				'type'    => 'select',
-				'label'   => __( 'Image template', 'artificial-image-generator' ),
+				'label'   => __( 'Default template', 'artificial-image-generator' ),
 				'options' => $templates,
 				'show_if' => array( 'generation_method' => $template_methods ),
 			),
@@ -423,10 +429,157 @@ class Settings {
 				$values[ $id ] = 'yes' === aimg_sanitize_checkbox( isset( $values[ $id ] ) ? $values[ $id ] : '' );
 			} elseif ( 'select' === $field['type'] ) {
 				$values[ $id ] = isset( $values[ $id ] ) ? (string) $values[ $id ] : '';
+			} elseif ( 'post_types' === $field['type'] ) {
+				$values[ $id ] = array();
+
+				foreach ( array_keys( Generator::get_post_types() ) as $post_type ) {
+					$rule                        = Generator::get_post_type_rule( $post_type );
+					$values[ $id ][ $post_type ] = array(
+						'enabled'  => $rule['enabled'],
+						'method'   => $rule['method'],
+						'template' => (string) $rule['template'],
+					);
+				}
+
+				$values[ $id ] = (object) $values[ $id ];
+			} elseif ( 'template_rules' === $field['type'] ) {
+				$values[ $id ] = self::rule_values( isset( $saved[ $id ] ) ? $saved[ $id ] : array() );
 			}
 		}
 
 		return $values;
+	}
+
+	/**
+	 * What template rules can match: each rule taxonomy, then authors.
+	 *
+	 * @return array[] { value, label, path } where path is the REST route used to search.
+	 */
+	private static function rule_conditions() {
+		$conditions = array();
+
+		foreach ( Generator::get_rule_taxonomies() as $name => $taxonomy ) {
+			if ( empty( $taxonomy->show_in_rest ) ) {
+				continue;
+			}
+
+			$conditions[] = array(
+				'value' => $name,
+				'label' => $taxonomy->labels->singular_name,
+				'path'  => '/' . ( $taxonomy->rest_namespace ? $taxonomy->rest_namespace : 'wp/v2' ) . '/' . ( $taxonomy->rest_base ? $taxonomy->rest_base : $name ),
+			);
+		}
+
+		$conditions[] = array(
+			'value' => 'author',
+			'label' => __( 'Author', 'artificial-image-generator' ),
+			'path'  => '/wp/v2/users',
+		);
+
+		return $conditions;
+	}
+
+	/**
+	 * Saved template rules for the settings app, with the names of their terms and authors.
+	 *
+	 * @param mixed $rules Saved rules.
+	 *
+	 * @return array[]
+	 */
+	private static function rule_values( $rules ) {
+		$values = array();
+
+		foreach ( self::sanitize_template_rules( $rules ) as $rule ) {
+			if ( 'author' === $rule['type'] ) {
+				$user      = get_userdata( $rule['author'] );
+				$condition = 'author';
+				$item      = $rule['author'];
+				$label     = $user ? $user->display_name : '';
+			} else {
+				$term      = get_term( $rule['term'], $rule['taxonomy'] );
+				$condition = $rule['taxonomy'];
+				$item      = $rule['term'];
+				$label     = $term && ! is_wp_error( $term ) ? $term->name : '';
+			}
+
+			$values[] = array(
+				'condition' => $condition,
+				'item'      => (string) $item,
+				'itemLabel' => $label,
+				'template'  => (string) $rule['template'],
+			);
+		}
+
+		return $values;
+	}
+
+	/**
+	 * Clean template rules. Rules from the settings app use { condition, item, template };
+	 * stored rules use { type, taxonomy, term, author, template }. Incomplete rules are dropped.
+	 *
+	 * @param mixed $input Rules.
+	 *
+	 * @return array[]
+	 */
+	private static function sanitize_template_rules( $input ) {
+		$clean      = array();
+		$taxonomies = Generator::get_rule_taxonomies();
+
+		foreach ( array_slice( (array) $input, 0, 100 ) as $rule ) {
+			if ( ! is_array( $rule ) ) {
+				continue;
+			}
+
+			if ( isset( $rule['condition'] ) ) {
+				$condition = sanitize_key( $rule['condition'] );
+				$item      = isset( $rule['item'] ) ? absint( $rule['item'] ) : 0;
+				$rule      = 'author' === $condition
+					? array(
+						'type'     => 'author',
+						'author'   => $item,
+						'template' => isset( $rule['template'] ) ? $rule['template'] : 0,
+					)
+					: array(
+						'type'     => 'term',
+						'taxonomy' => $condition,
+						'term'     => $item,
+						'template' => isset( $rule['template'] ) ? $rule['template'] : 0,
+					);
+			}
+
+			$type     = isset( $rule['type'] ) ? $rule['type'] : '';
+			$template = isset( $rule['template'] ) ? absint( $rule['template'] ) : 0;
+
+			if ( ! $template || ! aimg_get_template( $template ) ) {
+				continue;
+			}
+
+			if ( 'author' === $type ) {
+				$author = isset( $rule['author'] ) ? absint( $rule['author'] ) : 0;
+
+				if ( $author && get_userdata( $author ) ) {
+					$clean[] = array(
+						'type'     => 'author',
+						'author'   => $author,
+						'template' => $template,
+					);
+				}
+			} elseif ( 'term' === $type ) {
+				$taxonomy = isset( $rule['taxonomy'] ) ? sanitize_key( $rule['taxonomy'] ) : '';
+				$term     = isset( $rule['term'] ) ? absint( $rule['term'] ) : 0;
+
+				if ( isset( $taxonomies[ $taxonomy ] ) && $term && term_exists( $term, $taxonomy ) ) {
+					$clean[] = array(
+						'type'     => 'term',
+						'taxonomy' => $taxonomy,
+						'term'     => $term,
+						'template' => $template,
+					);
+				}
+			}
+		}
+
+		return $clean;
 	}
 
 	/**
@@ -532,6 +685,32 @@ class Settings {
 			'placeholder' => $placeholder,
 			'test'        => $test,
 		);
+	}
+
+	/**
+	 * Clean the post type settings: { type: { enabled: yes|no, method: '' or a method, template: ID } }.
+	 *
+	 * @param array $input Submitted post type settings.
+	 *
+	 * @return array
+	 */
+	private static function sanitize_post_types( $input ) {
+		$clean = array();
+
+		foreach ( array_keys( Generator::get_post_types() ) as $post_type ) {
+			$rule     = isset( $input[ $post_type ] ) && is_array( $input[ $post_type ] ) ? $input[ $post_type ] : array();
+			$enabled  = isset( $rule['enabled'] ) ? $rule['enabled'] : false;
+			$method   = isset( $rule['method'] ) ? sanitize_key( $rule['method'] ) : '';
+			$template = isset( $rule['template'] ) ? absint( $rule['template'] ) : 0;
+
+			$clean[ $post_type ] = array(
+				'enabled'  => true === $enabled || 'yes' === $enabled || '1' === (string) $enabled ? 'yes' : 'no',
+				'method'   => isset( Generator::get_methods()[ $method ] ) ? $method : '',
+				'template' => $template && aimg_get_template( $template ) ? $template : 0,
+			);
+		}
+
+		return $clean;
 	}
 
 	/**
@@ -652,6 +831,25 @@ class Settings {
 
 		$template_id                               = isset( $settings['default_template_id'] ) ? absint( $settings['default_template_id'] ) : 0;
 		$sanitized_settings['default_template_id'] = $template_id && aimg_get_template( $template_id ) ? $template_id : 0;
+
+		// Saved once the post types field is used; until then the 1.x post/page settings above decide.
+		if ( isset( $settings['auto_post_types'] ) && is_array( $settings['auto_post_types'] ) ) {
+			$sanitized_settings['auto_post_types'] = self::sanitize_post_types( $settings['auto_post_types'] );
+
+			// Kept in step for downgrades to versions that only know these two.
+			foreach ( array(
+				'post' => 'is_post_thumbnail',
+				'page' => 'is_page_thumbnail',
+			) as $post_type => $key ) {
+				if ( isset( $sanitized_settings['auto_post_types'][ $post_type ] ) ) {
+					$sanitized_settings[ $key ] = $sanitized_settings['auto_post_types'][ $post_type ]['enabled'];
+				}
+			}
+		}
+
+		if ( isset( $settings['template_rules'] ) ) {
+			$sanitized_settings['template_rules'] = self::sanitize_template_rules( $settings['template_rules'] );
+		}
 
 		$sanitized_settings['ai_prompt_template'] = isset( $settings['ai_prompt_template'] ) ? sanitize_textarea_field( $settings['ai_prompt_template'] ) : '';
 		$sanitized_settings['ai_negative_prompt'] = isset( $settings['ai_negative_prompt'] ) ? sanitize_textarea_field( $settings['ai_negative_prompt'] ) : PromptBuilder::get_default_negative();

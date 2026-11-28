@@ -29,13 +29,17 @@ function aimg_uninstall_site() {
 	$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '\_transient\_aimg\_flash\_notices\_%' OR option_name LIKE '\_transient\_timeout\_aimg\_flash\_notices\_%' OR option_name LIKE '\_transient\_aimg\_ai\_usage\_%' OR option_name LIKE '\_transient\_timeout\_aimg\_ai\_usage\_%' OR option_name LIKE '\_transient\_aimg\_kick\_%' OR option_name LIKE '\_transient\_timeout\_aimg\_kick\_%' OR option_name LIKE '\_transient\_aimg\_previews\_%' OR option_name LIKE '\_transient\_timeout\_aimg\_previews\_%' OR option_name LIKE '\_transient\_aimg\_stock\_%' OR option_name LIKE '\_transient\_timeout\_aimg\_stock\_%'" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 
 	// Pending background jobs would otherwise fire with no handler.
-	foreach ( array( 'aimg_generate_featured_image', 'aimg_migrate_templates' ) as $aimg_hook ) {
+	foreach ( array( 'aimg_generate_featured_image', 'aimg_migrate_templates', 'aimg_bulk_batch' ) as $aimg_hook ) {
 		wp_unschedule_hook( $aimg_hook );
 		if ( function_exists( 'as_unschedule_all_actions' ) ) {
 			as_unschedule_all_actions( $aimg_hook );
 		}
 	}
 	delete_post_meta_by_key( '_aimg_generation_job' );
+	delete_option( 'aimg_bulk_run' );
+	delete_option( 'aimg_bulk_lock' );
+	delete_option( 'aimg_install_starter' );
+	delete_option( 'aimg_setup_pending' );
 
 	$settings    = get_option( 'aimg_settings', array() );
 	$remove_data = is_array( $settings ) && isset( $settings['remove_data'] ) ? $settings['remove_data'] : 'no';

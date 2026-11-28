@@ -103,6 +103,14 @@ export default function SettingsPage() {
 						) }
 					</p>
 				</div>
+				{ window.aimgSettings?.setupUrl && (
+					<Button
+						variant="secondary"
+						href={ window.aimgSettings.setupUrl }
+					>
+						{ __( 'Run setup', 'artificial-image-generator' ) }
+					</Button>
+				) }
 			</div>
 
 			{ notice && (

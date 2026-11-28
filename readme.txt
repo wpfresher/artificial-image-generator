@@ -1,14 +1,14 @@
-=== Image Generator – AI Auto Featured Images, Thumbnails & Post Images ===
+=== Image Generator – AI Featured Images, Auto Thumbnails & Bulk Generate ===
 Contributors: beautifulplugins
-Tags: ai, ai image, image generator, featured image, block editor
+Tags: featured image, auto featured image, ai image generator, thumbnail, stock photos
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.9.0
+Stable tag: 1.9.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-AI image generator for WordPress. Auto-create featured images, post thumbnails & post images with templates or custom AI prompts.
+Auto featured images for any post type from your own templates, AI or free stock photos. Bulk generate images for old posts.
 
 == Description ==
 
@@ -88,7 +88,7 @@ Choose square, landscape or portrait images and the quality level (and so the co
 Decide which roles can use AI and set an hourly limit per user. Automatic AI images wait until a post is published, so drafts don't spend credit.
 
 ✅ **Works Anywhere You Edit**
-Automatic generation currently covers **posts and pages**. On-demand generation is not limited that way: the block editor panel and the Media Library modal let you generate an image and set it as the featured image on **any post type that supports featured images**, including WooCommerce products and custom post types.
+Automatic, bulk and on-demand generation work on **any post type that supports featured images**, including WooCommerce products and custom post types: turn each one on under Settings → Automatic Images, use Bulk Generate for existing items, or the block editor panel and the Media Library modal for one image.
 
 ✅ **Native WordPress Media Library**
 Every image — template, AI or stock photo — is **saved into the Media Library** with alt text. So image optimization plugins (Smush, ShortPixel, Imagify, EWWW), CDNs (Cloudflare, BunnyCDN, KeyCDN), and SEO plugins (Yoast, Rank Math, AIOSEO) all see it as a regular attachment.
@@ -124,10 +124,17 @@ The **AI Featured Image** panel can also (re)generate the featured image in one 
 
 = Auto-Generate Featured Images on Publish =
 
-1. Under **Image Generator → Settings → Automatic Featured Images**, choose **Image template**, **AI image** or **Stock photo** (or one with a fallback).
+1. Under **Image Generator → Settings → Automatic Images**, turn on the post types that should get images (posts, pages, products or any custom post type with featured images) and choose the default method: **Image template**, **AI image** or **Stock photo** (or one with a fallback). Each post type can use its own method and template.
 2. Write your post or page as normal and hit **Publish** or **Update**.
 3. If you already set a featured image, nothing happens.
 4. If you didn't, a template image is rendered right away from the post title — or an AI image or stock photo is fetched in the background — saved to the Media Library and attached as the post thumbnail.
+
+= Bulk Generate Images for Existing Posts =
+
+1. Go to **Image Generator → Bulk Generate**.
+2. Pick the post types, statuses, category and date range, and the method (template, AI or stock photo).
+3. Click **Preview** to see how many posts match and, for AI, how many paid requests it makes.
+4. Click **Generate**. Images are made in the background, so you can leave the page; pause, resume or cancel at any time.
 
 == Installation ==
 
@@ -142,6 +149,8 @@ The **AI Featured Image** panel can also (re)generate the featured image in one 
 3. Activate **Image Generator** through the **Plugins** menu in WordPress.
 
 = Setup =
+A fresh install starts with a ready-made template, so new posts get a featured image right away. A notice links to a short setup screen (also under **Settings → Run setup**) that walks through the steps below.
+
 1. Go to **Image Generator → Image Templates → Add New**, pick one of the ready-made designs (or start blank) and adjust it in the Template Studio.
 2. (Optional) Open **Image Generator → Settings** and add your **OpenAI API key** to enable AI images.
 3. (Optional) Under **Settings → Stock Photos**, add a free key from Unsplash, Pexels or Pixabay and click **Test Connection**.
@@ -176,7 +185,13 @@ You pay OpenAI directly for usage, based on the model, image size and quality; s
 By default, it's stored in the `aimg_settings` option in the WordPress database. **For maximum security**, define `AIMG_API_KEY` in `wp-config.php` instead — the settings UI will detect the constant and disable the input field, so the key never sits in the database.
 
 = Will this plugin generate featured images for existing posts? =
-Automatic generation only fires when a post is saved without a featured image. **For existing content**, open the post in the block editor and use the **AI Featured Image** panel to generate one on demand. Bulk generation across the entire site is on the roadmap.
+Yes. Go to **Image Generator → Bulk Generate**, choose which posts (post type, status, category, date range) and the method, preview the list, and start. By default only posts without a featured image are included. Single posts can still get one from the **AI Featured Image** panel in the block editor.
+
+= Can I undo a bulk run? =
+Yes. A bulk run never deletes images. When you choose to replace existing featured images, the old ones stay in the Media Library, so you can set them back on any post. You can also pause or cancel a run at any time.
+
+= Can different categories or authors get different designs? =
+Yes. Under **Settings → Automatic Images → Template rules**, pick a template for a category, a tag, a product category or an author. The first rule a post matches decides; posts that match no rule use their post type's template, then the default template.
 
 = Does it work with the Gutenberg block editor? =
 **Yes.** The block editor integration is the plugin's flagship feature. You'll find the ✨ button on Image and Media & Text block toolbars and a dedicated **AI Featured Image** panel in the document sidebar.
@@ -185,7 +200,7 @@ Automatic generation only fires when a post is saved without a featured image. *
 The editor buttons are built for Gutenberg, but the same modal is available in **Media → Library → Generate Image**, so you can create template, AI and stock images there and use them in any builder. **Automatic featured image generation works with every editor**, because it runs whenever WordPress saves a post — so Classic Editor, Elementor, Divi, Beaver Builder, Bricks, and any other builder all benefit from auto-generated thumbnails.
 
 = Does it work with WooCommerce products? =
-**On demand, yes.** Open a product, download, course, or any custom post type that supports featured images, and use the AI Featured Image panel or the Media Library modal to generate and assign an image. Automatic generation on save currently covers posts and pages only; extending it to every public post type is next on the roadmap.
+**Yes.** Turn on **Products** (or any custom post type that supports featured images) under **Settings → Automatic Images**, optionally with its own method and template, and products saved without an image get one. Use **Bulk Generate** for existing products, or the AI Featured Image panel and the Media Library modal for a single one.
 
 = Does it work with SEO plugins like Yoast SEO, Rank Math, and All in One SEO? =
 **Yes.** Generated images are stored as standard Media Library attachments with proper alt text, so SEO plugins can read them, expose them in Open Graph and Twitter Card tags, and include them in sitemaps.
@@ -261,12 +276,29 @@ Searching or importing stock photos calls the library you choose: **Unsplash** (
 10. Start from a design — ready-made templates, including stock photo designs (the review, sale, course, recipe and price tag designs come with Pro).
 11. Template Studio — edit layers on a canvas; text fits its box and uses tags like {title} and {category}.
 12. Template Studio — a background that shows a stock photo picked for each post, with your design on top.
+13. Bulk Generate — pick post types, statuses, category and dates, preview the matching posts and the number of paid AI requests, then let it run in the background.
+14. Automatic Images settings — turn on any post type with its own method and template, and add template rules by category, tag or author.
+15. Post list — the Image column shows each featured image and where it came from, with a one-click Regenerate image action.
+16. Setup — pick where images come from, add a key if needed, choose a design and preview it on your latest post.
 13. Template Studio — layer types: background, image, overlay, text, shape, pattern and frame (Rating, Progress bar and Badge come with Pro).
 14. Settings — automatic featured images with a template, AI or a stock photo, and the AI prompt and style.
 15. Settings — AI service: API key, model, image shape and quality, who can use AI and an hourly limit.
 16. Settings — stock photo API keys with Test Connection, and the library, orientation, size and credit options.
 
 == Changelog ==
+= 1.9.1 =
+* New: **Bulk Generate** page for featured images on existing posts, pages and other post types: filter by status, category and date, pick the method, preview the matching posts (with the number of paid AI requests), then let it run in the background with pause, resume and cancel. Only posts without a featured image are included unless you choose to replace them; old images are never deleted. AI runs wait when the hourly AI limit is reached.
+* New: **Image** column on post lists with the featured image and where a generated one came from (Template, AI or Stock), or "Generating…" / "Failed" for background jobs.
+* New: **Generate image** / **Regenerate image** row action, and a **Regenerate featured images** bulk action that starts a Bulk Generate run for the selected posts.
+* New: **Automatic images for any post type** with featured images (products, custom post types), each with its own method and template, or the defaults. Existing post and page settings carry over.
+* New: **Template rules**: pick a template by category, tag (or any taxonomy) or author. The first matching rule wins, then the post type's template, then the default template.
+* New: A fresh install starts with a ready-made template, so automatic featured images work right away. Sites that already have templates are not changed.
+* New: **Setup screen** for new installs: choose where images come from, add a key if needed, pick a design and preview it on your latest post. Open it again any time from **Settings → Run setup**.
+* Enhance: Compatible with WooCommerce High-Performance Order Storage and the Cart and Checkout blocks. Tested with PHP 8.4.
+* Dev: `Generator::get_post_types()`, `get_post_type_rule()` and `get_method_for_post()`; filter `aimg_post_types`; setting `auto_post_types`.
+* Dev: `Generator::get_rule_templates_for_post()` and `get_rule_taxonomies()`; filters `aimg_rule_taxonomies` and `aimg_install_starter`; setting `template_rules`.
+* Dev: REST endpoints `GET/POST aimg/v1/bulk`, `POST aimg/v1/bulk/preview` and `POST aimg/v1/bulk/{pause|resume|cancel|clear}`; filters `aimg_bulk_post_types`, `aimg_bulk_query_args` and `aimg_bulk_capability`; action `aimg_bulk_finished`.
+
 = 1.9.0 =
 * New: The integration API can make images for other plugins: `Api::generate()` makes one image with the configured method (AI, stock photo or template) and `Api::sources()` reports which methods are ready. AI Content Writer uses it when "Image Generator plugin" is its image source. The existing template methods used by Sokket are unchanged and still make no network requests.
 * New: GPT Image 2.6 Flare and GPT Image 2.6 Sunburst models.
@@ -398,6 +430,9 @@ Searching or importing stock photos calls the library you choose: **Unsplash** (
 * Initial release.
 
 == Upgrade Notice ==
+
+= 1.9.1 =
+Adds Bulk Generate for existing posts and automatic images for any post type. Heads-up: 2.0.0 stops reading templates in the pre-1.7 format. Templates are converted automatically since 1.8.0; if Site Health lists any that were not, open and save them in the Template Studio before updating to 2.0.0.
 
 = 1.8.0 =
 Adds free stock photos from Unsplash, Pexels and Pixabay and photo templates. Older templates are converted to the Template Studio format in the background only when they look exactly the same. Removes aimg_generate_preview().
