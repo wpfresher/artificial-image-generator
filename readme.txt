@@ -414,5 +414,8 @@ Searching or importing stock photos calls the library you choose: **Unsplash** (
 
 == Upgrade Notice ==
 
+= 1.9.1 =
+Adds Bulk Generate for existing posts and automatic images for any post type. Heads-up: 2.0.0 stops reading templates in the pre-1.7 format. Templates are converted automatically since 1.8.0; if Site Health lists any that were not, open and save them in the Template Studio before updating to 2.0.0.
+
 = 1.8.0 =
 Adds free stock photos from Unsplash, Pexels and Pixabay and photo templates. Older templates are converted to the Template Studio format in the background only when they look exactly the same. Removes aimg_generate_preview().
